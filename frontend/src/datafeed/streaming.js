@@ -1,0 +1,145 @@
+const UPDATE_FREQUENCY = 250;
+
+let socket = null;
+let reconnectDelay = 1_000;
+let reconnectTimer = null;
+let hasConnectedBefore = false;
+const subscriberToHandler = new Map();
+const pendingByUid = new Map();
+
+function wsUrl() {
+	const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+	return `${protocol}//${window.location.host}/ws/stream`;
+}
+
+function ensureSocket() {
+	if (
+		socket &&
+		(socket.readyState === WebSocket.OPEN ||
+			socket.readyState === WebSocket.CONNECTING)
+	) {
+		return socket;
+	}
+
+	socket = new WebSocket(wsUrl());
+
+	socket.addEventListener('open', () => {
+		const ws = socket;
+		reconnectDelay = 1_000;
+
+		if (hasConnectedBefore) {
+			subscriberToHandler.forEach(handler => {
+				handler.onResetCacheNeededCallback?.();
+			});
+		}
+		hasConnectedBefore = true;
+
+		if (!ws || ws.readyState !== WebSocket.OPEN) {
+			return;
+		}
+
+		subscriberToHandler.forEach((handler, uid) => {
+			ws.send(
+				JSON.stringify({
+					action: 'subscribe',
+					uid,
+					symbol: handler.symbol,
+					resolution: handler.resolution,
+				})
+			);
+		});
+	});
+
+	socket.addEventListener('message', event => {
+		let message;
+		try {
+			message = JSON.parse(event.data);
+		} catch {
+			return;
+		}
+
+		const handler = subscriberToHandler.get(message.uid);
+		if (!handler) return;
+
+		if (message.type === 'reset') {
+			handler.onResetCacheNeededCallback?.();
+			return;
+		}
+
+		if (message.type === 'bar' && message.bar) {
+			pendingByUid.set(message.uid, message.bar);
+		}
+	});
+
+	socket.addEventListener('close', () => {
+		socket = null;
+		if (subscriberToHandler.size === 0) return;
+
+		reconnectTimer = window.setTimeout(() => {
+			reconnectDelay = Math.min(reconnectDelay * 2, 30_000);
+			ensureSocket();
+		}, reconnectDelay);
+	});
+
+	socket.addEventListener('error', () => {
+		socket?.close();
+	});
+
+	return socket;
+}
+
+setInterval(() => {
+	pendingByUid.forEach((bar, uid) => {
+		const handler = subscriberToHandler.get(uid);
+		if (handler) {
+			handler.callback(bar);
+		}
+		pendingByUid.delete(uid);
+	});
+}, UPDATE_FREQUENCY);
+
+export function subscribeOnStream(
+	symbolInfo,
+	resolution,
+	onRealtimeCallback,
+	subscriberUID,
+	onResetCacheNeededCallback
+) {
+	subscriberToHandler.set(subscriberUID, {
+		symbol: symbolInfo.ticker,
+		resolution,
+		callback: onRealtimeCallback,
+		onResetCacheNeededCallback,
+	});
+
+	const ws = ensureSocket();
+	if (ws.readyState === WebSocket.OPEN) {
+		ws.send(
+			JSON.stringify({
+				action: 'subscribe',
+				uid: subscriberUID,
+				symbol: symbolInfo.ticker,
+				resolution,
+			})
+		);
+	}
+}
+
+export function unsubscribeFromStream(subscriberUID) {
+	pendingByUid.delete(subscriberUID);
+	subscriberToHandler.delete(subscriberUID);
+
+	if (socket?.readyState === WebSocket.OPEN) {
+		socket.send(JSON.stringify({ action: 'unsubscribe', uid: subscriberUID }));
+	}
+
+	if (subscriberToHandler.size === 0) {
+		if (reconnectTimer) {
+			window.clearTimeout(reconnectTimer);
+			reconnectTimer = null;
+		}
+		socket?.close();
+		socket = null;
+		reconnectDelay = 1_000;
+	}
+}
