@@ -8,18 +8,18 @@ import org.junit.jupiter.api.Test;
 class ResolutionMapperTest {
 
 	@Test
-	void mapsNativeBinanceIntervals() {
-		assertEquals("1s", ResolutionMapper.toBinanceInterval("1S"));
-		assertEquals("1m", ResolutionMapper.toBinanceInterval("1"));
-		assertEquals("1h", ResolutionMapper.toBinanceInterval("60"));
-		assertEquals("1d", ResolutionMapper.toBinanceInterval("1D"));
-		assertEquals("1M", ResolutionMapper.toBinanceInterval("1M"));
+	void mapsNativePeriodMillis() {
+		assertEquals(1_000L, ResolutionMapper.periodMillis("1S"));
+		assertEquals(60_000L, ResolutionMapper.periodMillis("1"));
+		assertEquals(3_600_000L, ResolutionMapper.periodMillis("60"));
+		assertEquals(86_400_000L, ResolutionMapper.periodMillis("1D"));
+		assertEquals(2_592_000_000L, ResolutionMapper.periodMillis("1M"));
 	}
 
 	@Test
 	void returnsNullForLibraryAggregatedResolutions() {
-		assertNull(ResolutionMapper.toBinanceInterval("2"));
-		assertNull(ResolutionMapper.toBinanceInterval("10"));
-		assertNull(ResolutionMapper.toBinanceInterval("90"));
+		assertNull(ResolutionMapper.periodMillis("2"));
+		assertNull(ResolutionMapper.periodMillis("10"));
+		assertNull(ResolutionMapper.periodMillis("90"));
 	}
 }

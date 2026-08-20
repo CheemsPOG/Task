@@ -1,18 +1,13 @@
 package com.task.chart.service;
 
-import tools.jackson.databind.JsonNode;
 import com.task.chart.dto.BarDto;
 import com.task.chart.dto.DatafeedConfigResponse;
-import com.task.chart.dto.DatafeedConfigResponse.ExchangeDto;
 import com.task.chart.dto.DatafeedConfigResponse.SymbolTypeDto;
 import com.task.chart.dto.HistoryResponse;
-import com.task.chart.dto.MarkDto;
 import com.task.chart.dto.SearchSymbolDto;
 import com.task.chart.dto.SymbolInfoDto;
-import com.task.chart.dto.TimescaleMarkDto;
+import com.task.chart.service.SymbolCatalog.CachedSymbol;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,39 +18,33 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class ChartDataService {
 
-	private static final int KLINE_LIMIT = 1000;
-	private static final int MAX_KLINE_REQUESTS = 25;
-	private static final long ONE_DAY_SEC = 86_400L;
-
-	private final BinanceClient binanceClient;
 	private final SymbolCatalog symbolCatalog;
+	private final MockBarGenerator mockBarGenerator;
+	private final MockFxQuoteService mockFxQuoteService;
 
-	public ChartDataService(BinanceClient binanceClient, SymbolCatalog symbolCatalog) {
-		this.binanceClient = binanceClient;
+	public ChartDataService(
+			SymbolCatalog symbolCatalog,
+			MockBarGenerator mockBarGenerator,
+			MockFxQuoteService mockFxQuoteService) {
 		this.symbolCatalog = symbolCatalog;
+		this.mockBarGenerator = mockBarGenerator;
+		this.mockFxQuoteService = mockFxQuoteService;
 	}
 
 	public DatafeedConfigResponse config() {
 		return new DatafeedConfigResponse(
 				true,
 				false,
-				true,
-				true,
+				false,
+				false,
 				true,
 				ResolutionMapper.SUPPORTED_RESOLUTIONS,
-				List.of(new ExchangeDto(
-						ResolutionMapper.EXCHANGE,
-						ResolutionMapper.EXCHANGE,
-						"Binance spot market")),
-				List.of(new SymbolTypeDto("crypto", "crypto")));
+				List.of(),
+				List.of(new SymbolTypeDto("forex", "forex")));
 	}
 
 	public long serverTimeSeconds() {
-		try {
-			return Math.floorDiv(binanceClient.serverTimeMillis(), 1000);
-		} catch (Exception ex) {
-			return Instant.now().getEpochSecond();
-		}
+		return Instant.now().getEpochSecond();
 	}
 
 	public List<SearchSymbolDto> search(String query, String exchange, String type, int limit) {
@@ -81,7 +70,7 @@ public class ChartDataService {
 	}
 
 	public SymbolInfoDto resolve(String symbolName) {
-		SymbolCatalog.CachedSymbol symbol = symbolCatalog.find(symbolName);
+		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		if (symbol == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "unknown_symbol");
 		}
@@ -114,101 +103,50 @@ public class ChartDataService {
 	}
 
 	public HistoryResponse history(String symbolName, String resolution, Long to, Integer countBack) {
-		SymbolCatalog.CachedSymbol symbol = symbolCatalog.find(symbolName);
+		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		if (symbol == null) {
 			return HistoryResponse.error("unknown_symbol");
 		}
 
-		String interval = ResolutionMapper.toBinanceInterval(resolution);
-		if (interval == null) {
+		Long periodMs = ResolutionMapper.periodMillis(resolution);
+		if (periodMs == null) {
 			return HistoryResponse.error("Unsupported resolution: " + resolution);
 		}
 
 		long toMs = (to == null ? Instant.now().getEpochSecond() : to) * 1000L;
 		int needed = countBack == null || countBack <= 0 ? 300 : countBack;
-
-		try {
-			List<JsonNode> raw = fetchKlinesBefore(symbol.providerSymbol(), interval, toMs, needed);
-			List<BarDto> bars = new ArrayList<>();
-			for (JsonNode entry : raw) {
-				BarDto bar = toBar(entry);
-				if (bar.time() < toMs) {
-					bars.add(bar);
-				}
-			}
-
-			if (bars.isEmpty()) {
-				return HistoryResponse.empty();
-			}
-			return HistoryResponse.ok(bars);
-		} catch (Exception ex) {
-			return HistoryResponse.error(ex.getMessage());
+		List<BarDto> bars = mockBarGenerator.generate(symbol, periodMs, toMs, needed);
+		if (bars.isEmpty()) {
+			return HistoryResponse.empty();
 		}
+		return HistoryResponse.ok(stitchCurrentBar(symbol, periodMs, bars));
 	}
 
-	public List<MarkDto> marks(Long from, Long to) {
-		long now = to == null ? Instant.now().getEpochSecond() : to;
-		return List.of(
-				new MarkDto("1", now, "red", "N", "#ffffff", 14, List.of("Latest bar mark")),
-				new MarkDto("2", now - ONE_DAY_SEC, "green", "S", "#ffffff", 12, List.of("Signal from backend")),
-				new MarkDto("3", now - ONE_DAY_SEC * 3, "blue", "T", "#ffffff", 12, List.of("Timescale sample")));
-	}
-
-	public List<TimescaleMarkDto> timescaleMarks(Long from, Long to) {
-		long now = to == null ? Instant.now().getEpochSecond() : to;
-		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yy").withZone(ZoneOffset.UTC);
-		List<TimescaleMarkDto> marks = new ArrayList<>();
-		for (int i = 1; i <= 8; i++) {
-			long time = now - ONE_DAY_SEC * i;
-			marks.add(new TimescaleMarkDto(
-					"tsm" + i,
-					time,
-					i % 2 == 0 ? "#FFAA00" : "#089981",
-					i == 1 ? "A" : "B",
-					"#FFFFFF",
-					List.of(fmt.format(Instant.ofEpochSecond(time)), "Backend timescale mark")));
-		}
-		return marks;
+	public CachedSymbol findSymbol(String symbolName) {
+		return symbolCatalog.find(symbolName);
 	}
 
 	public String providerSymbol(String symbolName) {
-		SymbolCatalog.CachedSymbol symbol = symbolCatalog.find(symbolName);
+		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		return symbol == null ? null : symbol.providerSymbol();
 	}
 
-	private List<JsonNode> fetchKlinesBefore(String providerSymbol, String interval, long toMs, int countBack) {
-		List<JsonNode> collected = new ArrayList<>();
-		long endTime = toMs - 1;
-		int requestCount = 0;
-
-		while (collected.size() < countBack && requestCount < MAX_KLINE_REQUESTS) {
-			int limit = Math.min(KLINE_LIMIT, countBack - collected.size());
-			JsonNode batch = binanceClient.klines(providerSymbol, interval, endTime, limit);
-			if (batch == null || !batch.isArray() || batch.isEmpty()) {
-				break;
-			}
-
-			List<JsonNode> page = new ArrayList<>();
-			batch.forEach(page::add);
-			collected.addAll(0, page);
-			requestCount += 1;
-			endTime = page.get(0).get(0).asLong() - 1;
-
-			if (page.size() < limit) {
-				break;
-			}
+	private List<BarDto> stitchCurrentBar(CachedSymbol symbol, long periodMs, List<BarDto> bars) {
+		BarDto last = bars.get(bars.size() - 1);
+		long currentOpen = Math.floorDiv(Instant.now().toEpochMilli() - 1, periodMs) * periodMs;
+		if (last.time() != currentOpen) {
+			return bars;
 		}
-
-		return collected;
-	}
-
-	private static BarDto toBar(JsonNode entry) {
-		return new BarDto(
-				entry.get(0).asLong(),
-				entry.get(1).asDouble(),
-				entry.get(2).asDouble(),
-				entry.get(3).asDouble(),
-				entry.get(4).asDouble(),
-				entry.get(5).asDouble());
+		double mid = mockFxQuoteService.currentMid(symbol.curpairCd());
+		BarDto stitched = new BarDto(
+				last.time(),
+				last.open(),
+				Math.max(last.high(), mid),
+				Math.min(last.low(), mid),
+				mid,
+				last.volume());
+		List<BarDto> copy = new ArrayList<>(bars);
+		copy.set(copy.size() - 1, stitched);
+		return copy;
 	}
 }

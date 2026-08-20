@@ -1,6 +1,9 @@
 const API_BASE = '/api';
 
-export async function apiGet(path, params = {}) {
+export async function apiGet<T>(
+	path: string,
+	params: Record<string, string | number | boolean | null | undefined> = {}
+): Promise<T> {
 	const url = new URL(`${API_BASE}${path}`, window.location.origin);
 
 	Object.entries(params).forEach(([key, value]) => {
@@ -14,5 +17,5 @@ export async function apiGet(path, params = {}) {
 		throw new Error(`HTTP ${response.status} for ${url.pathname}`);
 	}
 
-	return response.json();
+	return response.json() as Promise<T>;
 }

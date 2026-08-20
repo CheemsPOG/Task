@@ -1,11 +1,11 @@
 # TradingView Advanced Charts
 
-Frontend chart (TradingView Advanced Charts) plus a Java Spring Boot backend. The chart datafeed calls the backend; the backend loads **real Binance spot market data** (historical klines and live candle updates). No Binance API key is required.
+Frontend chart (TradingView Advanced Charts) plus a Java Spring Boot backend. The chart datafeed calls the backend; the backend serves **local demo FX data** (historical OHLCV and live candle updates) for the same currency pairs as `/curpairs`. No external market-data API is used.
 
 ## Prerequisites
 
 - **Java 21+** (Java 21–26 are fine)
-- **Node.js 18+** (used only to serve the frontend; no `npm install` needed)
+- **Node.js 18+**
 
 Maven is not required globally. The backend ships with the Maven Wrapper (`mvnw` / `mvnw.cmd`).
 
@@ -41,12 +41,13 @@ Expected: `{"status":"ok","service":"chart-backend"}`.
 
 ```bash
 cd frontend
-node server.mjs
+npm install
+npm start
 ```
 
-Open **http://127.0.0.1:5173**. The chart starts on `Binance:ETH/USDT`, interval `1D`.
+Open **http://127.0.0.1:5173**. The chart starts on `USD/JPY`, interval `1D`.
 
-The frontend server also proxies `/api` and `/ws` to the backend, so the browser only talks to port 5173.
+The frontend server also proxies `/api`, `/curpairs`, and `/ws` to the backend, so the browser only talks to port 5173.
 
 ## If a port is already in use
 
@@ -62,7 +63,7 @@ Then start the frontend with that port:
 ```bash
 cd frontend
 set BACKEND_PORT=8081
-node server.mjs
+npm start
 ```
 
 PowerShell:
@@ -70,23 +71,28 @@ PowerShell:
 ```powershell
 cd frontend
 $env:BACKEND_PORT = "8081"
-node server.mjs
+npm start
 ```
 
 **Frontend (5173)** — pick another port:
 
 ```powershell
 $env:PORT = "5174"
-node server.mjs
+npm start
 ```
 
 Then open `http://127.0.0.1:5174`.
 
 ## What you should see
 
-- Candles and volume for the selected Binance pair (live data while the market is updating)
-- Symbol search for other Binance spot pairs (for example `BTC/USDT`)
+- Candles and volume for the selected FX pair (live demo ticks)
+- Symbol search for the five demo pairs (for example `EUR/USD`)
 - Interval switcher (minutes, hours, daily, weekly, monthly)
 - Light / dark theme toggle on the right of the chart header
+- FX header controls: BID/ASK/MID dropdown and a live simulated quote that follows the chart symbol
+
+## Demo data
+
+Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are all **local mock services**. Prices are simulated with a random walk (`BID < ASK`, `MID = (BID + ASK) / 2`, about 3 ticks per second). The forming candle close tracks the mock FX mid so the header quote and the chart stay related. The mock can later be replaced with a real FX feed without changing the header UI contract.
 
 Implementation details (APIs, files, dataflow) are in [spec.md](./spec.md).

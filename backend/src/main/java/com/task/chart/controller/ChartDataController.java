@@ -3,11 +3,9 @@ package com.task.chart.controller;
 import com.task.chart.dto.DatafeedConfigResponse;
 import com.task.chart.dto.HealthResponse;
 import com.task.chart.dto.HistoryResponse;
-import com.task.chart.dto.MarkDto;
 import com.task.chart.dto.SearchSymbolDto;
 import com.task.chart.dto.ServerTimeResponse;
 import com.task.chart.dto.SymbolInfoDto;
-import com.task.chart.dto.TimescaleMarkDto;
 import com.task.chart.service.ChartDataService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,21 +62,4 @@ public class ChartDataController {
 		return chartDataService.history(symbol, resolution, to, countBack);
 	}
 
-	@GetMapping("/marks")
-	public List<MarkDto> marks(
-			@RequestParam(required = false) String symbol,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to,
-			@RequestParam(required = false) String resolution) {
-		return chartDataService.marks(from, to);
-	}
-
-	@GetMapping("/timescale-marks")
-	public List<TimescaleMarkDto> timescaleMarks(
-			@RequestParam(required = false) String symbol,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to,
-			@RequestParam(required = false) String resolution) {
-		return chartDataService.timescaleMarks(from, to);
-	}
 }

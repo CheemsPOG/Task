@@ -1,18 +1,38 @@
+import type {
+	Bar,
+	LibrarySymbolInfo,
+	ResolutionString,
+	SubscribeBarsCallback,
+} from 'charting_library';
+
 const UPDATE_FREQUENCY = 250;
 
-let socket = null;
-let reconnectDelay = 1_000;
-let reconnectTimer = null;
-let hasConnectedBefore = false;
-const subscriberToHandler = new Map();
-const pendingByUid = new Map();
+interface SubscriberHandler {
+	symbol: string;
+	resolution: ResolutionString;
+	callback: SubscribeBarsCallback;
+	onResetCacheNeededCallback?: () => void;
+}
 
-function wsUrl() {
+interface StreamMessage {
+	uid?: string;
+	type?: string;
+	bar?: Bar;
+}
+
+let socket: WebSocket | null = null;
+let reconnectDelay = 1_000;
+let reconnectTimer: number | null = null;
+let hasConnectedBefore = false;
+const subscriberToHandler = new Map<string, SubscriberHandler>();
+const pendingByUid = new Map<string, Bar>();
+
+function wsUrl(): string {
 	const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 	return `${protocol}//${window.location.host}/ws/stream`;
 }
 
-function ensureSocket() {
+function ensureSocket(): WebSocket {
 	if (
 		socket &&
 		(socket.readyState === WebSocket.OPEN ||
@@ -51,14 +71,14 @@ function ensureSocket() {
 	});
 
 	socket.addEventListener('message', event => {
-		let message;
+		let message: StreamMessage;
 		try {
-			message = JSON.parse(event.data);
+			message = JSON.parse(event.data) as StreamMessage;
 		} catch {
 			return;
 		}
 
-		const handler = subscriberToHandler.get(message.uid);
+		const handler = subscriberToHandler.get(message.uid ?? '');
 		if (!handler) return;
 
 		if (message.type === 'reset') {
@@ -67,7 +87,7 @@ function ensureSocket() {
 		}
 
 		if (message.type === 'bar' && message.bar) {
-			pendingByUid.set(message.uid, message.bar);
+			pendingByUid.set(message.uid ?? '', message.bar);
 		}
 	});
 
@@ -99,14 +119,14 @@ setInterval(() => {
 }, UPDATE_FREQUENCY);
 
 export function subscribeOnStream(
-	symbolInfo,
-	resolution,
-	onRealtimeCallback,
-	subscriberUID,
-	onResetCacheNeededCallback
-) {
+	symbolInfo: LibrarySymbolInfo,
+	resolution: ResolutionString,
+	onRealtimeCallback: SubscribeBarsCallback,
+	subscriberUID: string,
+	onResetCacheNeededCallback: () => void
+): void {
 	subscriberToHandler.set(subscriberUID, {
-		symbol: symbolInfo.ticker,
+		symbol: symbolInfo.ticker ?? symbolInfo.name,
 		resolution,
 		callback: onRealtimeCallback,
 		onResetCacheNeededCallback,
@@ -118,14 +138,14 @@ export function subscribeOnStream(
 			JSON.stringify({
 				action: 'subscribe',
 				uid: subscriberUID,
-				symbol: symbolInfo.ticker,
+				symbol: symbolInfo.ticker ?? symbolInfo.name,
 				resolution,
 			})
 		);
 	}
 }
 
-export function unsubscribeFromStream(subscriberUID) {
+export function unsubscribeFromStream(subscriberUID: string): void {
 	pendingByUid.delete(subscriberUID);
 	subscriberToHandler.delete(subscriberUID);
 

@@ -1,14 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
+const backendHost = process.env.BACKEND_HOST || '127.0.0.1';
+const backendPort = Number(process.env.BACKEND_PORT || 8080);
+const port = Number(process.env.PORT || 5173);
 
-const MIME = {
+const MIME: Record<string, string> = {
 	'.js': 'text/javascript',
 	'.mjs': 'text/javascript',
 	'.cjs': 'text/javascript',
+	'.ts': 'text/javascript',
 	'.css': 'text/css',
 	'.json': 'application/json',
 	'.svg': 'image/svg+xml',
@@ -23,7 +27,7 @@ const MIME = {
 	'.html': 'text/html',
 };
 
-function serveStaticFolder(urlPrefix, folderName) {
+function serveStaticFolder(urlPrefix: string, folderName: string): Plugin {
 	const dir = path.resolve(root, folderName);
 
 	return {
@@ -35,7 +39,9 @@ function serveStaticFolder(urlPrefix, folderName) {
 					return;
 				}
 
-				const relative = decodeURIComponent(req.url.split('?')[0].slice(urlPrefix.length));
+				const relative = decodeURIComponent(
+					req.url.split('?')[0].slice(urlPrefix.length)
+				);
 				const file = path.resolve(dir, relative);
 				if (!file.startsWith(dir) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
 					next();
@@ -60,15 +66,20 @@ export default defineConfig({
 		serveStaticFolder('/datafeeds/', 'datafeeds'),
 	],
 	server: {
-		port: 5173,
+		host: '127.0.0.1',
+		port,
 		strictPort: true,
 		proxy: {
 			'/api': {
-				target: 'http://127.0.0.1:8080',
+				target: `http://${backendHost}:${backendPort}`,
+				changeOrigin: true,
+			},
+			'/curpairs': {
+				target: `http://${backendHost}:${backendPort}`,
 				changeOrigin: true,
 			},
 			'/ws': {
-				target: 'ws://127.0.0.1:8080',
+				target: `ws://${backendHost}:${backendPort}`,
 				ws: true,
 			},
 		},
