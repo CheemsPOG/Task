@@ -6,6 +6,8 @@ import { defineConfig, type Plugin } from 'vite';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const backendHost = process.env.BACKEND_HOST || '127.0.0.1';
 const backendPort = Number(process.env.BACKEND_PORT || 8080);
+const wsHost = process.env.WS_HOST || backendHost;
+const wsPort = Number(process.env.WS_PORT || 8081);
 const port = Number(process.env.PORT || 5173);
 
 const MIME: Record<string, string> = {
@@ -79,7 +81,7 @@ export default defineConfig({
 				changeOrigin: true,
 			},
 			'/ws': {
-				target: `ws://${backendHost}:${backendPort}`,
+				target: `ws://${wsHost}:${wsPort}`,
 				ws: true,
 			},
 		},

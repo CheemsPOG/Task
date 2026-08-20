@@ -1,9 +1,10 @@
 # TradingView Advanced Charts — Spec
 
 Frontend: TradingView Advanced Charts (CL v27.006) in TypeScript.  
-Backend: Java 21 Spring Boot 4.0.7. All market data is **local mock**. There is no Binance or external FX provider.
+REST backend: Java 21 Spring Boot 4.0.7 (`/api`, `/curpairs`).  
+Live sockets: Python (`/ws/stream`, `/ws/fx-quotes`). All market data is **local mock**. There is no Binance or external FX provider.
 
-How to run: see [README.md](./README.md). Backend `http://127.0.0.1:8080`, frontend `http://127.0.0.1:5173` (Vite proxies `/api`, `/curpairs`, `/ws`).
+How to run: see [README.md](./README.md). Java REST `http://127.0.0.1:8080`, Python WebSocket `ws://127.0.0.1:8081`, frontend `http://127.0.0.1:5173` (Vite proxies `/api` and `/curpairs` to Java, `/ws` to Python).
 
 ---
 
@@ -22,10 +23,10 @@ How to run: see [README.md](./README.md). Backend `http://127.0.0.1:8080`, front
 ```text
 Browser (5173)
   └── Widget + datafeed + FX header
-        ├── GET  /api/*         → chart config, search, history
-        ├── WS   /ws/stream     → live candles (bid, ask, or mid)
-        ├── GET  /curpairs      → FX pair catalog
-        └── WS   /ws/fx-quotes  → live BID/ASK quotes (~3/s)
+        ├── GET  /api/*         → Java REST (chart config, search, history)
+        ├── GET  /curpairs      → Java REST (FX pair catalog)
+        ├── WS   /ws/stream     → Python (live candles: bid, ask, or mid)
+        └── WS   /ws/fx-quotes  → Python (live BID/ASK quotes, ~3/s)
 ```
 
 Two WebSockets. Do not mix their payloads.
@@ -34,7 +35,7 @@ Two WebSockets. Do not mix their payloads.
 
 ## How mock data works
 
-**Quotes** (`MockFxQuoteService`, ~every 333ms):
+**Quotes** (`ws-python/market.py`, ~every 333ms):
 
 1. Random-walk **BID**.
 2. **ASK = BID + spread** (`BID < ASK`).
@@ -43,7 +44,7 @@ Two WebSockets. Do not mix their payloads.
 
 A future real feed that only has BID and ASK can replace this generator and still emit the same JSON with `mid` computed the same way. The UI does not need to change.
 
-**Candles** (`MockBarGenerator` + `MockKlineStreamer`):
+**Candles** (`MockBarGenerator` for REST history, `ws-python` for live bars):
 
 - Built from a **BID price path**. ASK bars use `bid + spread`. MID bars use `(bid + ask) / 2`.
 - ASK High is stretched up and BID Low down so the legend H/L is easy to check when switching modes.
@@ -108,7 +109,7 @@ Use this as the pairing-catalog + quote-stream spec. The backend **implements** 
 
 ### Quote WebSocket
 
-- URL: `ws://127.0.0.1:8080/ws/fx-quotes` (browser uses same-origin `/ws/fx-quotes` via Vite).
+- URL: `ws://127.0.0.1:8081/ws/fx-quotes` (browser uses same-origin `/ws/fx-quotes` via Vite).
 - Server pushes; the client does not send subscribe messages.
 - On connect, the server sends a **snapshot** (one message per pair), then live ticks.
 - Frequency: about **3 times per second** (333ms) for **every** pair.
@@ -176,9 +177,9 @@ Chart + mock:
 |---|---|
 | Chart REST | `controller/ChartDataController.java`, `service/ChartDataService.java` |
 | Pair catalog | `controller/CurrencyPairController.java`, `service/CurrencyPairService.java` |
-| Mock quotes | `service/MockFxQuoteService.java`, `websocket/FxQuoteWebSocketHandler.java` |
-| Mock candles | `service/DemoMarket.java`, `service/MockBarGenerator.java`, `websocket/MockKlineStreamer.java` |
-| Chart WS | `websocket/ChartStreamHandler.java`, `config/WebSocketConfig.java` |
+| Mock quotes | `ws-python/market.py`, `ws-python/server.py` (`/ws/fx-quotes`) |
+| Mock candles | `service/DemoMarket.java`, `service/MockBarGenerator.java` (history); `ws-python` live bars (`/ws/stream`) |
+| Chart WS | `ws-python/server.py` |
 | Widget | `frontend/src/main.ts`, `datafeed/datafeed.ts`, `datafeed/streaming.ts` |
 | FX header | `frontend/src/fx/currencyPairs.ts`, `quoteStore.ts`, `fxQuotesSocket.ts`, `quoteToolbar.ts` |
 

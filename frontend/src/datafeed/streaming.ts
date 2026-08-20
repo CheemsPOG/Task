@@ -150,6 +150,26 @@ export function subscribeOnStream(
 	}
 }
 
+export function resubscribeAllWithCurrentPrice(): void {
+	subscriberToHandler.forEach((handler, uid) => {
+		handler.price = quoteStore.mode;
+		pendingByUid.delete(uid);
+		if (socket?.readyState !== WebSocket.OPEN) {
+			return;
+		}
+		socket.send(JSON.stringify({ action: 'unsubscribe', uid }));
+		socket.send(
+			JSON.stringify({
+				action: 'subscribe',
+				uid,
+				symbol: handler.symbol,
+				resolution: handler.resolution,
+				price: quoteStore.mode,
+			})
+		);
+	});
+}
+
 export function unsubscribeFromStream(subscriberUID: string): void {
 	pendingByUid.delete(subscriberUID);
 	subscriberToHandler.delete(subscriberUID);

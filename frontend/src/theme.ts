@@ -75,18 +75,6 @@ const customCSS = `
   .switcher input:checked + .thumb-wrapper .thumb {
     transform: translate(21px, 3px);
   }
-
-  #fx-quote-price {
-    display: flex;
-    align-items: center;
-    min-width: 5.5em;
-    padding: 0 10px;
-    font-size: 14px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
-    pointer-events: none;
-  }
 `;
 
 const cssBlob = new Blob([customCSS], { type: 'text/css' });
