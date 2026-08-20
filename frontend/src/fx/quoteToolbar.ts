@@ -99,6 +99,11 @@ export function installFxQuoteToolbar(widget: IChartingLibraryWidget): void {
 					title: modeLabel(quoteStore.mode),
 					items: modeItems(),
 				});
+				try {
+					widget.activeChart().resetData();
+				} catch {
+					// Chart API is only available after onChartReady.
+				}
 			}
 		}
 

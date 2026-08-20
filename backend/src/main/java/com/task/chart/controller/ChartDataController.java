@@ -58,8 +58,9 @@ public class ChartDataController {
 			@RequestParam String resolution,
 			@RequestParam(required = false) Long from,
 			@RequestParam(required = false) Long to,
-			@RequestParam(required = false) Integer countBack) {
-		return chartDataService.history(symbol, resolution, to, countBack);
+			@RequestParam(required = false) Integer countBack,
+			@RequestParam(required = false, defaultValue = "mid") String price) {
+		return chartDataService.history(symbol, resolution, to, countBack, price);
 	}
 
 }

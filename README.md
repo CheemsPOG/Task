@@ -89,10 +89,10 @@ Then open `http://127.0.0.1:5174`.
 - Symbol search for the five demo pairs (for example `EUR/USD`)
 - Interval switcher (minutes, hours, daily, weekly, monthly)
 - Light / dark theme toggle on the right of the chart header
-- FX header controls: BID/ASK/MID dropdown and a live simulated quote that follows the chart symbol
+- FX header controls: BID/ASK/MID dropdown and a live simulated quote that follows the chart symbol. Switching BID/ASK/MID reloads that pair's candles from that price side.
 
 ## Demo data
 
-Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are all **local mock services**. Prices are simulated with a random walk (`BID < ASK`, `MID = (BID + ASK) / 2`, about 3 ticks per second). The forming candle close tracks the mock FX mid so the header quote and the chart stay related. The mock can later be replaced with a real FX feed without changing the header UI contract.
+Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are **local mocks**. The generator walks **BID**, sets **ASK = BID + spread**, and **MID = (BID + ASK) / 2** (~3 ticks per second). The forming candle close follows the selected BID/ASK/MID. A real FX feed can replace the generator later if it keeps the same `/curpairs` + quote JSON.
 
-Implementation details (APIs, files, dataflow) are in [spec.md](./spec.md).
+Details, FX WebSocket contract, and a verification checklist: [spec.md](./spec.md).

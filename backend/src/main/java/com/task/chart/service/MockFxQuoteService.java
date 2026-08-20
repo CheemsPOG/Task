@@ -49,11 +49,19 @@ public class MockFxQuoteService {
 	}
 
 	public double currentMid(int curpairCd) {
+		return currentPrice(curpairCd, PriceComponent.MID);
+	}
+
+	public double currentPrice(int curpairCd, PriceComponent price) {
 		SimulatedQuote quote = quotes.get(curpairCd);
 		if (quote == null) {
 			throw new IllegalArgumentException("unknown pair " + curpairCd);
 		}
-		return quote.midValue();
+		return switch (price == null ? PriceComponent.MID : price) {
+			case BID -> quote.bidValue();
+			case ASK -> quote.askValue();
+			case MID -> quote.midValue();
+		};
 	}
 
 	@Scheduled(fixedRate = 333)
@@ -74,9 +82,9 @@ public class MockFxQuoteService {
 		private final int scale;
 		private final BigDecimal spread;
 		private final BigDecimal maxStep;
-		private BigDecimal mid;
 		private BigDecimal bid;
 		private BigDecimal ask;
+		private BigDecimal mid;
 		private BigDecimal high;
 		private BigDecimal low;
 
@@ -85,13 +93,13 @@ public class MockFxQuoteService {
 				int scale,
 				BigDecimal spread,
 				BigDecimal maxStep,
-				BigDecimal mid) {
+				BigDecimal bid) {
 			this.curpairCd = curpairCd;
 			this.scale = scale;
 			this.spread = spread;
 			this.maxStep = maxStep;
-			this.mid = mid;
-			applyBidAskFromMid();
+			this.bid = bid;
+			applyAskFromBid();
 			this.high = ask;
 			this.low = bid;
 		}
@@ -99,34 +107,29 @@ public class MockFxQuoteService {
 		static SimulatedQuote seed(CurrencyPairDto pair) {
 			boolean yenQuote = pair.curpairName().endsWith("JPY");
 			int scale = yenQuote ? 3 : 5;
-			return switch (pair.curpairName()) {
-				case "USDJPY" -> new SimulatedQuote(
-						pair.curpairCd(), scale, bd("0.002", scale), bd("0.012", scale), bd("149.850", scale));
-				case "EURJPY" -> new SimulatedQuote(
-						pair.curpairCd(), scale, bd("0.002", scale), bd("0.014", scale), bd("162.420", scale));
-				case "EURUSD" -> new SimulatedQuote(
-						pair.curpairCd(), scale, bd("0.00002", scale), bd("0.00012", scale), bd("1.08540", scale));
-				case "GBPUSD" -> new SimulatedQuote(
-						pair.curpairCd(), scale, bd("0.00002", scale), bd("0.00014", scale), bd("1.27180", scale));
-				case "AUDUSD" -> new SimulatedQuote(
-						pair.curpairCd(), scale, bd("0.00002", scale), bd("0.00010", scale), bd("0.66250", scale));
-				default -> new SimulatedQuote(
-						pair.curpairCd(),
-						scale,
-						yenQuote ? bd("0.002", scale) : bd("0.00002", scale),
-						yenQuote ? bd("0.010", scale) : bd("0.00010", scale),
-						yenQuote ? bd("100.000", scale) : bd("1.00000", scale));
+			BigDecimal spread = BigDecimal.valueOf(DemoMarket.fullSpread(pair.curpairName()))
+					.setScale(scale, RoundingMode.HALF_UP);
+			BigDecimal bid = BigDecimal.valueOf(DemoMarket.seedBid(pair.curpairName()))
+					.setScale(scale, RoundingMode.HALF_UP);
+			BigDecimal maxStep = switch (pair.curpairName()) {
+				case "USDJPY" -> bd("0.012", scale);
+				case "EURJPY" -> bd("0.014", scale);
+				case "EURUSD" -> bd("0.00012", scale);
+				case "GBPUSD" -> bd("0.00014", scale);
+				case "AUDUSD" -> bd("0.00010", scale);
+				default -> yenQuote ? bd("0.010", scale) : bd("0.00010", scale);
 			};
+			return new SimulatedQuote(pair.curpairCd(), scale, spread, maxStep, bid);
 		}
 
 		void step() {
 			double gaussian = ThreadLocalRandom.current().nextGaussian();
 			BigDecimal delta = maxStep.multiply(BigDecimal.valueOf(gaussian / 3.0));
-			mid = mid.add(delta).setScale(scale, RoundingMode.HALF_UP);
-			if (mid.compareTo(BigDecimal.ZERO) <= 0) {
-				mid = maxStep;
+			bid = bid.add(delta).setScale(scale, RoundingMode.HALF_UP);
+			if (bid.compareTo(BigDecimal.ZERO) <= 0) {
+				bid = maxStep;
 			}
-			applyBidAskFromMid();
+			applyAskFromBid();
 			if (ask.compareTo(high) > 0) {
 				high = ask;
 			}
@@ -137,6 +140,14 @@ public class MockFxQuoteService {
 
 		double midValue() {
 			return mid.doubleValue();
+		}
+
+		double bidValue() {
+			return bid.doubleValue();
+		}
+
+		double askValue() {
+			return ask.doubleValue();
 		}
 
 		FxQuoteMessage toMessage() {
@@ -150,9 +161,7 @@ public class MockFxQuoteService {
 					low.doubleValue());
 		}
 
-		private void applyBidAskFromMid() {
-			BigDecimal halfSpread = spread.divide(BigDecimal.TWO, scale, RoundingMode.HALF_UP);
-			bid = mid.subtract(halfSpread).setScale(scale, RoundingMode.HALF_UP);
+		private void applyAskFromBid() {
 			ask = bid.add(spread).setScale(scale, RoundingMode.HALF_UP);
 			if (bid.compareTo(ask) >= 0) {
 				ask = bid.add(tick());

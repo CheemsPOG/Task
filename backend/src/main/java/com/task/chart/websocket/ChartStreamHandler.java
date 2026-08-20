@@ -4,6 +4,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import com.task.chart.dto.BarDto;
 import com.task.chart.service.ChartDataService;
+import com.task.chart.service.PriceComponent;
 import com.task.chart.service.ResolutionMapper;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
 import java.io.IOException;
@@ -48,7 +49,12 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 		String uid = root.path("uid").asText();
 
 		if ("subscribe".equals(action)) {
-			subscribe(session, uid, root.path("symbol").asText(), root.path("resolution").asText());
+			subscribe(
+					session,
+					uid,
+					root.path("symbol").asText(),
+					root.path("resolution").asText(),
+					root.path("price").asText("mid"));
 			return;
 		}
 		if ("unsubscribe".equals(action)) {
@@ -67,11 +73,17 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 		clearSession(session.getId());
 	}
 
-	private void subscribe(WebSocketSession session, String uid, String symbolName, String resolution) throws IOException {
+	private void subscribe(
+			WebSocketSession session,
+			String uid,
+			String symbolName,
+			String resolution,
+			String priceName) throws IOException {
 		unsubscribe(session, uid);
 
 		CachedSymbol symbol = chartDataService.findSymbol(symbolName);
 		Long periodMs = ResolutionMapper.periodMillis(resolution);
+		PriceComponent price = PriceComponent.from(priceName);
 		if (symbol == null || periodMs == null) {
 			send(session, Map.of(
 					"type", "error",
@@ -80,7 +92,7 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 			return;
 		}
 
-		SessionSubscription subscription = new SessionSubscription(session, uid, symbol, periodMs, bar -> {
+		SessionSubscription subscription = new SessionSubscription(session, uid, symbol, periodMs, price, bar -> {
 			if (bar == null) {
 				sendQuietly(session, Map.of("type", "reset", "uid", uid));
 				return;
@@ -88,7 +100,7 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 			sendQuietly(session, Map.of("type", "bar", "uid", uid, "bar", bar));
 		});
 		sessions.computeIfAbsent(session.getId(), key -> new ConcurrentHashMap<>()).put(uid, subscription);
-		streamer.subscribe(symbol, periodMs, subscription.listener());
+		streamer.subscribe(symbol, periodMs, price, subscription.listener());
 	}
 
 	private void unsubscribe(WebSocketSession session, String uid) {
@@ -98,7 +110,11 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 		}
 		SessionSubscription subscription = byUid.remove(uid);
 		if (subscription != null) {
-			streamer.unsubscribe(subscription.symbol(), subscription.periodMs(), subscription.listener());
+			streamer.unsubscribe(
+					subscription.symbol(),
+					subscription.periodMs(),
+					subscription.price(),
+					subscription.listener());
 		}
 	}
 
@@ -108,7 +124,11 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 			return;
 		}
 		byUid.values().forEach(subscription ->
-				streamer.unsubscribe(subscription.symbol(), subscription.periodMs(), subscription.listener()));
+				streamer.unsubscribe(
+						subscription.symbol(),
+						subscription.periodMs(),
+						subscription.price(),
+						subscription.listener()));
 	}
 
 	private void send(WebSocketSession session, Object payload) throws IOException {
@@ -133,6 +153,7 @@ public class ChartStreamHandler extends TextWebSocketHandler {
 			String uid,
 			CachedSymbol symbol,
 			long periodMs,
+			PriceComponent price,
 			java.util.function.Consumer<BarDto> listener) {
 	}
 }

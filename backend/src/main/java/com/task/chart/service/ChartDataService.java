@@ -103,6 +103,24 @@ public class ChartDataService {
 	}
 
 	public HistoryResponse history(String symbolName, String resolution, Long to, Integer countBack) {
+		return history(symbolName, resolution, to, countBack, PriceComponent.MID);
+	}
+
+	public HistoryResponse history(
+			String symbolName,
+			String resolution,
+			Long to,
+			Integer countBack,
+			String price) {
+		return history(symbolName, resolution, to, countBack, PriceComponent.from(price));
+	}
+
+	public HistoryResponse history(
+			String symbolName,
+			String resolution,
+			Long to,
+			Integer countBack,
+			PriceComponent price) {
 		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		if (symbol == null) {
 			return HistoryResponse.error("unknown_symbol");
@@ -113,13 +131,14 @@ public class ChartDataService {
 			return HistoryResponse.error("Unsupported resolution: " + resolution);
 		}
 
+		PriceComponent component = price == null ? PriceComponent.MID : price;
 		long toMs = (to == null ? Instant.now().getEpochSecond() : to) * 1000L;
 		int needed = countBack == null || countBack <= 0 ? 300 : countBack;
-		List<BarDto> bars = mockBarGenerator.generate(symbol, periodMs, toMs, needed);
+		List<BarDto> bars = mockBarGenerator.generate(symbol, periodMs, toMs, needed, component);
 		if (bars.isEmpty()) {
 			return HistoryResponse.empty();
 		}
-		return HistoryResponse.ok(stitchCurrentBar(symbol, periodMs, bars));
+		return HistoryResponse.ok(stitchCurrentBar(symbol, periodMs, bars, component));
 	}
 
 	public CachedSymbol findSymbol(String symbolName) {
@@ -131,19 +150,23 @@ public class ChartDataService {
 		return symbol == null ? null : symbol.providerSymbol();
 	}
 
-	private List<BarDto> stitchCurrentBar(CachedSymbol symbol, long periodMs, List<BarDto> bars) {
+	private List<BarDto> stitchCurrentBar(
+			CachedSymbol symbol,
+			long periodMs,
+			List<BarDto> bars,
+			PriceComponent price) {
 		BarDto last = bars.get(bars.size() - 1);
 		long currentOpen = Math.floorDiv(Instant.now().toEpochMilli() - 1, periodMs) * periodMs;
 		if (last.time() != currentOpen) {
 			return bars;
 		}
-		double mid = mockFxQuoteService.currentMid(symbol.curpairCd());
+		double close = mockFxQuoteService.currentPrice(symbol.curpairCd(), price);
 		BarDto stitched = new BarDto(
 				last.time(),
 				last.open(),
-				Math.max(last.high(), mid),
-				Math.min(last.low(), mid),
-				mid,
+				Math.max(last.high(), close),
+				Math.min(last.low(), close),
+				close,
 				last.volume());
 		List<BarDto> copy = new ArrayList<>(bars);
 		copy.set(copy.size() - 1, stitched);

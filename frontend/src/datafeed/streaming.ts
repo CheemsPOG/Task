@@ -4,12 +4,14 @@ import type {
 	ResolutionString,
 	SubscribeBarsCallback,
 } from 'charting_library';
+import { quoteStore } from '../fx/quoteStore.ts';
 
 const UPDATE_FREQUENCY = 250;
 
 interface SubscriberHandler {
 	symbol: string;
 	resolution: ResolutionString;
+	price: string;
 	callback: SubscribeBarsCallback;
 	onResetCacheNeededCallback?: () => void;
 }
@@ -65,6 +67,7 @@ function ensureSocket(): WebSocket {
 					uid,
 					symbol: handler.symbol,
 					resolution: handler.resolution,
+					price: handler.price,
 				})
 			);
 		});
@@ -128,6 +131,7 @@ export function subscribeOnStream(
 	subscriberToHandler.set(subscriberUID, {
 		symbol: symbolInfo.ticker ?? symbolInfo.name,
 		resolution,
+		price: quoteStore.mode,
 		callback: onRealtimeCallback,
 		onResetCacheNeededCallback,
 	});
@@ -140,6 +144,7 @@ export function subscribeOnStream(
 				uid: subscriberUID,
 				symbol: symbolInfo.ticker ?? symbolInfo.name,
 				resolution,
+				price: quoteStore.mode,
 			})
 		);
 	}

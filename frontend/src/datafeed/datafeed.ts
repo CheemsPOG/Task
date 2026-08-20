@@ -14,6 +14,7 @@ import type {
 	SubscribeBarsCallback,
 } from 'charting_library';
 import { apiGet } from '../api.ts';
+import { quoteStore } from '../fx/quoteStore.ts';
 import { subscribeOnStream, unsubscribeFromStream } from './streaming.ts';
 
 const lastBarsCache = new Map<string, Bar>();
@@ -103,6 +104,7 @@ const Datafeed: IBasicDataFeed = {
 				from: periodParams.from,
 				to: periodParams.to,
 				countBack: periodParams.countBack,
+				price: quoteStore.mode,
 			});
 
 			if (data.s !== 'ok' || data.noData || !data.bars?.length) {
@@ -112,7 +114,7 @@ const Datafeed: IBasicDataFeed = {
 
 			if (periodParams.firstDataRequest) {
 				lastBarsCache.set(
-					symbolInfo.ticker ?? symbolInfo.name,
+					`${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`,
 					data.bars[data.bars.length - 1]
 				);
 			}

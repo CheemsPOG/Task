@@ -12,7 +12,8 @@ class MockFxQuoteServiceTest {
 
 	@Test
 	void snapshotKeepsBidAskMidRelationship() {
-		MockFxQuoteService service = new MockFxQuoteService(new CurrencyPairService());
+		CurrencyPairService pairs = new CurrencyPairService();
+		MockFxQuoteService service = new MockFxQuoteService(pairs);
 
 		for (int i = 0; i < 40; i++) {
 			service.tick();
@@ -21,7 +22,12 @@ class MockFxQuoteServiceTest {
 		List<FxQuoteMessage> quotes = service.snapshot();
 		assertThat(quotes).hasSize(5);
 		for (FxQuoteMessage quote : quotes) {
+			CurrencyPairDto pair = pairs.find(Integer.parseInt(quote.curpairCd()));
+			assertThat(pair).isNotNull();
 			assertThat(quote.bid()).isLessThan(quote.ask());
+			assertThat(quote.ask()).isCloseTo(
+					quote.bid() + DemoMarket.fullSpread(pair.curpairName()),
+					within(0.001));
 			assertThat(quote.mid()).isCloseTo((quote.bid() + quote.ask()) / 2.0, within(0.0000001));
 			assertThat(quote.high()).isGreaterThanOrEqualTo(quote.ask());
 			assertThat(quote.low()).isLessThanOrEqualTo(quote.bid());
