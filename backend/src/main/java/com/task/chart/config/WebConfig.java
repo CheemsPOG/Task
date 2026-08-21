@@ -37,7 +37,7 @@ public class WebConfig {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
 						.allowedOrigins(properties.getCorsOrigins().toArray(String[]::new))
-						.allowedMethods("GET", "OPTIONS")
+						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*");
 				registry.addMapping("/curpairs")
 						.allowedOrigins(properties.getCorsOrigins().toArray(String[]::new))

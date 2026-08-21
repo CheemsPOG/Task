@@ -32,6 +32,8 @@ public class AppProperties {
 
 	private List<String> corsOrigins = new ArrayList<>();
 	@NestedConfigurationProperty
+	private Jwt jwt = new Jwt();
+	@NestedConfigurationProperty
 	private TradingView tradingView = new TradingView();
 
 	public List<String> getCorsOrigins() {
@@ -40,6 +42,14 @@ public class AppProperties {
 
 	public void setCorsOrigins(List<String> corsOrigins) {
 		this.corsOrigins = corsOrigins;
+	}
+
+	public Jwt getJwt() {
+		return jwt;
+	}
+
+	public void setJwt(Jwt jwt) {
+		this.jwt = jwt;
 	}
 
 	public TradingView getTradingView() {
@@ -51,13 +61,38 @@ public class AppProperties {
 	}
 
 	/**
+	 * Local JWT stand-in for S-01 (demo only).
+	 */
+	public static class Jwt {
+
+		private String secret = "chart-local-demo-jwt-secret-key-at-least-256-bits-long";
+		private long expirationMs = 86_400_000L;
+
+		public String getSecret() {
+			return secret;
+		}
+
+		public void setSecret(String secret) {
+			this.secret = secret;
+		}
+
+		public long getExpirationMs() {
+			return expirationMs;
+		}
+
+		public void setExpirationMs(long expirationMs) {
+			this.expirationMs = expirationMs;
+		}
+	}
+
+	/**
 	 * External configuration for datafeed {@code onReady} (design doc 120).
 	 */
 	public static class TradingView {
 
 		private boolean supportsSearch = true;
-		private boolean supportsMarks = false;
-		private boolean supportsTimescaleMarks = false;
+		private boolean supportsMarks = true;
+		private boolean supportsTimescaleMarks = true;
 		private boolean supportsTime = true;
 		private String exchanges = "CTFX";
 		private String symbolsTypes = "FOREX";
@@ -67,6 +102,8 @@ public class AppProperties {
 		private boolean hasSeconds = true;
 		private String timeSummer = "0700-3000:2|0600-3000:345|0600-2940:6";
 		private String timeWinter = "0700-3100:2|0700-3100:345|0700-3040:6";
+		private int searchDefaultLimit = 100;
+		private int searchMaxLimit = 100;
 		private List<String> supportedResolutions = new ArrayList<>(List.of(
 				"1S", "1", "5", "15", "30", "60", "120", "240", "480", "1D", "1W", "1M"));
 		private List<String> intradayMultipliers = new ArrayList<>(List.of(
@@ -166,6 +203,22 @@ public class AppProperties {
 
 		public void setTimeWinter(String timeWinter) {
 			this.timeWinter = timeWinter;
+		}
+
+		public int getSearchDefaultLimit() {
+			return searchDefaultLimit;
+		}
+
+		public void setSearchDefaultLimit(int searchDefaultLimit) {
+			this.searchDefaultLimit = searchDefaultLimit;
+		}
+
+		public int getSearchMaxLimit() {
+			return searchMaxLimit;
+		}
+
+		public void setSearchMaxLimit(int searchMaxLimit) {
+			this.searchMaxLimit = searchMaxLimit;
 		}
 
 		public List<String> getSupportedResolutions() {

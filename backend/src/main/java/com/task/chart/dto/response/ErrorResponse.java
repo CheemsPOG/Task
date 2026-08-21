@@ -4,11 +4,8 @@
 
 package com.task.chart.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 /**
- * Error payload for validation, not-found, and server failures.
+ * Error payload with stable {@code errorCode} and localized {@code message}.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -19,20 +16,23 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Always include errorCode + localized message</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
-@JsonInclude(Include.NON_NULL)
-public record ErrorResponse(String message, String errorCode) {
+public record ErrorResponse(String errorCode, String message) {
 
-	public static ErrorResponse of(String message) {
-		return new ErrorResponse(message, null);
-	}
-
-	public static ErrorResponse server(String errorCode, String message) {
-		return new ErrorResponse(message, errorCode);
+	/**
+	 * Builds an error body.
+	 *
+	 * @param errorCode stable code
+	 * @param message localized text
+	 * @return response
+	 */
+	public static ErrorResponse of(String errorCode, String message) {
+		return new ErrorResponse(errorCode, message);
 	}
 }

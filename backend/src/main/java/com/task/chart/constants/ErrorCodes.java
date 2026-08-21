@@ -5,7 +5,7 @@
 package com.task.chart.constants;
 
 /**
- * Error codes from the overview design documents.
+ * Error codes from the overview design documents and auth stand-in.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -16,17 +16,30 @@ package com.task.chart.constants;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Auth error codes + message keys</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class ErrorCodes {
 
 	public static final String VALIDATION = "CODE:30020";
 	public static final String NOT_FOUND = "CODE:30404";
 	public static final String SERVER = "E_SERVER";
+	public static final String UNAUTHORIZED = "E_UNAUTHORIZED";
+	public static final String BAD_CREDENTIALS = "E_BAD_CREDENTIALS";
+
+	public static final String MSG_VALIDATION = "error.validation";
+	public static final String MSG_NOT_FOUND = "error.not_found";
+	public static final String MSG_SERVER = "error.server";
+	public static final String MSG_UNAUTHORIZED = "error.unauthorized";
+	public static final String MSG_BAD_CREDENTIALS = "error.bad_credentials";
+	public static final String MSG_BAD_REQUEST = "error.bad_request";
+
+	/** @deprecated use MessageSource key {@link #MSG_SERVER} */
+	@Deprecated
 	public static final String SERVER_MESSAGE = "システムエラーが発生しました。";
 
 	private ErrorCodes() {

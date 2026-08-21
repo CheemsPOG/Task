@@ -18,6 +18,7 @@ interface SubscriberHandler {
 	price: string;
 	callback: SubscribeBarsCallback;
 	onResetCacheNeededCallback?: () => void;
+	lastBarTime: number;
 }
 
 interface StreamMessage {
@@ -118,9 +119,17 @@ function ensureSocket(): WebSocket {
 setInterval(() => {
 	pendingByUid.forEach((bar, uid) => {
 		const handler = subscriberToHandler.get(uid);
-		if (handler) {
-			handler.callback(bar);
+		if (!handler) {
+			pendingByUid.delete(uid);
+			return;
 		}
+		// Drop ticks older than the last history/live bar (avoids TV time-order violations).
+		if (bar.time < handler.lastBarTime) {
+			pendingByUid.delete(uid);
+			return;
+		}
+		handler.lastBarTime = bar.time;
+		handler.callback(bar);
 		pendingByUid.delete(uid);
 	});
 }, UPDATE_FREQUENCY);
@@ -130,7 +139,8 @@ export function subscribeOnStream(
 	resolution: ResolutionString,
 	onRealtimeCallback: SubscribeBarsCallback,
 	subscriberUID: string,
-	onResetCacheNeededCallback: () => void
+	onResetCacheNeededCallback: () => void,
+	lastBarTime = 0
 ): void {
 	subscriberToHandler.set(subscriberUID, {
 		symbol: symbolInfo.ticker ?? symbolInfo.name,
@@ -138,6 +148,7 @@ export function subscribeOnStream(
 		price: quoteStore.mode,
 		callback: onRealtimeCallback,
 		onResetCacheNeededCallback,
+		lastBarTime,
 	});
 
 	const ws = ensureSocket();

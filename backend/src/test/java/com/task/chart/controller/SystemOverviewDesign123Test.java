@@ -12,19 +12,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task.chart.config.AppProperties;
-import com.task.chart.constants.ApiHeaders;
 import com.task.chart.constants.ErrorCodes;
+import com.task.chart.support.TestAuthSupport;
 import com.task.chart.entity.Ccypair;
 import com.task.chart.entity.Season;
 import com.task.chart.repository.CcypairRepository;
 import com.task.chart.repository.SeasonRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -61,6 +63,15 @@ class SystemOverviewDesign123Test {
 	@Autowired
 	private MockMvc mockMvc;
 
+	private String bearerDemo;
+	private String bearerDemo2;
+
+	@BeforeEach
+	void authenticateDemoUsers() throws Exception {
+		bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
+		bearerDemo2 = TestAuthSupport.bearerDemo2(mockMvc);
+	}
+
 	@Autowired
 	private AppProperties appProperties;
 
@@ -93,16 +104,16 @@ class SystemOverviewDesign123Test {
 
 		@Test
 		void missingSymbolReturns422() throws Exception {
-			mockMvc.perform(get("/api/symbols").header(ApiHeaders.CUSTOMER_NO, "1"))
+			mockMvc.perform(get("/api/symbols").header(HttpHeaders.AUTHORIZATION, bearerDemo))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
 		void blankSymbolReturns422() throws Exception {
 			mockMvc.perform(authorizedSymbols("   "))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 	}
 
@@ -116,7 +127,7 @@ class SystemOverviewDesign123Test {
 					.andReturn();
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
-			assertThat(root.get("name").asText()).isEqualTo("USDJPY");
+			assertThat(root.get("name").asText()).isEqualTo("USD/JPY");
 			assertThat(root.get("description").asText()).isEqualTo("米ドル/円");
 			assertThat(root.get("pricescale").asInt()).isEqualTo(1000);
 		}
@@ -125,21 +136,21 @@ class SystemOverviewDesign123Test {
 		void widgetDisplayNameStillResolves() throws Exception {
 			mockMvc.perform(authorizedSymbols("USD/JPY"))
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.name").value("USDJPY"));
+					.andExpect(jsonPath("$.name").value("USD/JPY"));
 		}
 
 		@Test
 		void fxPrefixedDisplayNameStillResolves() throws Exception {
 			mockMvc.perform(authorizedSymbols("FX:USD/JPY"))
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.name").value("USDJPY"));
+					.andExpect(jsonPath("$.name").value("USD/JPY"));
 		}
 
 		@Test
 		void unknownSymbolReturns404() throws Exception {
 			mockMvc.perform(authorizedSymbols("ETHUSD"))
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.NOT_FOUND));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.NOT_FOUND));
 		}
 
 		@Test
@@ -151,14 +162,14 @@ class SystemOverviewDesign123Test {
 
 			mockMvc.perform(authorizedSymbols("AUDUSD"))
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.NOT_FOUND));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.NOT_FOUND));
 		}
 
 		@Test
 		void nonYenPairUsesRateUnitFive() throws Exception {
 			mockMvc.perform(authorizedSymbols("EURUSD"))
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.name").value("EURUSD"))
+					.andExpect(jsonPath("$.name").value("EUR/USD"))
 					.andExpect(jsonPath("$.pricescale").value(100_000))
 					.andExpect(jsonPath("$.description").value("ユーロ/米ドル"));
 		}
@@ -193,7 +204,7 @@ class SystemOverviewDesign123Test {
 					"has_seconds");
 
 			AppProperties.TradingView tradingView = appProperties.getTradingView();
-			assertThat(root.get("name").asText()).isEqualTo("USDJPY");
+			assertThat(root.get("name").asText()).isEqualTo("USD/JPY");
 			assertThat(root.get("description").asText()).isEqualTo("米ドル/円");
 			assertThat(root.get("timezone").asText()).isEqualTo("Asia/Tokyo");
 			assertThat(root.get("exchange").asText()).isEqualTo("CTFX");
@@ -204,6 +215,7 @@ class SystemOverviewDesign123Test {
 			assertThat(root.get("has_intraday").asBoolean()).isTrue();
 			assertThat(root.get("visible_plots_set").asText()).isEqualTo("ohlc");
 			assertThat(root.get("has_seconds").asBoolean()).isTrue();
+			assertThat(root.get("provider_symbol").asText()).isEqualTo("USDJPY");
 
 			List<String> resolutions = new ArrayList<>();
 			root.get("supported_resolutions").forEach(node -> resolutions.add(node.asText()));
@@ -254,13 +266,13 @@ class SystemOverviewDesign123Test {
 			mockMvc.perform(authorizedSymbols("USDJPY"))
 					.andExpect(status().isInternalServerError())
 					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.SERVER))
-					.andExpect(jsonPath("$.message").value(ErrorCodes.SERVER_MESSAGE));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.SERVER));
 		}
 	}
 
 	private MockHttpServletRequestBuilder authorizedSymbols(String symbol) {
 		return get("/api/symbols")
 				.param("symbol", symbol)
-				.header(ApiHeaders.CUSTOMER_NO, "1");
+				.header(HttpHeaders.AUTHORIZATION, bearerDemo);
 	}
 }

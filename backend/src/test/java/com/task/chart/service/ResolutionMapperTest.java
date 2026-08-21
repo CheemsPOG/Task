@@ -45,4 +45,22 @@ class ResolutionMapperTest {
 		assertNull(ResolutionMapper.periodMillis("2"));
 		assertNull(ResolutionMapper.periodMillis("90"));
 	}
+
+	@Test
+	void marksResolutionsExcludeTen() {
+		org.junit.jupiter.api.Assertions.assertTrue(ResolutionMapper.isMarksResolution("1D"));
+		org.junit.jupiter.api.Assertions.assertTrue(ResolutionMapper.isHistoryResolution("10"));
+		org.junit.jupiter.api.Assertions.assertFalse(ResolutionMapper.isMarksResolution("10"));
+	}
+
+	@Test
+	void mapsTradingViewResolutionToPeachChartType() {
+		assertEquals("1S", ResolutionMapper.toPeachChartType("1S"));
+		assertEquals("1M", ResolutionMapper.toPeachChartType("1"));
+		assertEquals("10M", ResolutionMapper.toPeachChartType("10"));
+		assertEquals("DAY", ResolutionMapper.toPeachChartType("1D"));
+		assertEquals("WEEK", ResolutionMapper.toPeachChartType("1W"));
+		assertEquals("MONTH", ResolutionMapper.toPeachChartType("1M"));
+		assertNull(ResolutionMapper.toPeachChartType("2"));
+	}
 }

@@ -1,8 +1,7 @@
 ---
 description: CTFX git update flow and merge request checklist
-alwaysApply: true
+alwaysApply: false
 ---
-
 # CTFX git flow
 
 When updating a working branch `A` from `master`/`develop`:

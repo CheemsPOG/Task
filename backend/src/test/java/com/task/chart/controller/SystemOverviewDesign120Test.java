@@ -6,19 +6,23 @@ package com.task.chart.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.task.chart.constants.ApiHeaders;
+import com.task.chart.constants.ErrorCodes;
+import com.task.chart.support.TestAuthSupport;
 import com.task.chart.dto.response.DatafeedConfigResponse;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -54,26 +58,28 @@ class SystemOverviewDesign120Test {
 		@Autowired
 		private MockMvc mockMvc;
 
+		private String bearerDemo;
+
+		@BeforeEach
+		void authenticateDemoUsers() throws Exception {
+			bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
+		}
+
 		@Test
 		void missingTokenReturns401() throws Exception {
 			mockMvc.perform(get("/api/config")).andExpect(status().isUnauthorized());
 		}
 
 		@Test
-		void invalidTokenReturns401() throws Exception {
-			mockMvc.perform(get("/api/config").header(ApiHeaders.CUSTOMER_NO, "abc"))
-					.andExpect(status().isUnauthorized());
-		}
-
-		@Test
-		void nonPositiveTokenReturns401() throws Exception {
-			mockMvc.perform(get("/api/config").header(ApiHeaders.CUSTOMER_NO, "0"))
-					.andExpect(status().isUnauthorized());
+		void invalidBearerReturns401() throws Exception {
+			mockMvc.perform(get("/api/config").header(HttpHeaders.AUTHORIZATION, "Bearer not-a-jwt"))
+					.andExpect(status().isUnauthorized())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.UNAUTHORIZED));
 		}
 
 		@Test
 		void validTokenReturns200() throws Exception {
-			mockMvc.perform(get("/api/config").header(ApiHeaders.CUSTOMER_NO, "1"))
+			mockMvc.perform(get("/api/config").header(HttpHeaders.AUTHORIZATION, bearerDemo))
 					.andExpect(status().isOk());
 		}
 	}
@@ -89,9 +95,16 @@ class SystemOverviewDesign120Test {
 
 		private final ObjectMapper objectMapper = new ObjectMapper();
 
+		private String bearerDemo;
+
+		@BeforeEach
+		void authenticateDemoUsers() throws Exception {
+			bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
+		}
+
 		@Test
 		void mapsEveryDatafeedConfigurationDtoFieldFromExternalConfiguration() throws Exception {
-			MvcResult result = mockMvc.perform(get("/api/config").header(ApiHeaders.CUSTOMER_NO, "1"))
+			MvcResult result = mockMvc.perform(get("/api/config").header(HttpHeaders.AUTHORIZATION, bearerDemo))
 					.andExpect(status().isOk())
 					.andReturn();
 
@@ -128,7 +141,7 @@ class SystemOverviewDesign120Test {
 
 		@Test
 		void doesNotRequireDatabaseTables() throws Exception {
-			mockMvc.perform(get("/api/config").header(ApiHeaders.CUSTOMER_NO, "1"))
+			mockMvc.perform(get("/api/config").header(HttpHeaders.AUTHORIZATION, bearerDemo))
 					.andExpect(status().isOk());
 		}
 	}

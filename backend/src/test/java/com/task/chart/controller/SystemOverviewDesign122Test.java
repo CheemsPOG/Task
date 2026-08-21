@@ -10,13 +10,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.task.chart.constants.ApiHeaders;
+import com.task.chart.support.TestAuthSupport;
 import java.time.Instant;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -45,6 +47,15 @@ class SystemOverviewDesign122Test {
 	@Autowired
 	private MockMvc mockMvc;
 
+	private String bearerDemo;
+	private String bearerDemo2;
+
+	@BeforeEach
+	void authenticateDemoUsers() throws Exception {
+		bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
+		bearerDemo2 = TestAuthSupport.bearerDemo2(mockMvc);
+	}
+
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Nested
@@ -57,7 +68,7 @@ class SystemOverviewDesign122Test {
 
 		@Test
 		void validTokenReturns200() throws Exception {
-			mockMvc.perform(get("/api/time").header(ApiHeaders.CUSTOMER_NO, "1"))
+			mockMvc.perform(get("/api/time").header(HttpHeaders.AUTHORIZATION, bearerDemo))
 					.andExpect(status().isOk());
 		}
 	}
@@ -69,7 +80,7 @@ class SystemOverviewDesign122Test {
 		void returnsUnixSecondsAsTAndServerTimeWithoutMilliseconds() throws Exception {
 			long before = Instant.now().getEpochSecond();
 
-			MvcResult result = mockMvc.perform(get("/api/time").header(ApiHeaders.CUSTOMER_NO, "1"))
+			MvcResult result = mockMvc.perform(get("/api/time").header(HttpHeaders.AUTHORIZATION, bearerDemo))
 					.andExpect(status().isOk())
 					.andReturn();
 

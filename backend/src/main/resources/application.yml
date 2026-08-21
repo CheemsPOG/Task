@@ -22,11 +22,15 @@ app:
     - http://127.0.0.1:5173
     - http://localhost:3000
     - http://127.0.0.1:3000
+  jwt:
+    # Local demo only — replace for any shared environment.
+    secret: "chart-local-demo-jwt-secret-key-at-least-256-bits-long"
+    expiration-ms: 86400000
   tradingview:
     supports-search: true
-    # Doc 120 reference is true; keep false until marks APIs (125/126) exist.
-    supports-marks: false
-    supports-timescale-marks: false
+    # Enabled for design docs 125 / 126 (marks + timescale marks).
+    supports-marks: true
+    supports-timescale-marks: true
     supports-time: true
     exchanges: CTFX
     symbols-types: FOREX
@@ -36,6 +40,8 @@ app:
     has-seconds: true
     time-summer: "0700-3000:2|0600-3000:345|0600-2940:6"
     time-winter: "0700-3100:2|0700-3100:345|0700-3040:6"
+    search-default-limit: 100
+    search-max-limit: 100
     supported-resolutions:
       - 1S
       - 1

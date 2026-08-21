@@ -1,0 +1,96 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
+package com.task.chart.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.time.Instant;
+
+/**
+ * TV indicator template master row ({@code m_tv_indicator_template}).
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.0.0
+ */
+@Entity
+@Table(
+		name = "m_tv_indicator_template",
+		uniqueConstraints = @UniqueConstraint(
+				name = "uq_m_tv_indicator_template_customer_name",
+				columnNames = { "customer_no", "name" }))
+public class TvIndicatorTemplate {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Long id;
+
+	@Column(name = "customer_no", nullable = false)
+	private long customerNo;
+
+	@Column(name = "name", length = 64, nullable = false)
+	private String name;
+
+	@Column(name = "content", nullable = false)
+	private String content;
+
+	@Column(name = "updated_at", nullable = false)
+	private Instant updatedAt;
+
+	protected TvIndicatorTemplate() {
+	}
+
+	/**
+	 * Creates a new indicator template row.
+	 *
+	 * @param customerNo token customer
+	 * @param name template name
+	 * @param content template JSON string
+	 * @param updatedAt update timestamp
+	 */
+	public TvIndicatorTemplate(long customerNo, String name, String content, Instant updatedAt) {
+		this.customerNo = customerNo;
+		this.name = name;
+		this.content = content;
+		this.updatedAt = updatedAt;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public long getCustomerNo() {
+		return customerNo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public Instant getUpdatedAt() {
+		return updatedAt;
+	}
+}

@@ -6,9 +6,11 @@ import type {
 	Bar,
 	DatafeedConfiguration,
 	ErrorCallback,
+	GetMarksCallback,
 	HistoryCallback,
 	IBasicDataFeed,
 	LibrarySymbolInfo,
+	Mark,
 	OnReadyCallback,
 	PeriodParams,
 	ResolutionString,
@@ -16,6 +18,7 @@ import type {
 	SearchSymbolsCallback,
 	ServerTimeCallback,
 	SubscribeBarsCallback,
+	TimescaleMark,
 } from 'charting_library';
 import { apiGet } from '../api.ts';
 import { quoteStore } from '../fx/quoteStore.ts';
@@ -31,7 +34,15 @@ interface HistoryResponse {
 	s?: string;
 	noData?: boolean;
 	bars?: Bar[];
+	nextTime?: number;
+	errmsg?: string;
+	t?: number[];
+	o?: number[];
+	h?: number[];
+	l?: number[];
+	c?: number[];
 }
+
 
 const Datafeed: IBasicDataFeed = {
 	onReady(callback: OnReadyCallback) {
@@ -71,7 +82,13 @@ const Datafeed: IBasicDataFeed = {
 				type: symbolType,
 				limit: 50,
 			});
-			onResultReadyCallback(results);
+			// Library SYMBOL column uses `symbol`; API keeps ccypair_cd there — show slash form via ticker.
+			onResultReadyCallback(
+				results.map(item => ({
+					...item,
+					symbol: item.ticker || item.full_name || item.symbol,
+				}))
+			);
 		} catch (error) {
 			console.error('[searchSymbols]', error);
 			onResultReadyCallback([]);
@@ -112,7 +129,12 @@ const Datafeed: IBasicDataFeed = {
 			});
 
 			if (data.s !== 'ok' || data.noData || !data.bars?.length) {
-				onHistoryCallback([], { noData: true });
+				// Doc 121 / UDF: nextTime is unix seconds; library bar times are ms.
+				const meta: { noData: true; nextTime?: number } = { noData: true };
+				if (typeof data.nextTime === 'number' && Number.isFinite(data.nextTime)) {
+					meta.nextTime = data.nextTime * 1000;
+				}
+				onHistoryCallback([], meta);
 				return;
 			}
 
@@ -130,6 +152,46 @@ const Datafeed: IBasicDataFeed = {
 		}
 	},
 
+	getMarks(
+		symbolInfo: LibrarySymbolInfo,
+		from: number,
+		to: number,
+		onDataCallback: GetMarksCallback<Mark>,
+		resolution: ResolutionString
+	) {
+		apiGet<Mark[]>('/marks', {
+			symbol: symbolInfo.ticker ?? symbolInfo.name,
+			resolution,
+			from,
+			to,
+		})
+			.then(marks => onDataCallback(Array.isArray(marks) ? marks : []))
+			.catch(error => {
+				console.error('[getMarks]', error);
+				onDataCallback([]);
+			});
+	},
+
+	getTimescaleMarks(
+		symbolInfo: LibrarySymbolInfo,
+		from: number,
+		to: number,
+		onDataCallback: GetMarksCallback<TimescaleMark>,
+		resolution: ResolutionString
+	) {
+		apiGet<TimescaleMark[]>('/timescale_marks', {
+			symbol: symbolInfo.ticker ?? symbolInfo.name,
+			resolution,
+			from,
+			to,
+		})
+			.then(marks => onDataCallback(Array.isArray(marks) ? marks : []))
+			.catch(error => {
+				console.error('[getTimescaleMarks]', error);
+				onDataCallback([]);
+			});
+	},
+
 	subscribeBars(
 		symbolInfo: LibrarySymbolInfo,
 		resolution: ResolutionString,
@@ -137,12 +199,15 @@ const Datafeed: IBasicDataFeed = {
 		subscriberUID: string,
 		onResetCacheNeededCallback: () => void
 	) {
+		const cacheKey = `${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`;
+		const lastBar = lastBarsCache.get(cacheKey);
 		subscribeOnStream(
 			symbolInfo,
 			resolution,
 			onRealtimeCallback,
 			subscriberUID,
-			onResetCacheNeededCallback
+			onResetCacheNeededCallback,
+			lastBar?.time ?? 0
 		);
 	},
 

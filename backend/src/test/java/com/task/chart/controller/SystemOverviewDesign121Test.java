@@ -11,14 +11,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.task.chart.constants.ApiHeaders;
 import com.task.chart.constants.ErrorCodes;
+import com.task.chart.support.TestAuthSupport;
 import java.time.Instant;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -47,6 +49,15 @@ class SystemOverviewDesign121Test {
 	@Autowired
 	private MockMvc mockMvc;
 
+	private String bearerDemo;
+	private String bearerDemo2;
+
+	@BeforeEach
+	void authenticateDemoUsers() throws Exception {
+		bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
+		bearerDemo2 = TestAuthSupport.bearerDemo2(mockMvc);
+	}
+
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Nested
@@ -72,7 +83,7 @@ class SystemOverviewDesign121Test {
 							.param("countBack", "10")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
@@ -83,7 +94,7 @@ class SystemOverviewDesign121Test {
 							.param("countBack", "10")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
@@ -94,7 +105,7 @@ class SystemOverviewDesign121Test {
 							.param("countBack", "10")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
@@ -105,7 +116,7 @@ class SystemOverviewDesign121Test {
 							.param("countBack", "10")
 							.param("bid_ask", "FOO"))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
@@ -116,7 +127,7 @@ class SystemOverviewDesign121Test {
 							.param("from", "1721037907")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
@@ -140,7 +151,7 @@ class SystemOverviewDesign121Test {
 							.param("to", "1721037907")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
-					.andExpect(jsonPath("$.message").value(ErrorCodes.VALIDATION));
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 	}
 
@@ -163,7 +174,27 @@ class SystemOverviewDesign121Test {
 			assertThat(root.path("bars")).hasSize(10);
 			assertBarShape(root.path("bars").get(0));
 			assertThat(root.path("bars").get(9).path("time").asLong())
-					.isLessThan(Instant.now().getEpochSecond() * 1000L + 86_400_000L);
+					.isLessThanOrEqualTo(Instant.now().toEpochMilli());
+		}
+
+		@Test
+		void futureToIsClampedSoLastBarIsNotAfterNow() throws Exception {
+			long futureTo = Instant.now().getEpochSecond() + 10 * 86_400L;
+
+			MvcResult result = mockMvc.perform(authorizedHistory()
+							.param("symbol", "USD/JPY")
+							.param("resolution", "1D")
+							.param("to", String.valueOf(futureTo))
+							.param("countBack", "5")
+							.param("bid_ask", "MID"))
+					.andExpect(status().isOk())
+					.andReturn();
+
+			JsonNode bars = objectMapper.readTree(result.getResponse().getContentAsString()).path("bars");
+			assertThat(bars).hasSize(5);
+			long lastTime = bars.get(bars.size() - 1).path("time").asLong();
+			long currentOpen = Math.floorDiv(Instant.now().toEpochMilli() - 1, 86_400_000L) * 86_400_000L;
+			assertThat(lastTime).isLessThanOrEqualTo(currentOpen);
 		}
 
 		@Test
@@ -232,7 +263,7 @@ class SystemOverviewDesign121Test {
 		}
 
 		@Test
-		void keepsWidgetBarsShapeNotPeachArrays() throws Exception {
+		void returnsWidgetBarsAndPeachColumnarArrays() throws Exception {
 			MvcResult result = mockMvc.perform(authorizedHistory()
 							.param("symbol", "USD/JPY")
 							.param("resolution", "1D")
@@ -242,11 +273,43 @@ class SystemOverviewDesign121Test {
 					.andReturn();
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
-			assertThat(root.has("bars")).isTrue();
-			assertThat(root.has("t")).isFalse();
-			assertThat(root.has("o")).isFalse();
+			assertThat(root.path("s").asText()).isEqualTo("ok");
+			assertThat(root.path("bars")).hasSize(3);
+			assertThat(root.path("t")).hasSize(3);
+			assertThat(root.path("o")).hasSize(3);
+			assertThat(root.path("h")).hasSize(3);
+			assertThat(root.path("l")).hasSize(3);
+			assertThat(root.path("c")).hasSize(3);
 			assertThat(root.path("bars").get(0).has("time")).isTrue();
-			assertThat(root.path("bars").get(0).has("open")).isTrue();
+			assertThat(root.path("t").get(0).asLong())
+					.isEqualTo(root.path("bars").get(0).path("time").asLong() / 1000L);
+			assertThat(root.path("o").get(0).asDouble())
+					.isEqualTo(root.path("bars").get(0).path("open").asDouble());
+		}
+
+		@Test
+		void emptyFutureRangeReturnsNoDataWithNextTime() throws Exception {
+			long from = Instant.now().getEpochSecond() + 10 * 86_400L;
+			long to = from + 86_400L;
+
+			MvcResult result = mockMvc.perform(authorizedHistory()
+							.param("symbol", "USDJPY")
+							.param("resolution", "1D")
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
+							.param("bid_ask", "MID"))
+					.andExpect(status().isOk())
+					.andReturn();
+
+			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
+			assertThat(root.path("s").asText()).isEqualTo("no_data");
+			assertThat(root.path("noData").asBoolean()).isTrue();
+			assertThat(root.path("bars")).isEmpty();
+			assertThat(root.path("t")).isEmpty();
+			assertThat(root.has("nextTime")).isTrue();
+			long nextTime = root.path("nextTime").asLong();
+			assertThat(nextTime).isLessThan(from);
+			assertThat(nextTime).isPositive();
 		}
 
 		private JsonNode historyJson(String bidAsk, long to) throws Exception {
@@ -262,8 +325,8 @@ class SystemOverviewDesign121Test {
 		}
 	}
 
-	private static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder authorizedHistory() {
-		return get("/api/history").header(ApiHeaders.CUSTOMER_NO, "1");
+	private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder authorizedHistory() {
+		return get("/api/history").header(HttpHeaders.AUTHORIZATION, bearerDemo);
 	}
 
 	private static void assertBarShape(JsonNode bar) {

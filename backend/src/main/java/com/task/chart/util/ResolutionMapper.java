@@ -37,6 +37,10 @@ public final class ResolutionMapper {
 	public static final List<String> HISTORY_RESOLUTIONS = List.of(
 			"1S", "1", "5", "10", "15", "30", "60", "120", "240", "480", "1D", "1W", "1M");
 
+	/** Resolutions accepted by design doc 125 marks (no {@code 10}). */
+	public static final List<String> MARKS_RESOLUTIONS = List.of(
+			"1S", "1", "5", "15", "30", "60", "120", "240", "480", "1D", "1W", "1M");
+
 	public static final List<String> INTRADAY_MULTIPLIERS = List.of(
 			"1", "3", "5", "15", "30", "60", "120", "240", "360", "480", "720");
 
@@ -85,5 +89,38 @@ public final class ResolutionMapper {
 
 	public static boolean isHistoryResolution(String resolution) {
 		return resolution != null && HISTORY_RESOLUTIONS.contains(resolution);
+	}
+
+	public static boolean isMarksResolution(String resolution) {
+		return resolution != null && MARKS_RESOLUTIONS.contains(resolution);
+	}
+
+	/**
+	 * Maps TradingView widget resolution to Peach chart_type (design doc 121).
+	 * Used for documentation / future cache routing; mock history uses {@link #periodMillis}.
+	 *
+	 * @param resolution TradingView resolution
+	 * @return Peach chart_type, or {@code null} if unsupported for history
+	 */
+	public static String toPeachChartType(String resolution) {
+		if (resolution == null) {
+			return null;
+		}
+		return switch (resolution) {
+			case "1S" -> "1S";
+			case "1" -> "1M";
+			case "5" -> "5M";
+			case "10" -> "10M";
+			case "15" -> "15M";
+			case "30" -> "30M";
+			case "60" -> "60M";
+			case "120" -> "120M";
+			case "240" -> "240M";
+			case "480" -> "480M";
+			case "1D" -> "DAY";
+			case "1W" -> "WEEK";
+			case "1M" -> "MONTH";
+			default -> null;
+		};
 	}
 }

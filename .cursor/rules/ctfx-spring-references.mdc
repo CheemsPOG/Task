@@ -1,0 +1,84 @@
+---
+description: CTFX Spring reference and dependency policy
+alwaysApply: false
+---
+# CTFX Spring Reference and Dependency Policy
+
+## Reference Sources
+
+When implementing or modifying Spring Boot backend code, use the following sources in this priority order:
+
+1. Official Spring documentation:
+   - https://spring.io/
+   - Prefer official Spring documentation, Spring guides, and Spring reference documentation for framework behavior, configuration, APIs, and recommended patterns.
+
+2. Baeldung:
+   - https://www.baeldung.com/
+   - Use Baeldung for practical examples, implementation patterns, and explanations when the official Spring documentation does not provide a sufficiently clear example.
+
+3. Other sources:
+   - Use other sources only when the required information cannot be sufficiently determined from the sources above.
+   - Do not treat third-party examples as project requirements.
+
+## Dependency Policy
+
+Before adding a new dependency:
+
+- Verify that the dependency is actually required for the requested feature.
+- Prefer Spring Boot starters and dependencies officially recommended by Spring.
+- Check compatibility with the Spring Boot version already used by the project.
+- Do not invent or guess dependency versions.
+- Do not downgrade or upgrade an existing dependency unless explicitly required.
+- Reuse an existing dependency if it already provides the required functionality.
+- Do not add a library solely because a tutorial uses it.
+- Keep dependencies to the minimum required by the feature.
+
+## Spring Boot Version
+
+- Follow the Spring Boot version defined in `pom.xml`.
+- Prefer documentation that matches the project's Spring Boot major/minor version.
+- If documentation targets a different Spring Boot version, verify API and configuration compatibility before applying it.
+- Do not copy deprecated configuration or APIs from older Spring Boot tutorials without verification.
+
+## Implementation Rules
+
+When implementing a Spring feature:
+
+1. Identify the required Spring module or starter.
+2. Check the official Spring documentation first.
+3. Check Baeldung for practical implementation examples if needed.
+4. Compare the example with the project's existing architecture and conventions.
+5. Implement only what is required by the task.
+6. Verify compilation and tests after adding or changing dependencies.
+
+## Dependency Changes
+
+When a dependency is added, explain briefly:
+
+- Why it is required.
+- Which feature uses it.
+- Why an existing dependency cannot provide the same functionality.
+
+Do not modify unrelated dependencies.
+
+## Source of Truth
+
+Official Spring documentation is the primary source of truth for:
+
+- Spring Boot configuration
+- Spring MVC
+- Spring Security
+- Spring Data
+- Spring Validation
+- Spring WebSocket
+- Spring testing
+- Spring Boot starters
+- Spring framework APIs
+
+Baeldung is a secondary reference for:
+
+- Practical examples
+- Common implementation patterns
+- Explanations and tutorials
+
+If Baeldung and official Spring documentation conflict, follow the official Spring documentation.

@@ -7,8 +7,10 @@ package com.task.chart.service;
 import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.DatafeedConfigResponse;
 import com.task.chart.dto.response.HistoryResponse;
+import com.task.chart.dto.response.MarkDto;
 import com.task.chart.dto.response.SearchSymbolDto;
 import com.task.chart.dto.response.SymbolInfoDto;
+import com.task.chart.dto.response.TimescaleMarkDto;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
 import java.util.List;
 
@@ -36,7 +38,11 @@ public interface ChartDataService {
 
 	long serverTimeSeconds();
 
-	List<SearchSymbolDto> search(String query, String exchange, String type, int limit);
+	List<SearchSymbolDto> search(String query, String exchange, String type, Integer limit);
+
+	List<MarkDto> marks(String symbol, String resolution, Long from, Long to);
+
+	List<TimescaleMarkDto> timescaleMarks(String symbol, String resolution, Long from, Long to);
 
 	SymbolInfoDto resolve(String symbolName);
 

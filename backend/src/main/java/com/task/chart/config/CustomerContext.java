@@ -5,7 +5,7 @@
 package com.task.chart.config;
 
 /**
- * Holds the stub customer number for the current request (S-01 stand-in).
+ * Holds the customer number for the current request (from JWT claim).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

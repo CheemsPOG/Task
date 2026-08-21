@@ -1,9 +1,7 @@
 ---
 description: CTFX Java style — format, comments, braces, size limits
-globs: backend/**/*.java
 alwaysApply: false
 ---
-
 # CTFX backend style
 
 - Format with team IntelliJ settings / `checkstyle_be.xml`. Fix warnings and errors before push.
@@ -39,3 +37,25 @@ if (user != null) { }
 - No static variables unless approved.
 - SQL: bind parameters (`:userId` + `params.put`), never concatenate values into the query string.
 - Group related classes in the same lowercase package. Put files in the folder that matches their role.
+
+## API Architecture
+
+- Backend APIs must use RESTful HTTP APIs.
+- Use Spring MVC / Spring Web REST controllers with `@RestController`.
+- Use appropriate HTTP methods:
+  - `GET` for retrieving resources.
+  - `POST` for creating resources or operations that cannot be represented as retrieval.
+  - `PUT` for full resource replacement.
+  - `PATCH` for partial resource updates when applicable.
+  - `DELETE` for deleting resources.
+- Use appropriate HTTP status codes.
+- Request and response data must use JSON unless the API requirement specifies another format.
+- Use DTOs for API request and response models where appropriate.
+- Do not expose JPA entities directly as API responses unless explicitly approved.
+- Keep controller classes focused on HTTP request/response handling.
+- Business logic belongs in the service layer.
+- Database access belongs in the repository/data-access layer.
+- Do not put business logic or SQL directly in REST controllers.
+- Use consistent API URL naming and resource-oriented paths.
+- Validate request parameters and request bodies at the API boundary.
+- Return consistent error responses for validation, authentication, authorization, not-found, conflict, and server errors.

@@ -57,3 +57,33 @@ export function installThemeToolbar(widget: IChartingLibraryWidget): void {
 		});
 	});
 }
+
+/**
+ * Adds a Logout control to the chart header.
+ *
+ * @param widget chart widget
+ * @param onLogout callback when Logout is clicked
+ */
+export function installLogoutButton(
+	widget: IChartingLibraryWidget,
+	onLogout: () => void
+): void {
+	widget.headerReady().then(() => {
+		const buttonEl = widget.createButton({
+			useTradingViewStyle: false,
+			align: 'right',
+		});
+		if (!buttonEl) {
+			return;
+		}
+
+		buttonEl.id = 'logout-button';
+		buttonEl.textContent = 'Logout';
+		buttonEl.title = 'Log out';
+		buttonEl.style.cursor = 'pointer';
+		buttonEl.style.padding = '0 10px';
+		buttonEl.addEventListener('click', () => {
+			onLogout();
+		});
+	});
+}

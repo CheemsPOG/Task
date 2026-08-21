@@ -3,12 +3,26 @@
  */
 
 import type { ChartingLibraryFeatureset, ResolutionString } from 'charting_library';
+import { setUnauthorizedHandler } from './api.ts';
+import { getToken, logout } from './auth.ts';
 import Datafeed from './datafeed/datafeed.ts';
 import { installFxQuoteToolbar } from './fx/quoteToolbar.ts';
+import {
+	hideLoginOverlay,
+	installLoginOverlay,
+	showLoginOverlay,
+} from './login.ts';
 import { cssBlobUrl, getChartOverrides, theme } from './theme.ts';
-import { installThemeToolbar } from './toolbar.ts';
+import { installLogoutButton, installThemeToolbar } from './toolbar.ts';
+
+let chartStarted = false;
 
 function initChart(): void {
+	if (chartStarted) {
+		return;
+	}
+	chartStarted = true;
+
 	const Widget = window.TradingView?.widget;
 	if (!Widget) {
 		throw new Error('TradingView Advanced Charts library failed to load.');
@@ -42,6 +56,31 @@ function initChart(): void {
 	window.tvWidget = widget;
 	installThemeToolbar(widget);
 	installFxQuoteToolbar(widget);
+	installLogoutButton(widget, () => {
+		logout();
+		window.location.reload();
+	});
 }
 
-window.addEventListener('DOMContentLoaded', initChart, { once: true });
+function boot(): void {
+	setUnauthorizedHandler(() => {
+		logout();
+		window.location.reload();
+	});
+
+	installLoginOverlay({
+		onLoggedIn: () => {
+			hideLoginOverlay();
+			initChart();
+		},
+	});
+
+	if (getToken()) {
+		hideLoginOverlay();
+		initChart();
+	} else {
+		showLoginOverlay();
+	}
+}
+
+window.addEventListener('DOMContentLoaded', boot, { once: true });

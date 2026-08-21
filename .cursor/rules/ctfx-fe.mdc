@@ -1,9 +1,7 @@
 ---
 description: CTFX frontend conventions — TypeScript/React structure, naming, safety
-globs: frontend/**/*.{ts,tsx}
 alwaysApply: false
 ---
-
 # CTFX frontend
 
 - Format with Prettier + ESLint (and the team VS Code `settings.json`: format on save, organize imports). UTF-8, EOL LF. TypeScript strict mode.

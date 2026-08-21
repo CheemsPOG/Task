@@ -16,10 +16,130 @@
 				width: 100%;
 				height: 100%;
 			}
+
+			#login-overlay {
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 10000;
+				align-items: center;
+				justify-content: center;
+				background: rgba(16, 24, 32, 0.72);
+				font-family: 'Segoe UI', Tahoma, sans-serif;
+			}
+
+			#login-overlay.is-visible {
+				display: flex;
+			}
+
+			#login-panel {
+				width: min(360px, calc(100vw - 32px));
+				padding: 28px 24px 24px;
+				border-radius: 8px;
+				background: #f7f8fa;
+				color: #1a1a1a;
+				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+			}
+
+			#login-panel h1 {
+				margin: 0 0 8px;
+				font-size: 1.35rem;
+				font-weight: 600;
+			}
+
+			#login-panel .login-hint {
+				margin: 0 0 20px;
+				font-size: 0.875rem;
+				color: #5a6570;
+			}
+
+			#login-panel label {
+				display: block;
+				margin: 0 0 6px;
+				font-size: 0.8rem;
+				font-weight: 600;
+			}
+
+			#login-panel input {
+				box-sizing: border-box;
+				width: 100%;
+				margin: 0 0 14px;
+				padding: 10px 12px;
+				border: 1px solid #c5ced6;
+				border-radius: 4px;
+				font-size: 0.95rem;
+			}
+
+			#login-error {
+				margin: 0 0 12px;
+				min-height: 1.2em;
+				font-size: 0.85rem;
+				color: #b42318;
+			}
+
+			#login-actions {
+				display: flex;
+				gap: 10px;
+				margin-top: 8px;
+			}
+
+			#login-actions button {
+				flex: 1;
+				padding: 10px 12px;
+				border: 0;
+				border-radius: 4px;
+				font-size: 0.9rem;
+				font-weight: 600;
+				cursor: pointer;
+			}
+
+			#login-submit {
+				background: #1f6feb;
+				color: #fff;
+			}
+
+			#login-submit:disabled {
+				opacity: 0.6;
+				cursor: default;
+			}
+
+			#login-demo {
+				background: #e8eef5;
+				color: #1a1a1a;
+			}
 		</style>
 		<script src="/charting_library/charting_library.standalone.js"></script>
 	</head>
 	<body>
+		<div id="login-overlay" aria-hidden="true">
+			<div id="login-panel">
+				<h1>Chart login</h1>
+				<p class="login-hint">Local demo auth (JWT stand-in for S-01).</p>
+				<form id="login-form">
+					<label for="login-username">Username</label>
+					<input
+						id="login-username"
+						name="username"
+						type="text"
+						autocomplete="username"
+						required
+					/>
+					<label for="login-password">Password</label>
+					<input
+						id="login-password"
+						name="password"
+						type="password"
+						autocomplete="current-password"
+						required
+					/>
+					<p id="login-error" hidden></p>
+					<div id="login-actions">
+						<button type="submit" id="login-submit">Login</button>
+						<button type="button" id="login-demo">Demo</button>
+					</div>
+				</form>
+			</div>
+		</div>
 		<div id="tv_chart_container"></div>
 		<script type="module" src="/src/main.ts"></script>
 	</body>

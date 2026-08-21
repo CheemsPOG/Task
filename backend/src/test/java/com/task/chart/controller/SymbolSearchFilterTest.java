@@ -10,11 +10,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.task.chart.constants.ApiHeaders;
+import com.task.chart.support.TestAuthSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -30,11 +32,12 @@ import org.springframework.test.web.servlet.MvcResult;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Doc 124 symbol is ccypair_cd</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,6 +45,15 @@ class SymbolSearchFilterTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	private String bearerDemo;
+	private String bearerDemo2;
+
+	@BeforeEach
+	void authenticateDemoUsers() throws Exception {
+		bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
+		bearerDemo2 = TestAuthSupport.bearerDemo2(mockMvc);
+	}
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -52,7 +64,7 @@ class SymbolSearchFilterTest {
 						.param("exchange", "CTFX")
 						.param("type", "FOREX")
 						.param("limit", "50")
-						.header(ApiHeaders.CUSTOMER_NO, "1"))
+						.header(HttpHeaders.AUTHORIZATION, bearerDemo))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -61,7 +73,9 @@ class SymbolSearchFilterTest {
 		assertThat(root).hasSize(5);
 		assertThat(root.get(0).get("exchange").asText()).isEqualTo("CTFX");
 		assertThat(root.get(0).get("type").asText()).isEqualTo("FOREX");
-		assertThat(root.get(0).get("symbol").asText()).isEqualTo("USD/JPY");
+		assertThat(root.get(0).get("symbol").asText()).isEqualTo("USDJPY");
+		assertThat(root.get(0).get("ticker").asText()).isEqualTo("USD/JPY");
+		assertThat(root.get(0).get("description").asText()).isEqualTo("米ドル/円");
 	}
 
 	@Test
@@ -70,7 +84,7 @@ class SymbolSearchFilterTest {
 						.param("query", "USD")
 						.param("exchange", "CTFX")
 						.param("type", "FOREX")
-						.header(ApiHeaders.CUSTOMER_NO, "1"))
+						.header(HttpHeaders.AUTHORIZATION, bearerDemo))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -78,7 +92,7 @@ class SymbolSearchFilterTest {
 		assertThat(root.size()).isGreaterThanOrEqualTo(1);
 		boolean hasUsdJpy = false;
 		for (JsonNode node : root) {
-			if ("USD/JPY".equals(node.get("symbol").asText())) {
+			if ("USDJPY".equals(node.get("symbol").asText())) {
 				hasUsdJpy = true;
 				break;
 			}

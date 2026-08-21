@@ -1,9 +1,6 @@
 ---
-description: CTFX Java naming — types, methods, DTO and repository names
-globs: backend/**/*.java
-alwaysApply: false
+alwaysApply: true
 ---
-
 # CTFX backend naming
 
 - **Class**: noun, PascalCase, descriptive (`UserController`).

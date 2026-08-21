@@ -7,9 +7,11 @@ package com.task.chart.controller;
 import com.task.chart.dto.response.DatafeedConfigResponse;
 import com.task.chart.dto.response.HealthResponse;
 import com.task.chart.dto.response.HistoryResponse;
+import com.task.chart.dto.response.MarkDto;
 import com.task.chart.dto.response.SearchSymbolDto;
 import com.task.chart.dto.response.ServerTimeResponse;
 import com.task.chart.dto.response.SymbolInfoDto;
+import com.task.chart.dto.response.TimescaleMarkDto;
 import com.task.chart.service.ChartDataService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,20 +83,20 @@ public class ChartDataController {
 	}
 
 	/**
-	 * Symbol search over the demo FX catalog.
+	 * Symbol search over {@code m_ccypairs} (design doc 124).
 	 *
-	 * @param query search text
-	 * @param exchange optional exchange filter
-	 * @param type optional type filter
-	 * @param limit max hits
+	 * @param query optional search text (max length 10)
+	 * @param exchange optional exchange filter (widget)
+	 * @param type optional type filter (widget)
+	 * @param limit optional max hits; default/max from {@code app.tradingview}
 	 * @return matching symbols
 	 */
 	@GetMapping("/search")
 	public List<SearchSymbolDto> search(
-			@RequestParam(required = false, defaultValue = "") String query,
+			@RequestParam(required = false) String query,
 			@RequestParam(required = false) String exchange,
 			@RequestParam(required = false) String type,
-			@RequestParam(required = false, defaultValue = "50") int limit) {
+			@RequestParam(required = false) Integer limit) {
 		return chartDataService.search(query, exchange, type, limit);
 	}
 
@@ -107,6 +109,42 @@ public class ChartDataController {
 	@GetMapping("/symbols")
 	public SymbolInfoDto symbols(@RequestParam(required = false) String symbol) {
 		return chartDataService.resolve(symbol);
+	}
+
+	/**
+	 * Chart marks for the visible range (design doc 125).
+	 *
+	 * @param symbol currency pair CD or display name
+	 * @param resolution TradingView resolution
+	 * @param from range start unix seconds (inclusive)
+	 * @param to range end unix seconds (inclusive)
+	 * @return mark list
+	 */
+	@GetMapping("/marks")
+	public List<MarkDto> marks(
+			@RequestParam(required = false) String symbol,
+			@RequestParam(required = false) String resolution,
+			@RequestParam(required = false) Long from,
+			@RequestParam(required = false) Long to) {
+		return chartDataService.marks(symbol, resolution, from, to);
+	}
+
+	/**
+	 * Timescale marks for the visible range (design doc 126).
+	 *
+	 * @param symbol currency pair CD or display name
+	 * @param resolution TradingView resolution
+	 * @param from range start unix seconds (inclusive)
+	 * @param to range end unix seconds (inclusive)
+	 * @return timescale mark list
+	 */
+	@GetMapping("/timescale_marks")
+	public List<TimescaleMarkDto> timescaleMarks(
+			@RequestParam(required = false) String symbol,
+			@RequestParam(required = false) String resolution,
+			@RequestParam(required = false) Long from,
+			@RequestParam(required = false) Long to) {
+		return chartDataService.timescaleMarks(symbol, resolution, from, to);
 	}
 
 	/**

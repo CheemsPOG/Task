@@ -2,6 +2,8 @@
 
 Frontend chart (TradingView Advanced Charts), a Java Spring Boot REST backend, and a Python WebSocket server. The chart datafeed calls Java for history and Python for live ticks. Both serve **local demo FX data** for the same currency pairs as `/curpairs`. No external market-data API is used.
 
+How the app is built (config, database, APIs 120–123, how to test): [`structure.md`](structure.md).
+
 ## Prerequisites
 
 - **Java 21+** (Java 21–26 are fine)
@@ -51,13 +53,31 @@ curl http://127.0.0.1:8080/api/health
 
 Expected: `{"status":"ok","service":"chart-backend"}` (no auth header).
 
-Chart datafeed routes under `/api` (except `/health`) require header `X-Customer-No`. The frontend sends `1`. Quick check:
+Chart datafeed routes under `/api` (except `/health` and `/api/auth/login`) require:
 
-```bash
-curl http://127.0.0.1:8080/api/config
+```http
+Authorization: Bearer <jwt>
+Accept-Language: en
 ```
 
-Expected: HTTP 401. With `-H "X-Customer-No: 1"` the same URL returns 200.
+Login (no Bearer):
+
+```bash
+curl -s -X POST http://127.0.0.1:8080/api/auth/login ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"demo\",\"password\":\"demo\"}"
+```
+
+Then:
+
+```bash
+curl -s http://127.0.0.1:8080/api/config -H "Authorization: Bearer <accessToken>"
+```
+
+Without Bearer → **401** `{ "errorCode": "E_UNAUTHORIZED", "message": "..." }`.  
+With `Accept-Language: ja` → Japanese `message`.
+
+Demo users: `demo` / `demo` (customer 1), `demo2` / `demo2` (customer 2).
 
 ### 2. Python WebSocket server
 
@@ -77,7 +97,7 @@ npm install
 npm start
 ```
 
-Open **http://127.0.0.1:5173**. The chart starts on `USD/JPY`, interval `1D`.
+Open **http://127.0.0.1:5173**. A login overlay appears first — use **Demo** (`demo` / `demo`) or type credentials, then the chart loads on `USD/JPY`, interval `1D`. **Logout** is on the chart header (reloads to the login form).
 
 The frontend server proxies `/api` and `/curpairs` to Java (8080) and `/ws` to Python (8081), so the browser only talks to port 5173.
 
@@ -130,7 +150,8 @@ Then open `http://127.0.0.1:5174`.
 - Candles and volume for the selected FX pair (live demo ticks)
 - Symbol search for the five demo pairs (for example `EUR/USD`)
 - Interval switcher (minutes, hours, daily, weekly, monthly)
-- Light / dark theme toggle on the right of the chart header
+- Light / dark theme toggle and **Logout** on the right of the chart header
+- Login overlay before the chart (local JWT; not Peach S-01)
 - FX header controls: BID/ASK/MID dropdown and a live simulated quote that follows the chart symbol. Switching BID/ASK/MID reloads that pair's candles from that price side.
 
 ## Demo data

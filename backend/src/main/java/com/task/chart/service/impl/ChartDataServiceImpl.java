@@ -11,15 +11,21 @@ import com.task.chart.dto.response.DatafeedConfigResponse;
 import com.task.chart.dto.response.DatafeedConfigResponse.ExchangeDto;
 import com.task.chart.dto.response.DatafeedConfigResponse.SymbolTypeDto;
 import com.task.chart.dto.response.HistoryResponse;
+import com.task.chart.dto.response.MarkDto;
 import com.task.chart.dto.response.SearchSymbolDto;
 import com.task.chart.dto.response.SymbolInfoDto;
+import com.task.chart.dto.response.TimescaleMarkDto;
 import com.task.chart.entity.Ccypair;
 import com.task.chart.entity.Season;
+import com.task.chart.entity.TvMark;
+import com.task.chart.entity.TvTimescaleMark;
 import com.task.chart.exception.ResourceNotFoundException;
 import com.task.chart.exception.ServerErrorException;
 import com.task.chart.exception.ValidationException;
 import com.task.chart.repository.CcypairRepository;
 import com.task.chart.repository.SeasonRepository;
+import com.task.chart.repository.TvMarkRepository;
+import com.task.chart.repository.TvTimescaleMarkRepository;
 import com.task.chart.service.ChartDataService;
 import com.task.chart.service.MockBarGenerator;
 import com.task.chart.service.MockFxQuoteService;
@@ -32,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -46,6 +53,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 	private final AppProperties appProperties;
 	private final CcypairRepository ccypairRepository;
 	private final SeasonRepository seasonRepository;
+	private final TvMarkRepository tvMarkRepository;
+	private final TvTimescaleMarkRepository tvTimescaleMarkRepository;
 
 	public ChartDataServiceImpl(
 			SymbolCatalog symbolCatalog,
@@ -53,13 +62,17 @@ public class ChartDataServiceImpl implements ChartDataService {
 			MockFxQuoteService mockFxQuoteService,
 			AppProperties appProperties,
 			CcypairRepository ccypairRepository,
-			SeasonRepository seasonRepository) {
+			SeasonRepository seasonRepository,
+			TvMarkRepository tvMarkRepository,
+			TvTimescaleMarkRepository tvTimescaleMarkRepository) {
 		this.symbolCatalog = symbolCatalog;
 		this.mockBarGenerator = mockBarGenerator;
 		this.mockFxQuoteService = mockFxQuoteService;
 		this.appProperties = appProperties;
 		this.ccypairRepository = ccypairRepository;
 		this.seasonRepository = seasonRepository;
+		this.tvMarkRepository = tvMarkRepository;
+		this.tvTimescaleMarkRepository = tvTimescaleMarkRepository;
 	}
 
 	@Override
@@ -84,28 +97,127 @@ public class ChartDataServiceImpl implements ChartDataService {
 	}
 
 	@Override
-	public List<SearchSymbolDto> search(String query, String exchange, String type, int limit) {
-		String needle = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
-		int max = limit <= 0 ? 50 : Math.min(limit, 200);
+	public List<SearchSymbolDto> search(String query, String exchange, String type, Integer limit) {
+		AppProperties.TradingView tradingView = appProperties.getTradingView();
+		String needle = query == null ? "" : query.trim();
+		if (needle.length() > 10) {
+			throw new ValidationException();
+		}
 
-		return symbolCatalog.getAll().stream()
-				.filter(symbol -> exchange == null || exchange.isBlank()
-						|| symbol.exchange().equalsIgnoreCase(exchange))
-				.filter(symbol -> type == null || type.isBlank()
-						|| symbol.type().equalsIgnoreCase(type))
-				.filter(symbol -> needle.isEmpty()
-						|| symbol.ticker().toLowerCase(Locale.ROOT).contains(needle)
-						|| symbol.shortName().toLowerCase(Locale.ROOT).contains(needle)
-						|| symbol.providerSymbol().toLowerCase(Locale.ROOT).contains(needle))
-				.limit(max)
-				.map(symbol -> new SearchSymbolDto(
-						symbol.shortName(),
-						symbol.fullName(),
-						symbol.ticker(),
-						symbol.shortName(),
-						symbol.exchange(),
-						symbol.type()))
+		int effectiveLimit = resolveSearchLimit(limit, tradingView);
+		if (!matchesConfiguredFilter(exchange, tradingView.getExchanges())
+				|| !matchesConfiguredFilter(type, tradingView.getSymbolsTypes())) {
+			return List.of();
+		}
+
+		boolean queryEmpty = needle.isEmpty();
+		String needleCd = needle.replace("/", "");
+		List<Ccypair> pairs = ccypairRepository.searchActive(
+				Ccypair.ACTIVE,
+				queryEmpty,
+				needle,
+				needleCd,
+				PageRequest.of(0, effectiveLimit));
+
+		String exchangeValue = tradingView.getExchanges();
+		String typeValue = tradingView.getSymbolsTypes();
+		return pairs.stream()
+				.map(pair -> toSearchSymbol(pair, exchangeValue, typeValue))
 				.toList();
+	}
+
+	@Override
+	public List<MarkDto> marks(String symbol, String resolution, Long from, Long to) {
+		validateMarksRequest(symbol, resolution, from, to);
+		String ccypairCd = normalizeCcypairCd(symbol);
+		List<TvMark> marks = tvMarkRepository
+				.findByCcypairCdAndResolutionAndMarkAtGreaterThanEqualAndMarkAtLessThanEqualOrderByMarkAtAsc(
+						ccypairCd,
+						resolution,
+						from,
+						to);
+		return marks.stream().map(ChartDataServiceImpl::toMarkDto).toList();
+	}
+
+	@Override
+	public List<TimescaleMarkDto> timescaleMarks(String symbol, String resolution, Long from, Long to) {
+		validateMarksRequest(symbol, resolution, from, to);
+		String ccypairCd = normalizeCcypairCd(symbol);
+		List<TvTimescaleMark> marks = tvTimescaleMarkRepository
+				.findByCcypairCdAndResolutionAndTimescaleMarkAtGreaterThanEqualAndTimescaleMarkAtLessThanEqualOrderByTimescaleMarkAtAsc(
+						ccypairCd,
+						resolution,
+						from,
+						to);
+		return marks.stream().map(ChartDataServiceImpl::toTimescaleMarkDto).toList();
+	}
+
+	private static void validateMarksRequest(String symbol, String resolution, Long from, Long to) {
+		if (symbol == null || symbol.isBlank()) {
+			throw new ValidationException();
+		}
+		if (resolution == null || resolution.isBlank() || !ResolutionMapper.isMarksResolution(resolution)) {
+			throw new ValidationException();
+		}
+		if (from == null || to == null) {
+			throw new ValidationException();
+		}
+		if (to < from) {
+			throw new ValidationException();
+		}
+	}
+
+	private static MarkDto toMarkDto(TvMark mark) {
+		return new MarkDto(
+				mark.getId(),
+				mark.getMarkAt(),
+				mark.getColor(),
+				mark.getMarkText(),
+				mark.getLabel(),
+				"#ffffff",
+				14);
+	}
+
+	private static TimescaleMarkDto toTimescaleMarkDto(TvTimescaleMark mark) {
+		return new TimescaleMarkDto(
+				mark.getId(),
+				mark.getTimescaleMarkAt(),
+				mark.getColor(),
+				mark.getLabel(),
+				List.of(mark.getTooltip()),
+				"#ffffff");
+	}
+
+	private static int resolveSearchLimit(Integer limit, AppProperties.TradingView tradingView) {
+		int maxLimit = tradingView.getSearchMaxLimit();
+		if (limit == null) {
+			return tradingView.getSearchDefaultLimit();
+		}
+		if (limit < 1 || limit > maxLimit) {
+			throw new ValidationException();
+		}
+
+		return limit;
+	}
+
+	private static boolean matchesConfiguredFilter(String requested, String configured) {
+		if (requested == null || requested.isBlank()) {
+			return true;
+		}
+
+		return configured.equalsIgnoreCase(requested.trim());
+	}
+
+	private static SearchSymbolDto toSearchSymbol(Ccypair pair, String exchange, String type) {
+		String ccypairCd = pair.getCcypairCd();
+		String display = displayTicker(ccypairCd);
+		return new SearchSymbolDto(
+				ccypairCd,
+				display,
+				display,
+				pair.getCcypairJp(),
+				exchange,
+				type);
 	}
 
 	@Override
@@ -162,9 +274,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 	private SymbolInfoDto toSymbolInfo(Ccypair pair, String session) {
 		AppProperties.TradingView tradingView = appProperties.getTradingView();
 		String ccypairCd = pair.getCcypairCd();
+		String displayName = displayTicker(ccypairCd);
 		return new SymbolInfoDto(
-				displayTicker(ccypairCd),
-				ccypairCd,
+				displayName,
+				displayName,
 				pair.getCcypairJp(),
 				tradingView.getSymbolsTypes(),
 				tradingView.getExchanges(),
@@ -258,7 +371,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		}
 
 		PriceComponent component = price == null ? PriceComponent.MID : price;
-		long toMs = (to == null ? Instant.now().getEpochSecond() : to) * 1000L;
+		// Cap at wall-clock now so history never ends after the live stream's current bar.
+		long nowMs = Instant.now().toEpochMilli();
+		long requestedToMs = (to == null ? Instant.now().getEpochSecond() : to) * 1000L;
+		long toMs = Math.min(requestedToMs, nowMs);
 		int needed = countBack == null || countBack <= 0 ? 300 : countBack;
 		if (from != null && to != null && (countBack == null || countBack <= 0)) {
 			needed = Math.max(1, (int) ((toMs - from * 1000L) / periodMs) + 2);
@@ -269,7 +385,15 @@ public class ChartDataServiceImpl implements ChartDataService {
 			bars = bars.stream().filter(bar -> bar.time() >= fromMs).toList();
 		}
 		if (bars.isEmpty()) {
-			return HistoryResponse.empty();
+			// Doc 121: nextTime = latest bar datetime before "from" (unix seconds).
+			Long nextTimeSeconds = null;
+			if (from != null) {
+				long previousOpenMs = Math.floorDiv(from * 1000L - 1, periodMs) * periodMs;
+				if (previousOpenMs >= 0) {
+					nextTimeSeconds = previousOpenMs / 1000L;
+				}
+			}
+			return HistoryResponse.empty(nextTimeSeconds);
 		}
 		return HistoryResponse.ok(stitchCurrentBar(symbol, periodMs, bars, component));
 	}
