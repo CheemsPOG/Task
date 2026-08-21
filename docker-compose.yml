@@ -15,5 +15,16 @@ services:
       timeout: 5s
       retries: 10
 
+  # Doc 121 Peach cache namespaces (cache_set_*) — Redis ZSETs, not in-JVM maps.
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
   chart-pgdata:

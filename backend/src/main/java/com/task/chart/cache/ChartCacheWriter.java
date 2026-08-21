@@ -1,0 +1,169 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
+package com.task.chart.cache;
+
+import com.task.chart.service.MockBarGenerator;
+import com.task.chart.service.SymbolCatalog;
+import com.task.chart.service.SymbolCatalog.CachedSymbol;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+/**
+ * Doc 121 background writer: persists {@code t_chart_*} then refreshes Redis {@code cache_set_*}.
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>Phase 1 in-memory / Redis</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Phase 2 warehouse + Redis</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.1.0
+ */
+@Component
+@Order(100)
+public class ChartCacheWriter implements ApplicationRunner {
+
+	private static final Logger log = LoggerFactory.getLogger(ChartCacheWriter.class);
+
+	private final ChartBarRepository chartBarRepository;
+	private final ChartCacheStore chartCacheStore;
+	private final SymbolCatalog symbolCatalog;
+	private final MockBarGenerator mockBarGenerator;
+	private volatile boolean seedComplete;
+
+	/**
+	 * Creates the writer.
+	 *
+	 * @param chartBarRepository warehouse tables
+	 * @param chartCacheStore Redis cache
+	 * @param symbolCatalog pair catalog
+	 * @param mockBarGenerator deterministic Peach bar factory
+	 */
+	public ChartCacheWriter(
+			ChartBarRepository chartBarRepository,
+			ChartCacheStore chartCacheStore,
+			SymbolCatalog symbolCatalog,
+			MockBarGenerator mockBarGenerator) {
+		this.chartBarRepository = chartBarRepository;
+		this.chartCacheStore = chartCacheStore;
+		this.symbolCatalog = symbolCatalog;
+		this.mockBarGenerator = mockBarGenerator;
+	}
+
+	@Override
+	public void run(ApplicationArguments args) {
+		seedAll();
+		seedComplete = true;
+	}
+
+	/**
+	 * Full seed: warehouse tables then Redis namespaces.
+	 */
+	public synchronized void seedAll() {
+		long toMs = Instant.now().toEpochMilli();
+		List<CachedSymbol> symbols = symbolCatalog.getAll();
+		int total = 0;
+		for (CacheNamespace namespace : CacheNamespace.values()) {
+			int depth = seedDepth(namespace);
+			for (CachedSymbol symbol : symbols) {
+				List<CachedChartBar> bars = buildSeries(symbol, namespace, toMs, depth);
+				chartBarRepository.replacePair(namespace, symbol.providerSymbol(), bars);
+				chartCacheStore.replacePair(namespace, symbol.providerSymbol(), bars);
+				total += bars.size();
+			}
+		}
+		log.info(
+				"Seeded Peach warehouse + Redis: {} bars across {} tables/namespaces × {} pairs",
+				total,
+				CacheNamespace.values().length,
+				symbols.size());
+	}
+
+	/**
+	 * Refreshes the current open bar (DB + Redis) — doc 121 concurrent writer stand-in.
+	 */
+	@Scheduled(fixedDelayString = "${app.chart-cache.refresh-ms:60000}")
+	public void refreshCurrentBars() {
+		if (!seedComplete) {
+			return;
+		}
+		long nowMs = Instant.now().toEpochMilli();
+		for (CacheNamespace namespace : CacheNamespace.values()) {
+			long periodMs = namespace.periodMillis();
+			long openMs = Math.floorDiv(nowMs - 1, periodMs) * periodMs;
+			for (CachedSymbol symbol : symbolCatalog.getAll()) {
+				if (skipWeekend(namespace, openMs)) {
+					continue;
+				}
+				CachedChartBar bar = mockBarGenerator.peachBarAt(symbol, periodMs, openMs);
+				chartBarRepository.upsert(namespace, bar);
+				chartCacheStore.put(namespace, bar);
+			}
+		}
+	}
+
+	private List<CachedChartBar> buildSeries(
+			CachedSymbol symbol,
+			CacheNamespace namespace,
+			long toMs,
+			int depth) {
+		long periodMs = namespace.periodMillis();
+		long lastOpen = Math.floorDiv(toMs - 1, periodMs) * periodMs;
+		java.util.LinkedHashMap<Long, CachedChartBar> bySec = new java.util.LinkedHashMap<>();
+		long cursor = lastOpen;
+		int guard = 0;
+		int maxGuard = depth * 4 + 64;
+		while (bySec.size() < depth && cursor >= 0 && guard < maxGuard) {
+			guard++;
+			if (!skipWeekend(namespace, cursor)) {
+				CachedChartBar bar = mockBarGenerator.peachBarAt(symbol, periodMs, cursor);
+				bySec.putIfAbsent(bar.chartDatetimeSec(), bar);
+			}
+			cursor -= periodMs;
+		}
+		return new ArrayList<>(bySec.values());
+	}
+
+	private static boolean skipWeekend(CacheNamespace namespace, long openMs) {
+		if (namespace != CacheNamespace.CACHE_SET_DAY
+				&& namespace != CacheNamespace.CACHE_SET_WEEK
+				&& namespace != CacheNamespace.CACHE_SET_MONTH) {
+			return false;
+		}
+		DayOfWeek day = Instant.ofEpochMilli(openMs).atZone(ZoneOffset.UTC).getDayOfWeek();
+		return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
+	}
+
+	private static int seedDepth(CacheNamespace namespace) {
+		return switch (namespace) {
+			case CACHE_SET_1S -> 900;
+			case CACHE_SET_1M -> 600;
+			case CACHE_SET_5M, CACHE_SET_10M, CACHE_SET_15M, CACHE_SET_30M -> 400;
+			case CACHE_SET_60M, CACHE_SET_120M, CACHE_SET_240M, CACHE_SET_480M -> 300;
+			case CACHE_SET_DAY -> 400;
+			case CACHE_SET_WEEK -> 200;
+			case CACHE_SET_MONTH -> 120;
+			default -> 100;
+		};
+	}
+}

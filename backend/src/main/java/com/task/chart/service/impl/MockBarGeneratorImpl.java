@@ -4,6 +4,7 @@
 
 package com.task.chart.service.impl;
 
+import com.task.chart.cache.CachedChartBar;
 import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.BarDto;
 import com.task.chart.service.MockBarGenerator;
@@ -15,6 +16,22 @@ import org.springframework.stereotype.Service;
 
 /**
  * Implementation of {@link MockBarGenerator}.
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>peachBarAt for cache writer</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.1.0
  */
 @Service
 public class MockBarGeneratorImpl implements MockBarGenerator {
@@ -80,6 +97,24 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 		}
 		double volume = 80 + (mix & 2047);
 		return new BarDto(time, open, high, low, close, volume);
+	}
+
+	@Override
+	public CachedChartBar peachBarAt(CachedSymbol symbol, long periodMs, long timeMs) {
+		BarDto bid = barAt(symbol, periodMs, timeMs, PriceComponent.BID);
+		BarDto ask = barAt(symbol, periodMs, timeMs, PriceComponent.ASK);
+		return new CachedChartBar(
+				symbol.providerSymbol(),
+				timeMs / 1000L,
+				bid.open(),
+				bid.high(),
+				bid.low(),
+				bid.close(),
+				ask.open(),
+				ask.high(),
+				ask.low(),
+				ask.close(),
+				bid.volume());
 	}
 
 	private static double priceAt(

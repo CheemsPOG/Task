@@ -4,13 +4,14 @@
 
 package com.task.chart.service;
 
+import com.task.chart.cache.CachedChartBar;
 import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.BarDto;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
 import java.util.List;
 
 /**
- * Deterministic mock OHLCV generator for chart history.
+ * Deterministic mock OHLCV generator; also fills Peach in-memory caches (Phase 1).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -21,11 +22,12 @@ import java.util.List;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>peachBarAt for cache writer</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 public interface MockBarGenerator {
 
@@ -41,4 +43,14 @@ public interface MockBarGenerator {
 	BarDto barAt(CachedSymbol symbol, long periodMs, long time);
 
 	BarDto barAt(CachedSymbol symbol, long periodMs, long time, PriceComponent price);
+
+	/**
+	 * Builds one cache row with bid and ask OHLC at the bar open time.
+	 *
+	 * @param symbol catalog symbol
+	 * @param periodMs bar period
+	 * @param timeMs bar open (milliseconds)
+	 * @return cached Peach bar
+	 */
+	CachedChartBar peachBarAt(CachedSymbol symbol, long periodMs, long timeMs);
 }

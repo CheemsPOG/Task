@@ -158,14 +158,9 @@ DBeaver: none for bars. Optional: `SELECT * FROM m_ccypairs WHERE ccypair_cd = '
 
 ### Come back later (unchecked)
 
-- [ ] Create the 13 `t_chart_*` tables and Peach cache namespaces (`cache_set_*`) from doc 121; stop using `MockBarGenerator` for production history.
-- [ ] Implement synchronized cache retrieval (doc: synchronize API read vs background cache writer).
-- [ ] Optionally expose Peach columnar response `{ t, o, h, l, c }` (and empty lists on `no_data`) behind a flag or separate contract — **do not** replace widget `{ s, bars[] }` until `datafeed.ts` is updated or dual-shaped.
-- [ ] Implement `s=no_data` + `nextTime` (latest bar before `from` for weekend/gap ranges).
-- [ ] Map real BID / ASK / MID from stored `bid_*` / `ask_*` columns (not mock spread sides).
-- [ ] Decide whether `bid_ask` must be required (doc) vs optional + `price=` alias (widget); tighten validation if Peach clients need strict mode.
-- [ ] Decide whether `from`/`to` must always be a pair (doc “vice versa”) vs keeping `to` + `countBack` without `from` for the widget.
-- [ ] Point history symbol lookup at `m_ccypairs` (same source as resolve/search) so mock `CurrencyPairService` / `SymbolCatalog` is not a second source of truth.
+- [x] Phase 1: Redis `cache_set_*`, synchronized writer/reader, Peach `{ t,o,h,l,c }` + `nextTime`, bid_/ask_, strict validation + FE.
+- [x] Phase 2: Flyway V8 `t_chart_*` warehouse; writer UPSERTs DB then Redis; history reads Redis (warms from DB).
+- [ ] Point history symbol lookup at `m_ccypairs` only (drop duplicate catalog source) if mentor requires a single source of truth.
 
 ---
 

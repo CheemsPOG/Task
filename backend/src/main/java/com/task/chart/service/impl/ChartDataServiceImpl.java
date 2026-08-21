@@ -4,6 +4,9 @@
 
 package com.task.chart.service.impl;
 
+import com.task.chart.cache.CacheNamespace;
+import com.task.chart.cache.CachedChartBar;
+import com.task.chart.cache.ChartCacheStore;
 import com.task.chart.config.AppProperties;
 import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.BarDto;
@@ -27,7 +30,6 @@ import com.task.chart.repository.SeasonRepository;
 import com.task.chart.repository.TvMarkRepository;
 import com.task.chart.repository.TvTimescaleMarkRepository;
 import com.task.chart.service.ChartDataService;
-import com.task.chart.service.MockBarGenerator;
 import com.task.chart.service.MockFxQuoteService;
 import com.task.chart.service.SymbolCatalog;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
@@ -48,7 +50,7 @@ import org.springframework.stereotype.Service;
 public class ChartDataServiceImpl implements ChartDataService {
 
 	private final SymbolCatalog symbolCatalog;
-	private final MockBarGenerator mockBarGenerator;
+	private final ChartCacheStore chartCacheStore;
 	private final MockFxQuoteService mockFxQuoteService;
 	private final AppProperties appProperties;
 	private final CcypairRepository ccypairRepository;
@@ -58,7 +60,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 
 	public ChartDataServiceImpl(
 			SymbolCatalog symbolCatalog,
-			MockBarGenerator mockBarGenerator,
+			ChartCacheStore chartCacheStore,
 			MockFxQuoteService mockFxQuoteService,
 			AppProperties appProperties,
 			CcypairRepository ccypairRepository,
@@ -66,7 +68,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 			TvMarkRepository tvMarkRepository,
 			TvTimescaleMarkRepository tvTimescaleMarkRepository) {
 		this.symbolCatalog = symbolCatalog;
-		this.mockBarGenerator = mockBarGenerator;
+		this.chartCacheStore = chartCacheStore;
 		this.mockFxQuoteService = mockFxQuoteService;
 		this.appProperties = appProperties;
 		this.ccypairRepository = ccypairRepository;
@@ -316,7 +318,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 
 	@Override
 	public HistoryResponse history(String symbolName, String resolution, Long to, Integer countBack) {
-		return history(symbolName, resolution, null, to, countBack, null, null);
+		return history(symbolName, resolution, to, countBack, "mid");
 	}
 
 	@Override
@@ -326,7 +328,13 @@ public class ChartDataServiceImpl implements ChartDataService {
 			Long to,
 			Integer countBack,
 			String price) {
-		return history(symbolName, resolution, null, to, countBack, price, null);
+		String bidAsk = PriceComponent.from(price).name();
+		Long effectiveTo = to == null ? Instant.now().getEpochSecond() : to;
+		Long periodSec = ResolutionMapper.periodMillis(resolution);
+		long stepSec = periodSec == null ? 60L : Math.max(1L, periodSec / 1000L);
+		int needed = countBack == null || countBack <= 0 ? 300 : countBack;
+		Long from = effectiveTo - (long) needed * stepSec;
+		return history(symbolName, resolution, from, effectiveTo, countBack, price, bidAsk);
 	}
 
 	@Override
@@ -338,8 +346,14 @@ public class ChartDataServiceImpl implements ChartDataService {
 			Integer countBack,
 			String price,
 			String bidAsk) {
-		validateHistoryRequest(symbolName, resolution, from, to, bidAsk);
-		PriceComponent component = resolvePriceComponent(price, bidAsk);
+		String effectiveBidAsk = bidAsk;
+		if ((effectiveBidAsk == null || effectiveBidAsk.isBlank())
+				&& price != null
+				&& !price.isBlank()) {
+			effectiveBidAsk = PriceComponent.from(price).name();
+		}
+		validateHistoryRequest(symbolName, resolution, from, to, effectiveBidAsk);
+		PriceComponent component = PriceComponent.fromBidAsk(effectiveBidAsk);
 		return history(symbolName, resolution, from, to, countBack, component);
 	}
 
@@ -350,7 +364,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 			Long to,
 			Integer countBack,
 			PriceComponent price) {
-		return history(symbolName, resolution, null, to, countBack, price);
+		String bidAsk = (price == null ? PriceComponent.MID : price).name();
+		return history(symbolName, resolution, to, countBack, bidAsk.toLowerCase(Locale.ROOT));
 	}
 
 	private HistoryResponse history(
@@ -365,37 +380,45 @@ public class ChartDataServiceImpl implements ChartDataService {
 			return HistoryResponse.error("unknown_symbol");
 		}
 
-		Long periodMs = ResolutionMapper.periodMillis(resolution);
-		if (periodMs == null) {
+		CacheNamespace namespace = CacheNamespace.fromTvResolution(resolution);
+		if (namespace == null) {
 			return HistoryResponse.error("Unsupported resolution: " + resolution);
 		}
 
 		PriceComponent component = price == null ? PriceComponent.MID : price;
-		// Cap at wall-clock now so history never ends after the live stream's current bar.
-		long nowMs = Instant.now().toEpochMilli();
-		long requestedToMs = (to == null ? Instant.now().getEpochSecond() : to) * 1000L;
-		long toMs = Math.min(requestedToMs, nowMs);
-		int needed = countBack == null || countBack <= 0 ? 300 : countBack;
-		if (from != null && to != null && (countBack == null || countBack <= 0)) {
-			needed = Math.max(1, (int) ((toMs - from * 1000L) / periodMs) + 2);
+		long nowSec = Instant.now().getEpochSecond();
+		Long queryFrom = from;
+		Long queryTo = to;
+		if (queryTo != null) {
+			queryTo = Math.min(queryTo, nowSec);
 		}
-		List<BarDto> bars = mockBarGenerator.generate(symbol, periodMs, toMs, needed, component);
-		if (from != null) {
-			long fromMs = from * 1000L;
-			bars = bars.stream().filter(bar -> bar.time() >= fromMs).toList();
+
+		List<CachedChartBar> cached = chartCacheStore.query(
+				namespace,
+				symbol.providerSymbol(),
+				queryFrom,
+				queryTo);
+
+		if (countBack != null && countBack > 0 && cached.size() > countBack) {
+			cached = cached.subList(cached.size() - countBack, cached.size());
 		}
-		if (bars.isEmpty()) {
-			// Doc 121: nextTime = latest bar datetime before "from" (unix seconds).
+
+		if (cached.isEmpty()) {
 			Long nextTimeSeconds = null;
 			if (from != null) {
-				long previousOpenMs = Math.floorDiv(from * 1000L - 1, periodMs) * periodMs;
-				if (previousOpenMs >= 0) {
-					nextTimeSeconds = previousOpenMs / 1000L;
-				}
+				nextTimeSeconds = chartCacheStore.nextTimeBefore(
+						namespace,
+						symbol.providerSymbol(),
+						from);
 			}
 			return HistoryResponse.empty(nextTimeSeconds);
 		}
-		return HistoryResponse.ok(stitchCurrentBar(symbol, periodMs, bars, component));
+
+		List<BarDto> bars = new ArrayList<>(cached.size());
+		for (CachedChartBar row : cached) {
+			bars.add(row.toBarDto(component));
+		}
+		return HistoryResponse.ok(stitchCurrentBar(symbol, namespace.periodMillis(), bars, component));
 	}
 
 	private static void validateHistoryRequest(
@@ -407,29 +430,37 @@ public class ChartDataServiceImpl implements ChartDataService {
 		if (symbolName == null || symbolName.isBlank()) {
 			throw new ValidationException();
 		}
+		String normalizedCd = normalizeSymbolCd(symbolName);
+		if (normalizedCd.length() != 6) {
+			throw new ValidationException();
+		}
 		if (resolution == null || resolution.isBlank() || !ResolutionMapper.isHistoryResolution(resolution)) {
 			throw new ValidationException();
 		}
-		if (from != null && to == null) {
+		if (bidAsk == null || bidAsk.isBlank()) {
+			throw new ValidationException();
+		}
+		try {
+			PriceComponent.fromBidAsk(bidAsk);
+		} catch (IllegalArgumentException ex) {
+			throw new ValidationException();
+		}
+		if ((from == null) != (to == null)) {
 			throw new ValidationException();
 		}
 		if (from != null && to != null && to < from) {
 			throw new ValidationException();
 		}
-		if (bidAsk != null && !bidAsk.isBlank()) {
-			try {
-				PriceComponent.fromBidAsk(bidAsk);
-			} catch (IllegalArgumentException ex) {
-				throw new ValidationException();
-			}
-		}
 	}
 
-	private static PriceComponent resolvePriceComponent(String price, String bidAsk) {
-		if (bidAsk != null && !bidAsk.isBlank()) {
-			return PriceComponent.fromBidAsk(bidAsk);
-		}
-		return PriceComponent.from(price);
+	/**
+	 * Strips non-letters so {@code USD/JPY} becomes {@code USDJPY} (length-6 CD).
+	 *
+	 * @param symbolName raw symbol query
+	 * @return uppercase CD letters only
+	 */
+	static String normalizeSymbolCd(String symbolName) {
+		return symbolName.replaceAll("[^A-Za-z]", "").toUpperCase(Locale.ROOT);
 	}
 
 	@Override

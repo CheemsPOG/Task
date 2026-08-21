@@ -5,6 +5,10 @@ spring:
     url: jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_NAME:chart}
     username: ${DB_USER:chart}
     password: ${DB_PASSWORD:chart}
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
   jpa:
     hibernate:
       ddl-auto: none
@@ -26,6 +30,9 @@ app:
     # Local demo only — replace for any shared environment.
     secret: "chart-local-demo-jwt-secret-key-at-least-256-bits-long"
     expiration-ms: 86400000
+  chart-cache:
+    # Writer thread refresh interval (doc 121 concurrent cache writer stand-in).
+    refresh-ms: 60000
   tradingview:
     supports-search: true
     # Enabled for design docs 125 / 126 (marks + timescale marks).

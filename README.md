@@ -9,15 +9,15 @@ How the app is built (config, database, APIs 120–123, how to test): [`structur
 - **Java 21+** (Java 21–26 are fine)
 - **Python 3.10+**
 - **Node.js 18+**
-- **Docker** (PostgreSQL for Java REST)
+- **Docker** (PostgreSQL + Redis for Java REST)
 
 Maven is not required globally. The backend ships with the Maven Wrapper (`mvnw` / `mvnw.cmd`).
 
 ## Run
 
-Use four terminals (Postgres first).
+Use four terminals (Postgres + Redis first).
 
-### 0. PostgreSQL
+### 0. PostgreSQL + Redis
 
 From the repo root (Docker Desktop must be running):
 
@@ -25,7 +25,21 @@ From the repo root (Docker Desktop must be running):
 docker compose up -d
 ```
 
+That starts:
+
+| Service | Port | Use |
+|---|---|---|
+| Postgres | `5432` | Flyway / JPA |
+| Redis | `6379` | Doc 121 Peach `cache_set_*` bar cache |
+
 DBeaver: host `127.0.0.1`, port `5432`, database `chart`, user `chart`, password `chart`.
+
+Redis CLI peek (after Java has seeded):
+
+```bash
+docker compose exec redis redis-cli ZCARD peach:cache_set_day:USDJPY
+docker compose exec redis redis-cli ZRANGE peach:cache_set_day:USDJPY 0 2 WITHSCORES
+```
 
 Flyway creates `m_ccypairs` and `m_season` the first time Java starts.
 

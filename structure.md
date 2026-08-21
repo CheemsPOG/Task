@@ -232,33 +232,71 @@ Widget `onReady` uses this. Extra field `supports_group_request: false` so the l
 |---|---|
 | Doc | [`System_Overview_Design_121_….md`](System_Overview_Design/System_Overview_Design_121_Get_Bars_(TV).md) |
 | Path | `GET /api/history` |
-| Tables in doc | 13 `t_chart_*` — **not built** (still mock) |
-| Code | `history(…)` → `MockBarGenerator`; `ResolutionMapper.toPeachChartType` |
-| Test | `SystemOverviewDesign121Test` |
+| Warehouse | Flyway **V8** — all 13 `t_chart_*` tables |
+| Hot cache | Redis ZSET `peach:{cache_set_*}:{CD}` |
+| Code | `ChartBarRepository` + `ChartCacheStore` + `ChartCacheWriter` → `history(…)` |
+| Test | `SystemOverviewDesign121Test`, `FlywayMigrationTest` (Redis on `6379`) |
 
-Query: `symbol`, `resolution`, optional `from`/`to` (unix **seconds**), `countBack`, `price` (`bid`/`ask`/`mid`) or `bid_ask` (`BID`/`ASK`/`MID`).
+#### Architecture (Phases 1+2)
 
-**Dual response (widget + Peach):**
-
-- Widget: `{ s, bars: [{ time, open, high, low, close, volume }], noData }` — `time` in **ms**
-- Peach-shaped: `t[]` (unix **seconds**), `o[]`, `h[]`, `l[]`, `c[]` mirrored from the same bars
-- Empty: `s=no_data`, empty arrays, optional `nextTime` (unix seconds before `from`)
-
-History `to` is clamped to now so live WS bars do not go backward. FE maps `nextTime` × 1000 into the library.
-
-**Still not Peach warehouse:** no `t_chart_*`, no `cache_set_*`, no writer sync. `bid_ask` stays optional (widget uses `price`).
-
-**Postman:**
-
-```http
-GET /api/history?symbol=USD/JPY&resolution=1D&countBack=10&price=mid
-Authorization: Bearer <token>
+```
+MockBarGenerator ──► ChartCacheWriter ──► t_chart_* (Postgres)
+                              │
+                              └──► Redis cache_set_*  ◄── GET /api/history (sync lock)
 ```
 
-Expect `bars` and `t`/`o`/`h`/`l`/`c` same length. `bid_ask=FOO` or `from` without `to` → **422**. Unknown symbol → `{ "s": "error" }`.
+| Doc piece | Implementation |
+|---|---|
+| 13 tables | `t_chart_1` … `t_chart_month` (bid_/ask_ OHLC + `chart_datetime`) |
+| Cache namespaces | Redis keys named `cache_set_1s` … `cache_set_month` |
+| Mapping table | `CacheNamespace` (chart_type → table → cache name) |
+| Writer thread | `ChartCacheWriter` seeds boot; `@Scheduled` upserts DB+Redis |
+| Sync | JVM lock per namespace around Redis read/write |
+| Validation | `bid_ask` required; CD length 6; from↔to paired; 422 |
+| Bar DTO | `{ s, t, o, h, l, c }` (+ widget `bars[]`); MID = avg |
+| `nextTime` | max datetime &lt; `from` (weekend gaps on day+) |
+
+#### Doc 121 compliance checklist
+
+| MD requirement | Status |
+|---|---|
+| Receive bid_ask, symbol, chart type, from*, to* | Done |
+| Retrieve cache data (then respond) | Done (Redis; warm from DB if empty) |
+| Synchronize API read vs writer | Done |
+| Minute vs day/week/month table routing | Done via `CacheNamespace` |
+| All 13 `t_chart_*` tables | Done (V8) |
+| Cache mapping chart_type ↔ table ↔ `cache_set_*` | Done |
+| Validation table + 422 `CODE:30020` | Done |
+| resolution → Peach chart_type | Done |
+| Filter CD / from / to / all; sort ASC | Done |
+| BID/ASK/MID from bid_/ask_ columns | Done |
+| `no_data` + empty arrays + `nextTime` | Done |
+| Ignore separate “Peach API” doc extras | Done (only what 121 writes) |
+
+**Extras (widget safety, not in MD):** `bars[]` with ms `time`; FE sends Peach-shaped query params; `volume` column.
+
+#### Verify
+
+```bash
+docker compose up -d
+cd backend
+.\mvnw.cmd "-Dtest=SystemOverviewDesign121Test,FlywayMigrationTest" test
+```
+
+```sql
+SELECT COUNT(*) FROM t_chart_day WHERE curpair_cd = 'USDJPY';
+```
+
+```bash
+docker compose exec redis redis-cli ZCARD peach:cache_set_day:USDJPY
+```
+
+Postman (full host + real unix seconds):
 
 ```powershell
-.\mvnw.cmd "-Dtest=SystemOverviewDesign121Test" test
+$to = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+$from = $to - (20 * 86400)
+"http://127.0.0.1:8080/api/history?symbol=USDJPY&resolution=1D&from=$from&to=$to&bid_ask=MID"
 ```
 
 ---

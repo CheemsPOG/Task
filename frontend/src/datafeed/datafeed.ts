@@ -119,13 +119,17 @@ const Datafeed: IBasicDataFeed = {
 		onErrorCallback: ErrorCallback
 	) {
 		try {
+			const symbolCd = (symbolInfo.ticker ?? symbolInfo.name ?? '')
+				.replace(/[^A-Za-z]/g, '')
+				.toUpperCase();
+			const bidAsk = quoteStore.mode.toUpperCase();
 			const data = await apiGet<HistoryResponse>('/history', {
-				symbol: symbolInfo.ticker,
+				symbol: symbolCd || symbolInfo.ticker,
 				resolution,
 				from: periodParams.from,
 				to: periodParams.to,
 				countBack: periodParams.countBack,
-				price: quoteStore.mode,
+				bid_ask: bidAsk,
 			});
 
 			if (data.s !== 'ok' || data.noData || !data.bars?.length) {
@@ -138,14 +142,15 @@ const Datafeed: IBasicDataFeed = {
 				return;
 			}
 
+			const bars = data.bars;
 			if (periodParams.firstDataRequest) {
 				lastBarsCache.set(
 					`${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`,
-					data.bars[data.bars.length - 1]
+					bars[bars.length - 1]
 				);
 			}
 
-			onHistoryCallback(data.bars, { noData: false });
+			onHistoryCallback(bars, { noData: false });
 		} catch (error) {
 			console.error('[getBars]', error);
 			onErrorCallback(error instanceof Error ? error.message : String(error));

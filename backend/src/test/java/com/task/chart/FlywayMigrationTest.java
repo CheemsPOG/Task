@@ -108,6 +108,31 @@ class FlywayMigrationTest {
 	}
 
 	@Test
+	void createsAllThirteenChartWarehouseTables() {
+		List<String> expected = List.of(
+				"t_chart_1",
+				"t_chart_60",
+				"t_chart_300",
+				"t_chart_600",
+				"t_chart_900",
+				"t_chart_1800",
+				"t_chart_3600",
+				"t_chart_7200",
+				"t_chart_14400",
+				"t_chart_28800",
+				"t_chart_day",
+				"t_chart_week",
+				"t_chart_month");
+		for (String table : expected) {
+			Integer count = jdbcTemplate.queryForObject(
+					"SELECT COUNT(*) FROM information_schema.tables WHERE lower(table_name) = ?",
+					Integer.class,
+					table);
+			assertThat(count).as(table).isEqualTo(1);
+		}
+	}
+
+	@Test
 	void seedsDemoUsersWithBcryptPasswords() {
 		AppUser demo = appUserRepository.findByUsername("demo").orElseThrow();
 		assertThat(demo.getCustomerNo()).isEqualTo(1L);

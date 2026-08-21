@@ -50,32 +50,26 @@ Header on every `/api/**` call except health and login: `Authorization: Bearer <
 ## 121 — Get bars
 
 **Path:** `GET /api/history`  
-**Tables in doc:** 13 `t_chart_*` — **not built**
+**Tables:** Flyway V8 — all 13 `t_chart_*`  
+**Cache:** Redis `peach:cache_set_*:{CD}`
 
 | Doc item | Status | Notes |
 |---|---|---|
-| `bid_ask` required `BID\|MID\|ASK` | **Intentional gap** | Optional. Alias of widget `price=bid\|ask\|mid`. Invalid `bid_ask` → 422. Missing both → MID. Requiring `bid_ask` would break the widget. |
-| `symbol` required, length 6 | **Partial** | Required; `USDJPY` and `USD/JPY` both OK (normalize). Raw length-6 not enforced. |
-| `resolution` list including `10` | **Done** | History list has `10`; marks/timescale do **not** (per 125/126). |
-| `from`/`to` pair, `to >= from` | **Partial** | `from` without `to` → 422. `to` + `countBack` without `from` allowed (widget paging). Doc “vice versa” not enforced. |
-| Cache + 13 tables + `cache_set_*` | **Open** | Still `MockBarGenerator`. No Flyway for `t_chart_*`. |
-| Sync vs cache writer thread | **Open** | No writer thread. |
-| Response `{ s, t[], o[], h[], l[], c[] }` | **Done (dual)** | Peach arrays **and** widget `{ s, bars[{time,open,high,low,close,volume}], noData }`. `t` is unix **seconds**; bar `time` is **ms**. |
-| BID/ASK/MID from bid_/ask_ columns | **Partial** | Mock spread sides, not stored columns. |
-| `s=no_data` + empty arrays + `nextTime` | **Done (mock)** | Empty range → `no_data`, empty `bars`/`t`/`o`/`h`/`l`/`c`, `nextTime` = prior bar open (seconds). Weekend gaps not modeled. |
-| Sort ascending by time | **Done** | Mock generates ascending. |
-| Map TV resolution → Peach chart_type | **Done (helper)** | `ResolutionMapper.toPeachChartType`; mock still uses period ms (no cache route). |
+| `bid_ask` required `BID\|MID\|ASK` | **Done** | Missing / invalid → 422 |
+| `symbol` required, length 6 | **Done** | After normalize (`USD/JPY` → `USDJPY`) |
+| `resolution` list including `10` | **Done** | → chart_type → table + `cache_set_*` |
+| `from`/`to` pair, `to >= from` | **Done** | XOR → 422 |
+| 13 `t_chart_*` tables | **Done** | V8; bid_/ask_ OHLC columns |
+| `cache_set_*` + sync writer | **Done** | Redis hot cache; writer seeds DB then Redis |
+| Response `{ s, t[], o[], h[], l[], c[] }` | **Done (dual)** | + widget `bars[]` |
+| BID/ASK/MID from bid_/ask_ | **Done** | MID = average |
+| `s=no_data` + `nextTime` | **Done** | Prior bar before `from`; weekend gaps |
+| Sort ascending | **Done** | |
+| Map TV → Peach chart_type | **Done** | `CacheNamespace` |
 
-**Prove it:**
+**Prove it:** `structure.md` §121 compliance checklist.
 
-```
-GET /api/history?symbol=USD/JPY&resolution=1D&countBack=10&price=mid
-GET /api/history?symbol=USDJPY&resolution=1D&from=1787011200&to=1787270400&bid_ask=ASK
-```
-
-`bid_ask=FOO` or `from` without `to` → 422. Unknown symbol → `{ "s": "error" }`.
-
-**Test class:** `SystemOverviewDesign121Test`.
+**Test class:** `SystemOverviewDesign121Test` + `FlywayMigrationTest`.
 
 ---
 
@@ -497,11 +491,11 @@ Short answer: **no for the four named Peach items as a set.** Two of them would 
 
 | | |
 |---|---|
-| Close inside 120–126? | **No (honestly)** |
-| Break the chart? | **Yes**, if we switch `/history` off mocks onto empty tables |
-| Why | Doc 121 is a **cache pipeline** (`cache_set_*`, another thread, bid_/ask_ columns), not a CRUD table. Empty Flyway tables do not satisfy “retrieve cache data”. Filling 13 tables with generated OHLC is still a mock, just heavier. |
+| Close inside 120–126? | **Phase 1 done** (in-memory). Phase 2 = Flyway tables |
+| Break the chart? | **Yes**, if we switch `/history` onto empty `t_chart_*` with no writer |
+| Why | Doc 121 is a **cache pipeline**. Phase 1 fills `cache_set_*` in memory. Empty Flyway tables still would not satisfy “retrieve cache data”. |
 
-**Safe:** leave `MockBarGenerator`. Optional later (still ≤126, still mock): resolve the **pair** from `m_ccypairs` instead of `SymbolCatalog` so history/search/resolve share one source — does not require `t_chart_*`.
+**Safe Phase 2:** migrate the same `CachedChartBar` writer/reader onto `t_chart_*`; keep seeding.
 
 ---
 
@@ -509,11 +503,8 @@ Short answer: **no for the four named Peach items as a set.** Two of them would 
 
 | | |
 |---|---|
-| Close inside 120–126? | **Done as dual shape** (still mock) |
-| Break the chart? | **No** — `bars[]` kept; FE still reads `bars` and now forwards `nextTime` |
-| Why | Replacing `bars` would empty the chart; adding Peach arrays + `nextTime` does not. |
-
-**Still open:** real weekend-gap `nextTime` from warehouse data; requiring `bid_ask` / always-paired `from`/`to`.
+| Close inside 120–126? | **Done** (dual shape + cache `nextTime` with weekend gaps) |
+| Break the chart? | **No** — `bars[]` kept; FE still reads `bars` and forwards `nextTime` |
 
 **122 Peach-only `{ t }`:** already return both `t` and `serverTime`. Switching FE to `t` is a one-line change and does not need 127. Dropping `serverTime` without that FE change **breaks** time.
 

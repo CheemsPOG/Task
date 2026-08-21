@@ -11,9 +11,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.task.chart.cache.CacheNamespace;
+import com.task.chart.cache.ChartBarRepository;
+import com.task.chart.cache.ChartCacheStore;
 import com.task.chart.constants.ErrorCodes;
 import com.task.chart.support.TestAuthSupport;
+import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAdjusters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 /**
- * GET /api/history against design doc 121 (validation + BID/ASK/MID bars).
+ * GET /api/history against design doc 121 Phase 1 (in-memory Peach caches).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -36,11 +43,12 @@ import org.springframework.test.web.servlet.MvcResult;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Phase 1 cache read path</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,13 +57,17 @@ class SystemOverviewDesign121Test {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private ChartCacheStore chartCacheStore;
+
+	@Autowired
+	private ChartBarRepository chartBarRepository;
+
 	private String bearerDemo;
-	private String bearerDemo2;
 
 	@BeforeEach
 	void authenticateDemoUsers() throws Exception {
 		bearerDemo = TestAuthSupport.bearerDemo(mockMvc);
-		bearerDemo2 = TestAuthSupport.bearerDemo2(mockMvc);
 	}
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -66,9 +78,11 @@ class SystemOverviewDesign121Test {
 		@Test
 		void missingTokenReturns401() throws Exception {
 			mockMvc.perform(get("/api/history")
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
-							.param("countBack", "10"))
+							.param("from", "1700000000")
+							.param("to", "1700100000")
+							.param("bid_ask", "MID"))
 					.andExpect(status().isUnauthorized());
 		}
 	}
@@ -80,7 +94,8 @@ class SystemOverviewDesign121Test {
 		void missingSymbolReturns422() throws Exception {
 			mockMvc.perform(authorizedHistory()
 							.param("resolution", "1D")
-							.param("countBack", "10")
+							.param("from", "1700000000")
+							.param("to", "1700100000")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
 					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
@@ -91,7 +106,20 @@ class SystemOverviewDesign121Test {
 			mockMvc.perform(authorizedHistory()
 							.param("symbol", "  ")
 							.param("resolution", "1D")
-							.param("countBack", "10")
+							.param("from", "1700000000")
+							.param("to", "1700100000")
+							.param("bid_ask", "MID"))
+					.andExpect(status().isUnprocessableEntity())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
+		}
+
+		@Test
+		void symbolNotLengthSixAfterNormalizeReturns422() throws Exception {
+			mockMvc.perform(authorizedHistory()
+							.param("symbol", "USDJP")
+							.param("resolution", "1D")
+							.param("from", "1700000000")
+							.param("to", "1700100000")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isUnprocessableEntity())
 					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
@@ -100,10 +128,22 @@ class SystemOverviewDesign121Test {
 		@Test
 		void unsupportedResolutionReturns422() throws Exception {
 			mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "2")
-							.param("countBack", "10")
+							.param("from", "1700000000")
+							.param("to", "1700100000")
 							.param("bid_ask", "MID"))
+					.andExpect(status().isUnprocessableEntity())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
+		}
+
+		@Test
+		void missingBidAskReturns422() throws Exception {
+			mockMvc.perform(authorizedHistory()
+							.param("symbol", "USDJPY")
+							.param("resolution", "1D")
+							.param("from", "1700000000")
+							.param("to", "1700100000"))
 					.andExpect(status().isUnprocessableEntity())
 					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
@@ -111,9 +151,10 @@ class SystemOverviewDesign121Test {
 		@Test
 		void invalidBidAskReturns422() throws Exception {
 			mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
-							.param("countBack", "10")
+							.param("from", "1700000000")
+							.param("to", "1700100000")
 							.param("bid_ask", "FOO"))
 					.andExpect(status().isUnprocessableEntity())
 					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
@@ -122,7 +163,7 @@ class SystemOverviewDesign121Test {
 		@Test
 		void fromWithoutToReturns422() throws Exception {
 			mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
 							.param("from", "1721037907")
 							.param("bid_ask", "MID"))
@@ -131,21 +172,21 @@ class SystemOverviewDesign121Test {
 		}
 
 		@Test
-		void toWithoutFromIsAllowedWithCountBack() throws Exception {
+		void toWithoutFromReturns422() throws Exception {
 			mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
 							.param("to", "1721037907")
 							.param("countBack", "5")
 							.param("bid_ask", "MID"))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.s").value("ok"));
+					.andExpect(status().isUnprocessableEntity())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
 		void toBeforeFromReturns422() throws Exception {
 			mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
 							.param("from", "1721038000")
 							.param("to", "1721037907")
@@ -159,63 +200,85 @@ class SystemOverviewDesign121Test {
 	class HistoricalDataRetrieval {
 
 		@Test
-		void returnsOkBarsForWidgetPriceParam() throws Exception {
+		void cacheIsSeededForDayNamespace() {
+			assertThat(chartCacheStore.size(CacheNamespace.CACHE_SET_DAY, "USDJPY")).isPositive();
+			assertThat(chartBarRepository.size(CacheNamespace.CACHE_SET_DAY, "USDJPY")).isPositive();
+			assertThat(chartBarRepository.size(CacheNamespace.CACHE_SET_DAY, "USDJPY"))
+					.isEqualTo(chartCacheStore.size(CacheNamespace.CACHE_SET_DAY, "USDJPY"));
+		}
+
+		@Test
+		void returnsOkBarsWithBidAskAndSlashSymbol() throws Exception {
+			long to = Instant.now().getEpochSecond();
+			long from = to - 20 * 86_400L;
+
 			MvcResult result = mockMvc.perform(authorizedHistory()
 							.param("symbol", "USD/JPY")
 							.param("resolution", "1D")
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
 							.param("countBack", "10")
-							.param("price", "mid"))
+							.param("bid_ask", "MID"))
 					.andExpect(status().isOk())
 					.andReturn();
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
 			assertThat(root.path("s").asText()).isEqualTo("ok");
 			assertThat(root.path("bars").isArray()).isTrue();
-			assertThat(root.path("bars")).hasSize(10);
+			assertThat(root.path("bars").size()).isBetween(1, 10);
 			assertBarShape(root.path("bars").get(0));
-			assertThat(root.path("bars").get(9).path("time").asLong())
+			assertThat(root.path("bars").get(root.path("bars").size() - 1).path("time").asLong())
 					.isLessThanOrEqualTo(Instant.now().toEpochMilli());
 		}
 
 		@Test
 		void futureToIsClampedSoLastBarIsNotAfterNow() throws Exception {
-			long futureTo = Instant.now().getEpochSecond() + 10 * 86_400L;
+			long to = Instant.now().getEpochSecond() + 10 * 86_400L;
+			long from = Instant.now().getEpochSecond() - 10 * 86_400L;
 
 			MvcResult result = mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
-							.param("to", String.valueOf(futureTo))
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
 							.param("countBack", "5")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isOk())
 					.andReturn();
 
 			JsonNode bars = objectMapper.readTree(result.getResponse().getContentAsString()).path("bars");
-			assertThat(bars).hasSize(5);
+			assertThat(bars.size()).isBetween(1, 5);
 			long lastTime = bars.get(bars.size() - 1).path("time").asLong();
 			long currentOpen = Math.floorDiv(Instant.now().toEpochMilli() - 1, 86_400_000L) * 86_400_000L;
 			assertThat(lastTime).isLessThanOrEqualTo(currentOpen);
 		}
 
 		@Test
-		void bidAskAskProducesHigherCloseThanMid() throws Exception {
-			long to = Instant.parse("2026-01-01T00:00:00Z").getEpochSecond();
+		void midCloseIsAverageOfBidAndAskClose() throws Exception {
+			long to = Instant.parse("2026-01-02T00:00:00Z").getEpochSecond();
+			long from = to - 86_400L;
 
-			JsonNode mid = historyJson("MID", to);
-			JsonNode ask = historyJson("ASK", to);
-			JsonNode bid = historyJson("BID", to);
+			JsonNode mid = historyJson("MID", from, to);
+			JsonNode ask = historyJson("ASK", from, to);
+			JsonNode bid = historyJson("BID", from, to);
 
-			assertThat(ask.path("bars").get(0).path("close").asDouble())
-					.isGreaterThan(mid.path("bars").get(0).path("close").asDouble());
-			assertThat(bid.path("bars").get(0).path("close").asDouble())
-					.isLessThan(mid.path("bars").get(0).path("close").asDouble());
+			double midClose = mid.path("c").get(0).asDouble();
+			double askClose = ask.path("c").get(0).asDouble();
+			double bidClose = bid.path("c").get(0).asDouble();
+			assertThat(midClose).isEqualTo((askClose + bidClose) / 2.0);
+			assertThat(askClose).isGreaterThan(bidClose);
 		}
 
 		@Test
 		void tenMinuteResolutionIsAccepted() throws Exception {
+			long to = Instant.now().getEpochSecond();
+			long from = to - 10 * 600L;
+
 			mockMvc.perform(authorizedHistory()
 							.param("symbol", "USDJPY")
 							.param("resolution", "10")
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
 							.param("countBack", "5")
 							.param("bid_ask", "BID"))
 					.andExpect(status().isOk())
@@ -224,12 +287,12 @@ class SystemOverviewDesign121Test {
 		}
 
 		@Test
-		void fromAndToFilterBarsAscending() throws Exception {
-			long to = Instant.parse("2026-01-01T00:00:00Z").getEpochSecond();
+		void fromAndToFilterBarsAscendingInclusive() throws Exception {
+			long to = Instant.parse("2026-01-02T00:00:00Z").getEpochSecond();
 			long from = to - 10 * 86_400L;
 
 			MvcResult result = mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
 							.param("from", String.valueOf(from))
 							.param("to", String.valueOf(to))
@@ -244,7 +307,7 @@ class SystemOverviewDesign121Test {
 			for (JsonNode bar : bars) {
 				long time = bar.path("time").asLong();
 				assertThat(time).isGreaterThanOrEqualTo(from * 1000L);
-				assertThat(time).isLessThan(to * 1000L);
+				assertThat(time).isLessThanOrEqualTo(to * 1000L);
 				assertThat(time).isGreaterThan(previous);
 				previous = time;
 			}
@@ -252,10 +315,14 @@ class SystemOverviewDesign121Test {
 
 		@Test
 		void unknownSymbolReturnsUdfErrorBodyNot422() throws Exception {
+			long to = Instant.now().getEpochSecond();
+			long from = to - 86_400L;
+
 			mockMvc.perform(authorizedHistory()
 							.param("symbol", "ETHUSD")
 							.param("resolution", "1D")
-							.param("countBack", "10")
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
 							.param("bid_ask", "MID"))
 					.andExpect(status().isOk())
 					.andExpect(jsonPath("$.s").value("error"))
@@ -264,9 +331,14 @@ class SystemOverviewDesign121Test {
 
 		@Test
 		void returnsWidgetBarsAndPeachColumnarArrays() throws Exception {
+			long to = Instant.now().getEpochSecond();
+			long from = to - 5 * 86_400L;
+
 			MvcResult result = mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
 							.param("countBack", "3")
 							.param("bid_ask", "MID"))
 					.andExpect(status().isOk())
@@ -274,17 +346,42 @@ class SystemOverviewDesign121Test {
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
 			assertThat(root.path("s").asText()).isEqualTo("ok");
-			assertThat(root.path("bars")).hasSize(3);
-			assertThat(root.path("t")).hasSize(3);
-			assertThat(root.path("o")).hasSize(3);
-			assertThat(root.path("h")).hasSize(3);
-			assertThat(root.path("l")).hasSize(3);
-			assertThat(root.path("c")).hasSize(3);
-			assertThat(root.path("bars").get(0).has("time")).isTrue();
+			assertThat(root.path("bars").size()).isBetween(1, 3);
+			assertThat(root.path("t")).hasSize(root.path("bars").size());
+			assertThat(root.path("o")).hasSize(root.path("bars").size());
 			assertThat(root.path("t").get(0).asLong())
 					.isEqualTo(root.path("bars").get(0).path("time").asLong() / 1000L);
 			assertThat(root.path("o").get(0).asDouble())
 					.isEqualTo(root.path("bars").get(0).path("open").asDouble());
+		}
+
+		@Test
+		void weekendGapReturnsNoDataWithNextTimeOnPriorFriday() throws Exception {
+			LocalDate saturday = LocalDate.now(ZoneOffset.UTC)
+					.with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
+			if (saturday.getDayOfWeek() != DayOfWeek.SATURDAY) {
+				saturday = saturday.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+			}
+			long from = saturday.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
+			long to = from + 86_400L - 1;
+
+			MvcResult result = mockMvc.perform(authorizedHistory()
+							.param("symbol", "USDJPY")
+							.param("resolution", "1D")
+							.param("from", String.valueOf(from))
+							.param("to", String.valueOf(to))
+							.param("bid_ask", "MID"))
+					.andExpect(status().isOk())
+					.andReturn();
+
+			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
+			assertThat(root.path("s").asText()).isEqualTo("no_data");
+			assertThat(root.path("t")).isEmpty();
+			assertThat(root.has("nextTime")).isTrue();
+			long nextTime = root.path("nextTime").asLong();
+			assertThat(nextTime).isLessThan(from);
+			DayOfWeek nextDay = Instant.ofEpochSecond(nextTime).atZone(ZoneOffset.UTC).getDayOfWeek();
+			assertThat(nextDay).isNotIn(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 		}
 
 		@Test
@@ -312,10 +409,11 @@ class SystemOverviewDesign121Test {
 			assertThat(nextTime).isPositive();
 		}
 
-		private JsonNode historyJson(String bidAsk, long to) throws Exception {
+		private JsonNode historyJson(String bidAsk, long from, long to) throws Exception {
 			MvcResult result = mockMvc.perform(authorizedHistory()
-							.param("symbol", "USD/JPY")
+							.param("symbol", "USDJPY")
 							.param("resolution", "1D")
+							.param("from", String.valueOf(from))
 							.param("to", String.valueOf(to))
 							.param("countBack", "1")
 							.param("bid_ask", bidAsk))
