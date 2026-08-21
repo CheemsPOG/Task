@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 import type { IChartingLibraryWidget, ThemeName } from 'charting_library';
 import { getChartOverrides, theme as initialTheme } from './theme.ts';
 

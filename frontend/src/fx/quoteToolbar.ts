@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 import type { DropdownItem, IChartingLibraryWidget, IDropdownApi } from 'charting_library';
 import { resubscribeAllWithCurrentPrice } from '../datafeed/streaming.ts';
 import { fetchCurpairs } from './currencyPairs.ts';

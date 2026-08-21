@@ -1,0 +1,21 @@
+app:
+  tradingview:
+    supports-search: true
+    supports-marks: true
+    supports-timescale-marks: true
+    supports-time: true
+    exchanges: CTFX
+    symbols-types: FOREX
+    supported-resolutions:
+      - 1S
+      - 1
+      - 5
+      - 15
+      - 30
+      - 60
+      - 120
+      - 240
+      - 480
+      - 1D
+      - 1W
+      - 1M

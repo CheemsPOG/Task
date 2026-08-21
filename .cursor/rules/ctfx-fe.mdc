@@ -1,0 +1,32 @@
+---
+description: CTFX frontend conventions — TypeScript/React structure, naming, safety
+globs: frontend/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# CTFX frontend
+
+- Format with Prettier + ESLint (and the team VS Code `settings.json`: format on save, organize imports). UTF-8, EOL LF. TypeScript strict mode.
+- File header:
+
+```ts
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+```
+
+- One exported component per file. File name = component name, PascalCase, `.ts` / `.tsx` (`ReservationCard.tsx`). Put files in the matching folder (page, container, component, hook, services, routers).
+- Every component has a props interface. Do not use `any` on props. Always use TSX, not `React.createElement`.
+- Component / interface / type alias: PascalCase. Instances: camelCase.
+
+```tsx
+import ReservationCard from './ReservationCard';
+const reservationItem = <ReservationCard />;
+```
+
+- Variables, arrays, objects, functions: camelCase. Imports grouped (`import { Card, Row, Col } from "antd"`).
+- Do not put user-visible strings in components; use i18n keys.
+- No inline styles. Prefer fragments over extra `div`s.
+- Sanitize HTML (e.g. DOMPurify) to prevent XSS. Use try/catch/finally around async or complex logic.
+- `useMemo` / `useCallback` only when needed. Redux only for state shared across pages. Context: define context, provider, and hook together.
+- API layer: one service per backend controller, in `services`, with typed request/response per method.

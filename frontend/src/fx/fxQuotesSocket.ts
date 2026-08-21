@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 import { quoteStore } from './quoteStore.ts';
 
 const INITIAL_RECONNECT_MS = 1_000;

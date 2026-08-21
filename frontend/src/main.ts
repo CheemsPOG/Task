@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 import type { ChartingLibraryFeatureset, ResolutionString } from 'charting_library';
 import Datafeed from './datafeed/datafeed.ts';
 import { installFxQuoteToolbar } from './fx/quoteToolbar.ts';

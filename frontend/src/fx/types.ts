@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 export type PriceMode = 'bid' | 'ask' | 'mid';
 
 export interface CurrencyPair {

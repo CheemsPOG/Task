@@ -1,0 +1,45 @@
+---
+description: CTFX git update flow and merge request checklist
+alwaysApply: true
+---
+
+# CTFX git flow
+
+When updating a working branch `A` from `master`/`develop`:
+
+1. Stay on branch `A`.
+2. `git fetch` all remotes.
+3. Branch `master`/`develop` into a temp branch `B`.
+4. Merge `A` into `B`.
+5. Reset `A` to `B`.
+6. Delete `B`.
+7. Continue on `A`.
+
+Do not force-push unless the user explicitly asks.
+
+# Merge request body
+
+```markdown
+## [Task Id](task-link) Task Title
+### Summary of Changes
+- details-commit-changes
+### Checklist
+#### Code is up to date
+- [ ] Code is checked by checkstyle
+- [ ] Latest code pulled from working branch (base-branch)
+- [ ] All merge conflicts are resolved
+- [ ] Source code is build/executed successful
+- [ ] Source code is tested on local machine
+- [ ] Source code is passed UT
+#### Database changes
+- [ ] No changes
+#### Configuration change
+- [ ] No changes
+#### Library changed
+- [ ] N/A
+#### Task in Openproject/Jira/...
+- [ ] Status updated
+- [ ] Time logged
+#### Acceptance criteria
+- Refer [task-Id-of-QC](task-link)
+```

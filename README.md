@@ -7,12 +7,25 @@ Frontend chart (TradingView Advanced Charts), a Java Spring Boot REST backend, a
 - **Java 21+** (Java 21–26 are fine)
 - **Python 3.10+**
 - **Node.js 18+**
+- **Docker** (PostgreSQL for Java REST)
 
 Maven is not required globally. The backend ships with the Maven Wrapper (`mvnw` / `mvnw.cmd`).
 
 ## Run
 
-Use three terminals.
+Use four terminals (Postgres first).
+
+### 0. PostgreSQL
+
+From the repo root (Docker Desktop must be running):
+
+```bash
+docker compose up -d
+```
+
+DBeaver: host `127.0.0.1`, port `5432`, database `chart`, user `chart`, password `chart`.
+
+Flyway creates `m_ccypairs` and `m_season` the first time Java starts.
 
 ### 1. Java REST backend
 
@@ -36,7 +49,15 @@ Quick check:
 curl http://127.0.0.1:8080/api/health
 ```
 
-Expected: `{"status":"ok","service":"chart-backend"}`.
+Expected: `{"status":"ok","service":"chart-backend"}` (no auth header).
+
+Chart datafeed routes under `/api` (except `/health`) require header `X-Customer-No`. The frontend sends `1`. Quick check:
+
+```bash
+curl http://127.0.0.1:8080/api/config
+```
+
+Expected: HTTP 401. With `-H "X-Customer-No: 1"` the same URL returns 200.
 
 ### 2. Python WebSocket server
 

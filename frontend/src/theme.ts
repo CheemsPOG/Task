@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 import type { Overrides, ThemeName } from 'charting_library';
 
 function getRequestedTheme(): ThemeName | null {

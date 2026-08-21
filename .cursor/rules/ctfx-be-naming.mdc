@@ -1,0 +1,17 @@
+---
+description: CTFX Java naming — types, methods, DTO and repository names
+globs: backend/**/*.java
+alwaysApply: false
+---
+
+# CTFX backend naming
+
+- **Class**: noun, PascalCase, descriptive (`UserController`).
+- **Interface**: same as a class, or `I` prefix (`UserService`, `IUserInfo`).
+- **Method**: verb, camelCase (`validateParams()`, `getUserDetailById()`).
+- **Variable**: short camelCase (`User user`, `CreateUserRequest request`). No numbered names (`a1`, `user2`).
+- **Constant**: `UPPER_SNAKE_CASE` (`MAX_LENGTH`).
+- **Request**: `Create...Request`, `Update...Request`, `Delete...Request`, `Get...Request`, `Get...ListRequest` (`CreateUserRequest`, `GetUserListRequest`).
+- **Response**: matching `Create...Response`, `Update...Response`, `Delete...Response`, `Get...Response`, `Get...ListResponse`.
+- **Service interface method**: same stem as the request (`createUserRequest`).
+- **Repository**: `UserRepository` extends `BaseRepository` and `UserRepositoryCustom`; impl `UserRepositoryImpl`. Custom impl `UserRepositoryCustomImpl`.

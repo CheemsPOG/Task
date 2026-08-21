@@ -1,6 +1,17 @@
 spring:
   application:
     name: chart-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_NAME:chart}
+    username: ${DB_USER:chart}
+    password: ${DB_PASSWORD:chart}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 server:
   port: 8080
@@ -11,3 +22,39 @@ app:
     - http://127.0.0.1:5173
     - http://localhost:3000
     - http://127.0.0.1:3000
+  tradingview:
+    supports-search: true
+    # Doc 120 reference is true; keep false until marks APIs (125/126) exist.
+    supports-marks: false
+    supports-timescale-marks: false
+    supports-time: true
+    exchanges: CTFX
+    symbols-types: FOREX
+    timezone: Asia/Tokyo
+    has-intraday: true
+    visible-plots-set: ohlc
+    has-seconds: true
+    time-summer: "0700-3000:2|0600-3000:345|0600-2940:6"
+    time-winter: "0700-3100:2|0700-3100:345|0700-3040:6"
+    supported-resolutions:
+      - 1S
+      - 1
+      - 5
+      - 15
+      - 30
+      - 60
+      - 120
+      - 240
+      - 480
+      - 1D
+      - 1W
+      - 1M
+    intraday-multipliers:
+      - "1"
+      - "5"
+      - "15"
+      - "30"
+      - "60"
+      - "120"
+      - "240"
+      - "480"

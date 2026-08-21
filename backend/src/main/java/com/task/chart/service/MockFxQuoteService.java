@@ -1,180 +1,46 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 package com.task.chart.service;
 
-import com.task.chart.dto.CurrencyPairDto;
-import com.task.chart.dto.FxQuoteMessage;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
+import com.task.chart.constants.PriceComponent;
+import com.task.chart.dto.response.FxQuoteMessage;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
 /**
- * Local mock FX quote generator. Prices are simulated with a random walk.
+ * In-process BID/ASK/MID quote walk used by history stitching.
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.0.0
  */
-@Service
-public class MockFxQuoteService {
+public interface MockFxQuoteService {
 
-	public interface QuoteListener {
+	interface QuoteListener {
 		void onQuotes(List<FxQuoteMessage> quotes);
 	}
 
-	private final CurrencyPairService currencyPairService;
-	private final Map<Integer, SimulatedQuote> quotes = new ConcurrentHashMap<>();
-	private final List<QuoteListener> listeners = new CopyOnWriteArrayList<>();
+	void addListener(QuoteListener listener);
 
-	public MockFxQuoteService(CurrencyPairService currencyPairService) {
-		this.currencyPairService = currencyPairService;
-		for (CurrencyPairDto pair : currencyPairService.list()) {
-			quotes.put(pair.curpairCd(), SimulatedQuote.seed(pair));
-		}
-	}
+	void removeListener(QuoteListener listener);
 
-	public void addListener(QuoteListener listener) {
-		listeners.add(listener);
-	}
+	List<FxQuoteMessage> snapshot();
 
-	public void removeListener(QuoteListener listener) {
-		listeners.remove(listener);
-	}
+	double currentMid(int curpairCd);
 
-	public List<FxQuoteMessage> snapshot() {
-		List<FxQuoteMessage> messages = new ArrayList<>(quotes.size());
-		quotes.values().forEach(quote -> messages.add(quote.toMessage()));
-		return messages;
-	}
+	double currentPrice(int curpairCd, PriceComponent price);
 
-	public double currentMid(int curpairCd) {
-		return currentPrice(curpairCd, PriceComponent.MID);
-	}
-
-	public double currentPrice(int curpairCd, PriceComponent price) {
-		SimulatedQuote quote = quotes.get(curpairCd);
-		if (quote == null) {
-			throw new IllegalArgumentException("unknown pair " + curpairCd);
-		}
-		return switch (price == null ? PriceComponent.MID : price) {
-			case BID -> quote.bidValue();
-			case ASK -> quote.askValue();
-			case MID -> quote.midValue();
-		};
-	}
-
-	@Scheduled(fixedRate = 333)
-	public void tick() {
-		List<FxQuoteMessage> messages = new ArrayList<>(quotes.size());
-		quotes.values().forEach(quote -> {
-			quote.step();
-			messages.add(quote.toMessage());
-		});
-		if (listeners.isEmpty()) {
-			return;
-		}
-		listeners.forEach(listener -> listener.onQuotes(messages));
-	}
-
-	static final class SimulatedQuote {
-		private final int curpairCd;
-		private final int scale;
-		private final BigDecimal spread;
-		private final BigDecimal maxStep;
-		private BigDecimal bid;
-		private BigDecimal ask;
-		private BigDecimal mid;
-		private BigDecimal high;
-		private BigDecimal low;
-
-		private SimulatedQuote(
-				int curpairCd,
-				int scale,
-				BigDecimal spread,
-				BigDecimal maxStep,
-				BigDecimal bid) {
-			this.curpairCd = curpairCd;
-			this.scale = scale;
-			this.spread = spread;
-			this.maxStep = maxStep;
-			this.bid = bid;
-			applyAskFromBid();
-			this.high = ask;
-			this.low = bid;
-		}
-
-		static SimulatedQuote seed(CurrencyPairDto pair) {
-			boolean yenQuote = pair.curpairName().endsWith("JPY");
-			int scale = yenQuote ? 3 : 5;
-			BigDecimal spread = BigDecimal.valueOf(DemoMarket.fullSpread(pair.curpairName()))
-					.setScale(scale, RoundingMode.HALF_UP);
-			BigDecimal bid = BigDecimal.valueOf(DemoMarket.seedBid(pair.curpairName()))
-					.setScale(scale, RoundingMode.HALF_UP);
-			BigDecimal maxStep = switch (pair.curpairName()) {
-				case "USDJPY" -> bd("0.012", scale);
-				case "EURJPY" -> bd("0.014", scale);
-				case "EURUSD" -> bd("0.00012", scale);
-				case "GBPUSD" -> bd("0.00014", scale);
-				case "AUDUSD" -> bd("0.00010", scale);
-				default -> yenQuote ? bd("0.010", scale) : bd("0.00010", scale);
-			};
-			return new SimulatedQuote(pair.curpairCd(), scale, spread, maxStep, bid);
-		}
-
-		void step() {
-			double gaussian = ThreadLocalRandom.current().nextGaussian();
-			BigDecimal delta = maxStep.multiply(BigDecimal.valueOf(gaussian / 3.0));
-			bid = bid.add(delta).setScale(scale, RoundingMode.HALF_UP);
-			if (bid.compareTo(BigDecimal.ZERO) <= 0) {
-				bid = maxStep;
-			}
-			applyAskFromBid();
-			if (ask.compareTo(high) > 0) {
-				high = ask;
-			}
-			if (bid.compareTo(low) < 0) {
-				low = bid;
-			}
-		}
-
-		double midValue() {
-			return mid.doubleValue();
-		}
-
-		double bidValue() {
-			return bid.doubleValue();
-		}
-
-		double askValue() {
-			return ask.doubleValue();
-		}
-
-		FxQuoteMessage toMessage() {
-			return new FxQuoteMessage(
-					String.valueOf(curpairCd),
-					System.currentTimeMillis(),
-					bid.doubleValue(),
-					ask.doubleValue(),
-					mid.doubleValue(),
-					high.doubleValue(),
-					low.doubleValue());
-		}
-
-		private void applyAskFromBid() {
-			ask = bid.add(spread).setScale(scale, RoundingMode.HALF_UP);
-			if (bid.compareTo(ask) >= 0) {
-				ask = bid.add(tick());
-			}
-			mid = bid.add(ask).divide(BigDecimal.TWO, scale, RoundingMode.HALF_UP);
-		}
-
-		private BigDecimal tick() {
-			return BigDecimal.ONE.movePointLeft(scale);
-		}
-
-		private static BigDecimal bd(String value, int scale) {
-			return new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP);
-		}
-	}
+	void tick();
 }

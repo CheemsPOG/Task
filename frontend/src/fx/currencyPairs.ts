@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 import { parseCurrencyPairs } from './quoteStore.ts';
 import type { CurrencyPair } from './types.ts';
 

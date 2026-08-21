@@ -1,59 +1,36 @@
+/*
+ * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
+ */
+
 package com.task.chart.service;
 
-import com.task.chart.dto.CurrencyPairDto;
 import java.util.List;
-import java.util.Locale;
-import org.springframework.stereotype.Service;
 
-@Service
-public class SymbolCatalog {
+/**
+ * Resolves chart tickers from the FX pair catalog.
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.0.0
+ */
+public interface SymbolCatalog {
 
-	private final List<CachedSymbol> symbols;
+	List<CachedSymbol> getAll();
 
-	public SymbolCatalog(CurrencyPairService currencyPairService) {
-		this.symbols = currencyPairService.list().stream()
-				.map(SymbolCatalog::fromPair)
-				.toList();
-	}
+	CachedSymbol find(String symbolName);
 
-	public List<CachedSymbol> getAll() {
-		return symbols;
-	}
-
-	public CachedSymbol find(String symbolName) {
-		if (symbolName == null || symbolName.isBlank()) {
-			return null;
-		}
-		String needle = symbolName.trim().toLowerCase(Locale.ROOT);
-		return symbols.stream()
-				.filter(symbol -> matches(symbol, needle))
-				.findFirst()
-				.orElse(null);
-	}
-
-	private static CachedSymbol fromPair(CurrencyPairDto pair) {
-		String shortName = pair.curpairDisplay();
-		return new CachedSymbol(
-				shortName,
-				shortName,
-				shortName,
-				pair.curpairName(),
-				"",
-				"forex",
-				DemoMarket.priceScale(pair.curpairName()),
-				pair.curpairCd());
-	}
-
-	private static boolean matches(CachedSymbol symbol, String needle) {
-		return symbol.ticker().toLowerCase(Locale.ROOT).equals(needle)
-				|| symbol.fullName().toLowerCase(Locale.ROOT).equals(needle)
-				|| symbol.shortName().toLowerCase(Locale.ROOT).equals(needle)
-				|| symbol.providerSymbol().toLowerCase(Locale.ROOT).equals(needle)
-				|| String.valueOf(symbol.curpairCd()).equals(needle)
-				|| ("fx:" + symbol.shortName()).toLowerCase(Locale.ROOT).equals(needle);
-	}
-
-	public record CachedSymbol(
+	record CachedSymbol(
 			String shortName,
 			String fullName,
 			String ticker,
