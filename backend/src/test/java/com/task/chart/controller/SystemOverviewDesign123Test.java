@@ -115,6 +115,17 @@ class SystemOverviewDesign123Test {
 					.andExpect(status().isUnprocessableEntity())
 					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
+
+		@Test
+		void symbolNotLengthSixAfterNormalizeReturns422() throws Exception {
+			mockMvc.perform(authorizedSymbols("ETH"))
+					.andExpect(status().isUnprocessableEntity())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
+
+			mockMvc.perform(authorizedSymbols("USDJP"))
+					.andExpect(status().isUnprocessableEntity())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
+		}
 	}
 
 	@Nested
@@ -127,7 +138,8 @@ class SystemOverviewDesign123Test {
 					.andReturn();
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
-			assertThat(root.get("name").asText()).isEqualTo("USD/JPY");
+			assertThat(root.get("name").asText()).isEqualTo("USDJPY");
+			assertThat(root.get("ticker").asText()).isEqualTo("USD/JPY");
 			assertThat(root.get("description").asText()).isEqualTo("米ドル/円");
 			assertThat(root.get("pricescale").asInt()).isEqualTo(1000);
 		}
@@ -136,14 +148,16 @@ class SystemOverviewDesign123Test {
 		void widgetDisplayNameStillResolves() throws Exception {
 			mockMvc.perform(authorizedSymbols("USD/JPY"))
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.name").value("USD/JPY"));
+					.andExpect(jsonPath("$.name").value("USDJPY"))
+					.andExpect(jsonPath("$.ticker").value("USD/JPY"));
 		}
 
 		@Test
 		void fxPrefixedDisplayNameStillResolves() throws Exception {
 			mockMvc.perform(authorizedSymbols("FX:USD/JPY"))
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.name").value("USD/JPY"));
+					.andExpect(jsonPath("$.name").value("USDJPY"))
+					.andExpect(jsonPath("$.ticker").value("USD/JPY"));
 		}
 
 		@Test
@@ -169,7 +183,8 @@ class SystemOverviewDesign123Test {
 		void nonYenPairUsesRateUnitFive() throws Exception {
 			mockMvc.perform(authorizedSymbols("EURUSD"))
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.name").value("EUR/USD"))
+					.andExpect(jsonPath("$.name").value("EURUSD"))
+					.andExpect(jsonPath("$.ticker").value("EUR/USD"))
 					.andExpect(jsonPath("$.pricescale").value(100_000))
 					.andExpect(jsonPath("$.description").value("ユーロ/米ドル"));
 		}
@@ -204,7 +219,8 @@ class SystemOverviewDesign123Test {
 					"has_seconds");
 
 			AppProperties.TradingView tradingView = appProperties.getTradingView();
-			assertThat(root.get("name").asText()).isEqualTo("USD/JPY");
+			assertThat(root.get("name").asText()).isEqualTo("USDJPY");
+			assertThat(root.get("ticker").asText()).isEqualTo("USD/JPY");
 			assertThat(root.get("description").asText()).isEqualTo("米ドル/円");
 			assertThat(root.get("timezone").asText()).isEqualTo("Asia/Tokyo");
 			assertThat(root.get("exchange").asText()).isEqualTo("CTFX");

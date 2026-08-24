@@ -6,6 +6,10 @@ package com.task.chart.controller;
 
 import com.task.chart.dto.response.IndicatorTemplateListItemDto;
 import com.task.chart.service.IndicatorTemplateService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/indicator-templates")
+@Tag(name = "Indicator templates (132)", description = "List study templates for the current customer")
 public class IndicatorTemplateController {
 
 	private final IndicatorTemplateService indicatorTemplateService;
@@ -50,6 +55,11 @@ public class IndicatorTemplateController {
 	 * @return indicator template list DTO (name only, sorted by name)
 	 */
 	@GetMapping
+	@Operation(summary = "132 Get indicator template list")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Name-only list for this customer"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
+	})
 	public List<IndicatorTemplateListItemDto> list() {
 		return indicatorTemplateService.list();
 	}

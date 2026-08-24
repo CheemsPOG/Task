@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -28,11 +29,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>MessageSource + auth errors</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>@ResponseStatus for OpenAPI docs</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -49,6 +51,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ValidationException.class)
+	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
 	public ResponseEntity<ErrorResponse> handleValidation(ValidationException ex) {
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
 				.body(ErrorResponse.of(
@@ -61,6 +64,7 @@ public class GlobalExceptionHandler {
 			HttpMessageNotReadableException.class,
 			MethodArgumentTypeMismatchException.class
 	})
+	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
 	public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex) {
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
 				.body(ErrorResponse.of(
@@ -69,6 +73,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(ErrorResponse.of(
@@ -77,6 +82,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(BadCredentialsAppException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsAppException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(ErrorResponse.of(
@@ -85,6 +91,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ServerErrorException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<ErrorResponse> handleServer(ServerErrorException ex) {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(ErrorResponse.of(

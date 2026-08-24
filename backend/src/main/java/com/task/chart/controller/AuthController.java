@@ -7,6 +7,13 @@ package com.task.chart.controller;
 import com.task.chart.dto.request.LoginRequest;
 import com.task.chart.dto.response.LoginResponse;
 import com.task.chart.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>OpenAPI operation docs</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "Local JWT login (mentor S-01 stand-in)")
 public class AuthController {
 
 	private final AuthService authService;
@@ -52,6 +61,17 @@ public class AuthController {
 	 * @return access token payload
 	 */
 	@PostMapping("/login")
+	@SecurityRequirements
+	@Operation(summary = "Login and get JWT")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Token issued"),
+			@ApiResponse(responseCode = "401", description = "Bad username or password")
+	})
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			required = true,
+			content = @Content(
+					examples = @ExampleObject(
+							value = "{\"username\":\"demo\",\"password\":\"demo\"}")))
 	public LoginResponse login(@RequestBody(required = false) LoginRequest request) {
 		return authService.login(request);
 	}

@@ -30,11 +30,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Permit Swagger UI for mentor review</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @Configuration
 @EnableWebSecurity
@@ -86,6 +87,12 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 						.requestMatchers("/curpairs").permitAll()
+						.requestMatchers(
+								"/swagger-ui.html",
+								"/swagger-ui/**",
+								"/v3/api-docs",
+								"/v3/api-docs/**")
+						.permitAll()
 						.requestMatchers("/api/**").authenticated()
 						.anyRequest().permitAll())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

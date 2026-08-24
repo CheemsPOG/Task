@@ -6,6 +6,10 @@ package com.task.chart.controller;
 
 import com.task.chart.dto.response.CurrencyPairDto;
 import com.task.chart.service.CurrencyPairService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0.0
  */
 @RestController
+@Tag(name = "Currency pairs", description = "Demo FX catalog for the Python quote stream")
 public class CurrencyPairController {
 
 	private final CurrencyPairService currencyPairService;
@@ -48,6 +53,9 @@ public class CurrencyPairController {
 	 * @return catalog rows
 	 */
 	@GetMapping("/curpairs")
+	@SecurityRequirements
+	@Operation(summary = "List demo FX pairs (no token)")
+	@ApiResponse(responseCode = "200", description = "Catalog for the quote stream")
 	public List<CurrencyPairDto> curpairs() {
 		return currencyPairService.list();
 	}

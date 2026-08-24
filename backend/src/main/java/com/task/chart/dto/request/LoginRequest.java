@@ -4,6 +4,8 @@
 
 package com.task.chart.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Login body for {@code POST /api/auth/login}.
  *
@@ -22,5 +24,7 @@ package com.task.chart.dto.request;
  * @author Task
  * @version 1.0.0
  */
-public record LoginRequest(String username, String password) {
+public record LoginRequest(
+		@Schema(description = "Login name", example = "demo") String username,
+		@Schema(description = "Password", example = "demo") String password) {
 }

@@ -13,6 +13,12 @@ import com.task.chart.dto.response.ServerTimeResponse;
 import com.task.chart.dto.response.SymbolInfoDto;
 import com.task.chart.dto.response.TimescaleMarkDto;
 import com.task.chart.service.ChartDataService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +37,16 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>OpenAPI operation docs</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Datafeed (120–126)", description = "TradingView UDF: config, history, time, symbols, search, marks")
 public class ChartDataController {
 
 	private final ChartDataService chartDataService;
@@ -58,6 +66,9 @@ public class ChartDataController {
 	 * @return health payload
 	 */
 	@GetMapping("/health")
+	@SecurityRequirements
+	@Operation(summary = "Health check (no token)")
+	@ApiResponse(responseCode = "200", description = "Service is up")
 	public HealthResponse health() {
 		return new HealthResponse("ok", "chart-backend");
 	}
@@ -68,6 +79,11 @@ public class ChartDataController {
 	 * @return supported resolutions and flags
 	 */
 	@GetMapping("/config")
+	@Operation(summary = "120 Get datafeed configuration")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Widget onReady payload"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
+	})
 	public DatafeedConfigResponse config() {
 		return chartDataService.config();
 	}
@@ -78,6 +94,11 @@ public class ChartDataController {
 	 * @return unix time in seconds
 	 */
 	@GetMapping("/time")
+	@Operation(summary = "122 Get server time")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Unix seconds"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
+	})
 	public ServerTimeResponse time() {
 		return new ServerTimeResponse(chartDataService.serverTimeSeconds());
 	}
@@ -92,11 +113,17 @@ public class ChartDataController {
 	 * @return matching symbols
 	 */
 	@GetMapping("/search")
+	@Operation(summary = "124 Get symbol list")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Matching pairs"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "422", description = "query too long or bad limit")
+	})
 	public List<SearchSymbolDto> search(
-			@RequestParam(required = false) String query,
-			@RequestParam(required = false) String exchange,
-			@RequestParam(required = false) String type,
-			@RequestParam(required = false) Integer limit) {
+			@Parameter(description = "Partial CD or JP name, max 10") @RequestParam(required = false) String query,
+			@Parameter(description = "Widget filter; CTFX or empty") @RequestParam(required = false) String exchange,
+			@Parameter(description = "Widget filter; FOREX or empty") @RequestParam(required = false) String type,
+			@Parameter(description = "1–100, default 100") @RequestParam(required = false) Integer limit) {
 		return chartDataService.search(query, exchange, type, limit);
 	}
 
@@ -107,7 +134,16 @@ public class ChartDataController {
 	 * @return symbol metadata
 	 */
 	@GetMapping("/symbols")
-	public SymbolInfoDto symbols(@RequestParam(required = false) String symbol) {
+	@Operation(summary = "123 Get symbol information")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "LibrarySymbolInfo"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "404", description = "Unknown pair"),
+			@ApiResponse(responseCode = "422", description = "symbol missing or not length 6")
+	})
+	public SymbolInfoDto symbols(
+			@Parameter(description = "USDJPY or USD/JPY", example = "USDJPY")
+			@RequestParam(required = false) String symbol) {
 		return chartDataService.resolve(symbol);
 	}
 
@@ -121,11 +157,17 @@ public class ChartDataController {
 	 * @return mark list
 	 */
 	@GetMapping("/marks")
+	@Operation(summary = "125 Get marks list")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Marks in range (may be empty)"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "422", description = "Missing params or bad resolution")
+	})
 	public List<MarkDto> marks(
-			@RequestParam(required = false) String symbol,
-			@RequestParam(required = false) String resolution,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to) {
+			@Parameter(example = "USDJPY") @RequestParam(required = false) String symbol,
+			@Parameter(example = "1D") @RequestParam(required = false) String resolution,
+			@Parameter(example = "1787011200") @RequestParam(required = false) Long from,
+			@Parameter(example = "1787270400") @RequestParam(required = false) Long to) {
 		return chartDataService.marks(symbol, resolution, from, to);
 	}
 
@@ -139,11 +181,17 @@ public class ChartDataController {
 	 * @return timescale mark list
 	 */
 	@GetMapping("/timescale_marks")
+	@Operation(summary = "126 Get timescale marks list")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Timescale marks in range"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "422", description = "Missing params or bad resolution")
+	})
 	public List<TimescaleMarkDto> timescaleMarks(
-			@RequestParam(required = false) String symbol,
-			@RequestParam(required = false) String resolution,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to) {
+			@Parameter(example = "USDJPY") @RequestParam(required = false) String symbol,
+			@Parameter(example = "1D") @RequestParam(required = false) String resolution,
+			@Parameter(example = "1787011200") @RequestParam(required = false) Long from,
+			@Parameter(example = "1787270400") @RequestParam(required = false) Long to) {
 		return chartDataService.timescaleMarks(symbol, resolution, from, to);
 	}
 
@@ -160,14 +208,21 @@ public class ChartDataController {
 	 * @return history payload
 	 */
 	@GetMapping("/history")
+	@Operation(summary = "121 Get bars")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "OHLC arrays (s=ok or no_data)"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "422", description = "Missing bid_ask or bad range")
+	})
 	public HistoryResponse history(
-			@RequestParam(required = false) String symbol,
-			@RequestParam(required = false) String resolution,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to,
+			@Parameter(example = "USDJPY") @RequestParam(required = false) String symbol,
+			@Parameter(example = "1D") @RequestParam(required = false) String resolution,
+			@Parameter(description = "Unix seconds; required with to") @RequestParam(required = false) Long from,
+			@Parameter(description = "Unix seconds; required with from") @RequestParam(required = false) Long to,
 			@RequestParam(required = false) Integer countBack,
-			@RequestParam(required = false) String price,
-			@RequestParam(required = false) String bid_ask) {
+			@Parameter(description = "Widget alias: bid/ask/mid") @RequestParam(required = false) String price,
+			@Parameter(description = "BID, MID, or ASK", example = "MID") @RequestParam(required = false)
+					String bid_ask) {
 		return chartDataService.history(symbol, resolution, from, to, countBack, price, bid_ask);
 	}
 

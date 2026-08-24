@@ -239,7 +239,12 @@ public class ChartDataServiceImpl implements ChartDataService {
 			throw new ValidationException();
 		}
 
-		return normalizeCcypairCd(symbolName);
+		String ccypairCd = normalizeCcypairCd(symbolName);
+		if (ccypairCd.length() != 6) {
+			throw new ValidationException();
+		}
+
+		return ccypairCd;
 	}
 
 	private static String normalizeCcypairCd(String symbolName) {
@@ -279,7 +284,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 		String displayName = displayTicker(ccypairCd);
 		return new SymbolInfoDto(
 				displayName,
-				displayName,
+				ccypairCd,
 				pair.getCcypairJp(),
 				tradingView.getSymbolsTypes(),
 				tradingView.getExchanges(),

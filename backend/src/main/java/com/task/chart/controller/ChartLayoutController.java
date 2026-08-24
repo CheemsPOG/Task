@@ -10,6 +10,13 @@ import com.task.chart.dto.response.ChartLayoutIdResponse;
 import com.task.chart.dto.response.ChartLayoutListItemDto;
 import com.task.chart.dto.response.SystemDatetimeResponse;
 import com.task.chart.service.ChartLayoutService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/layouts")
+@Tag(name = "Chart layouts (127–131)", description = "Register, update, get, list, delete saved layouts")
 public class ChartLayoutController {
 
 	private final ChartLayoutService chartLayoutService;
@@ -63,6 +71,19 @@ public class ChartLayoutController {
 	 */
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
+	@Operation(summary = "127 Register chart layout")
+	@ApiResponses({
+			@ApiResponse(responseCode = "201", description = "Created; body is { id }"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "404", description = "Unknown or deleted pair"),
+			@ApiResponse(responseCode = "422", description = "Invalid body")
+	})
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			required = true,
+			content = @Content(
+					examples = @ExampleObject(
+							value = "{\"name\":\"My layout\",\"content\":\"{\\\"pane\\\":1}\","
+									+ "\"symbol\":\"USDJPY\",\"resolution\":\"1D\"}")))
 	public ChartLayoutIdResponse register(@RequestBody(required = false) RegisterChartLayoutRequest request) {
 		return chartLayoutService.register(request);
 	}
@@ -75,8 +96,15 @@ public class ChartLayoutController {
 	 * @return same layout id
 	 */
 	@PutMapping("/{id}")
+	@Operation(summary = "128 Update chart layout")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Updated; body is { id }"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "404", description = "Layout or pair not found"),
+			@ApiResponse(responseCode = "422", description = "Non-numeric id or invalid body")
+	})
 	public ChartLayoutIdResponse update(
-			@PathVariable("id") String id,
+			@Parameter(description = "Numeric layout id") @PathVariable("id") String id,
 			@RequestBody(required = false) RegisterChartLayoutRequest request) {
 		return chartLayoutService.update(id, request);
 	}
@@ -87,6 +115,11 @@ public class ChartLayoutController {
 	 * @return layout list DTO (newest {@code updated_at} first)
 	 */
 	@GetMapping
+	@Operation(summary = "130 Get chart layout list")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Layouts for this customer"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
+	})
 	public List<ChartLayoutListItemDto> list() {
 		return chartLayoutService.list();
 	}
@@ -98,7 +131,14 @@ public class ChartLayoutController {
 	 * @return layout DTO
 	 */
 	@GetMapping("/{id}")
-	public ChartLayoutDto get(@PathVariable("id") String id) {
+	@Operation(summary = "129 Get chart layout")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "id, name, timestamp, content"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "404", description = "Not found or other customer"),
+			@ApiResponse(responseCode = "422", description = "Non-numeric id")
+	})
+	public ChartLayoutDto get(@Parameter(description = "Numeric layout id") @PathVariable("id") String id) {
 		return chartLayoutService.get(id);
 	}
 
@@ -109,7 +149,15 @@ public class ChartLayoutController {
 	 * @return system datetime (unix seconds)
 	 */
 	@DeleteMapping("/{id}")
-	public SystemDatetimeResponse delete(@PathVariable("id") String id) {
+	@Operation(summary = "131 Delete chart layout")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Deleted; body is { t } unix seconds"),
+			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
+			@ApiResponse(responseCode = "404", description = "Not found or other customer"),
+			@ApiResponse(responseCode = "422", description = "Non-numeric id")
+	})
+	public SystemDatetimeResponse delete(
+			@Parameter(description = "Numeric layout id") @PathVariable("id") String id) {
 		return chartLayoutService.delete(id);
 	}
 }

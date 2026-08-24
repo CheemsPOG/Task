@@ -4,6 +4,8 @@
 
 package com.task.chart.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Body for POST /api/layouts (design doc 127).
  *
@@ -23,8 +25,8 @@ package com.task.chart.dto.request;
  * @version 1.0.0
  */
 public record RegisterChartLayoutRequest(
-		String name,
-		String content,
-		String symbol,
-		String resolution) {
+		@Schema(description = "Layout name (max 64)", example = "My layout") String name,
+		@Schema(description = "Widget layout JSON", example = "{\"pane\":1}") String content,
+		@Schema(description = "Currency pair CD", example = "USDJPY") String symbol,
+		@Schema(description = "Chart type / resolution", example = "1D") String resolution) {
 }

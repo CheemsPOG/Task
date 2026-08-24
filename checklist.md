@@ -98,18 +98,18 @@ Header on every `/api/**` call except health and login: `Authorization: Bearer <
 | Doc item | Status | Notes |
 |---|---|---|
 | Token | Stub | |
-| `symbol` required, length 6 | **Partial** | Blank → 422. `USDJPY` and `USD/JPY` both 200. |
+| `symbol` required, length 6 | **Done** | Blank / length ≠ 6 after normalize → 422. `USDJPY` and `USD/JPY` both 200. |
 | Active pair `is_deleted=0` | **Done** | Else 404 `CODE:30404` |
-| `name` = `ccypair_cd` | **Intentional gap** | `name` and `ticker` = `USD/JPY` so the chart header is readable. CD is `provider_symbol`. |
+| `name` = `ccypair_cd` | **Done** | e.g. `USDJPY`. Slash form is `ticker` for the widget. |
 | `description` = `ccypair_jp` | **Done** | e.g. `米ドル/円` |
 | `pricescale` = 10^`rate_unit` | **Done** | USDJPY → 1000 |
 | timezone / exchange / type / has_intraday / visible_plots_set / resolutions / multipliers / has_seconds | **Done** | From yml |
 | `minmov` = 1 | **Done** | |
 | Session from `m_season` vs now | **Done** | DST → `time-summer`, else winter |
 | No season row covering now | **Done** | 500 `E_SERVER` |
-| Extra library fields | Extra | `ticker`, `listed_exchange`, `format`, daily/weekly multipliers, `data_status` |
+| Extra library fields | Extra | `ticker` (slash), `listed_exchange`, `format`, daily/weekly multipliers, `data_status`, `provider_symbol` |
 
-**Prove it:** `symbol=USDJPY` and `USD/JPY` → 200, `pricescale=1000`, `exchange=CTFX`. `ETHUSD` → 404.
+**Prove it:** `symbol=USDJPY` and `USD/JPY` → 200, `name=USDJPY`, `ticker=USD/JPY`, `pricescale=1000`, `exchange=CTFX`. `ETH` → 422. `ETHUSD` → 404.
 
 **Test class:** `SystemOverviewDesign123Test`.
 

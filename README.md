@@ -93,6 +93,41 @@ With `Accept-Language: ja` → Japanese `message`.
 
 Demo users: `demo` / `demo` (customer 1), `demo2` / `demo2` (customer 2).
 
+### Swagger UI (mentor API review)
+
+After Java is running, open one of:
+
+| What | URL |
+|------|-----|
+| Swagger UI | http://127.0.0.1:8080/swagger-ui.html |
+| Same UI (Baeldung default path) | http://127.0.0.1:8080/swagger-ui/index.html |
+| OpenAPI JSON | http://127.0.0.1:8080/v3/api-docs |
+| OpenAPI YAML | http://127.0.0.1:8080/v3/api-docs.yaml |
+
+This lists every REST endpoint (docs 120–132), grouped by tag. You can try them in the browser.
+
+1. Expand **Auth** → `POST /api/auth/login` → **Try it out** (example body is pre-filled: `demo` / `demo`).
+2. **Execute** → copy `accessToken` from the response.
+3. Click **Authorize** (lock icon at the top) → paste the token only (no `Bearer ` prefix) → **Authorize** → **Close**.
+4. Expand **Datafeed (120–126)** or **Chart layouts (127–131)** → **Try it out** → **Execute**. Swagger sends `Authorization: Bearer …` for you.
+
+If the UI says “Failed to load remote configuration”, open `/v3/api-docs` first. A JSON document means docs are up; then reload Swagger UI.
+
+#### Mentor on another PC
+
+The mentor does **not** install Swagger. They open the UI in a browser against **your** running backend.
+
+On the machine that hosts Java + Docker:
+
+1. `docker compose up -d` then `cd backend` and `mvnw.cmd spring-boot:run` (leave it running).
+2. Find this PC’s LAN IP (Windows: `ipconfig` → IPv4, e.g. `192.168.1.20`).
+3. Allow inbound **TCP 8080** in Windows Firewall if the mentor cannot connect.
+4. Mentor opens **http://192.168.1.20:8080/swagger-ui.html** and follows the login + Authorize steps above.
+
+Both PCs must be on the same network (or you must port-forward 8080). Postgres and Redis stay on the host; the mentor only needs port 8080.
+
+Do **not** expose 8080 to the public internet — the JWT secret and `demo`/`demo` users are local demo credentials.
+
 ### 2. Python WebSocket server
 
 ```bash
