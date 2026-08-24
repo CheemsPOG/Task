@@ -27,7 +27,18 @@ import java.util.List;
  */
 public interface CurrencyPairService {
 
+	/**
+	 * Returns the hardcoded demo pair catalog (same five pairs as {@code m_ccypairs}).
+	 *
+	 * @return catalog rows
+	 */
 	List<CurrencyPairDto> list();
 
+	/**
+	 * Looks up one catalog row by numeric {@code curpairCd}.
+	 *
+	 * @param curpairCd quote-stream pair code
+	 * @return matching row, or {@code null}
+	 */
 	CurrencyPairDto find(int curpairCd);
 }

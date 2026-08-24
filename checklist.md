@@ -1,6 +1,6 @@
-# Mentor checkpoint — docs 120–134 vs this app
+# Mentor checkpoint — docs 120–139 vs this app
 
-**Scope:** TradingView **datafeed** (120–126), chart layouts (127–131), and indicator templates through get (132–134). Doc **132** list is Done; **133–134** are planned in `plan.md` Steps 14–15. Docs **135–139** (indicator delete + chart templates) are out of scope until planned.
+**Scope:** TradingView **datafeed** (120–126), chart layouts (127–131), indicator templates (132–135), and chart templates (136–139).
 
 **How to read:** `Done` = matches the markdown for this demo. `Planned` = in `plan.md`, not coded yet. `Intentional gap` = doc says X, we kept Y so the widget still loads. `Open` = not done and still unsafe or incomplete.
 
@@ -17,7 +17,7 @@ Header on every `/api/**` call except health and login: `Authorization: Bearer <
 | 404 `CODE:30404` | **Done** | `{ "errorCode": "CODE:30404", "message": "<localized>" }`. History unknown symbol is `{ s: "error" }` (UDF), not 404. |
 | 500 `E_SERVER` | **Done** | `{ "errorCode": "E_SERVER", "message": "<localized>" }` (EN default; JA if `Accept-Language: ja`) |
 | No `ApiResponse` wrapper on UDF | **Done** | Raw JSON as the library expects |
-| Postgres + Flyway | **Done** | V1–V7 (`m_app_user` for demo auth) |
+| Postgres + Flyway | **Done** | V1–V9 (`m_app_user` for demo auth; `m_tv_chart_templates` for 136–139) |
 | Frontend datafeed | **Done** | `datafeed.ts` + `api.ts` sends Bearer + `Accept-Language` |
 
 **Not in 120–126 (do not treat as missing):** save/load still `LocalStorageSaveLoadAdapter`; quotes still mock WS; `/curpairs` is extra.
@@ -413,20 +413,20 @@ Empty DB → `[]`. After seeding two names for customer `1` and one for `2`, lis
 
 **Path:** `POST /api/indicator-templates` (body `{ name, content }`)  
 **Table:** `m_tv_indicator_template`  
-**Status:** **Planned**
+**Status:** **Done**
 
 | Doc item | Status | Notes |
 |---|---|---|
-| Token (S-01) | **Planned** | |
-| `name` required, max 64 | **Planned** | Else **422** |
-| `content` required | **Planned** | Else **422** |
-| Upsert by customer + name | **Planned** | Insert or update `content` + `updated_at` |
-| Update keeps name | **Planned** | Per doc update-conditions |
-| Response update datetime | **Planned** | Prefer `{ "t": <unix> }` from row |
+| Token (S-01) | **Done** (JWT stub) | 401 without Bearer |
+| `name` required, max 64 | **Done** | Else **422** |
+| `content` required | **Done** | Else **422** |
+| Upsert by customer + name | **Done** | Insert or update `content` + `updated_at` |
+| Update keeps name | **Done** | Per doc update-conditions |
+| Response update datetime | **Done** | `{ "t": <unix> }` from row |
 
-**Prove it (when done):** POST twice same name → one row, newer `t`, new content.
+**Prove it:** POST twice same name → one row, newer `t`, new content.
 
-**Test class (planned):** `SystemOverviewDesign133Test`.
+**Test class:** `SystemOverviewDesign133Test`.
 
 ---
 
@@ -434,20 +434,106 @@ Empty DB → `[]`. After seeding two names for customer `1` and one for `2`, lis
 
 **Path:** `GET /api/indicator-templates/{name}` (URL-encode spaces)  
 **Table:** `m_tv_indicator_template`  
-**Status:** **Planned**
+**Status:** **Done**
 
 | Doc item | Status | Notes |
 |---|---|---|
-| Token (S-01) | **Planned** | |
-| `name` required, max 64 | **Planned** | **422** if invalid |
-| Match customer + name | **Planned** | Else **404** `CODE:30404` |
-| DTO `name`, `content` | **Planned** | |
+| Token (S-01) | **Done** (JWT stub) | |
+| `name` required, max 64 | **Done** | **422** if invalid |
+| Match customer + name | **Done** | Else **404** `CODE:30404` |
+| DTO `name`, `content` | **Done** | |
 
-**Prove it (when done):** upsert → get → content matches; other customer → 404.
+**Prove it:** upsert → get → content matches; other customer → 404.
 
-**Test class (planned):** `SystemOverviewDesign134Test`.
+**Test class:** `SystemOverviewDesign134Test`.
 
-**Come back later:** wire `getStudyTemplateContent`; doc **135** delete for `removeStudyTemplate`.
+---
+
+## 135 — Delete indicator template
+
+**Path:** `DELETE /api/indicator-templates/{name}`  
+**Table:** `m_tv_indicator_template`  
+**Status:** **Done**
+
+| Doc item | Status | Notes |
+|---|---|---|
+| Token (S-01) | **Done** (JWT stub) | |
+| `name` required, max 64 | **Done** | **422** if invalid |
+| Match customer + name | **Done** | Else **404** |
+| Hard delete + system datetime | **Done** | `{ "t": unix }` |
+
+**Test class:** `SystemOverviewDesign135Test`.
+
+**Come back later:** wire `saveStudyTemplate` / `getStudyTemplateContent` / `removeStudyTemplate`.
+
+---
+
+## 136 — Get chart template list
+
+**Path:** `GET /api/chart-templates`  
+**Table:** `m_tv_chart_templates`  
+**Status:** **Done**
+
+| Doc item | Status | Notes |
+|---|---|---|
+| Token (S-01) | **Done** (JWT stub) | |
+| Filter by token customer | **Done** | Other customers omitted |
+| List DTO `name` only | **Done** | Sorted name ASC |
+
+**Test class:** `SystemOverviewDesign136Test`.
+
+---
+
+## 137 — Register / update chart template
+
+**Path:** `POST /api/chart-templates`  
+**Table:** `m_tv_chart_templates`  
+**Status:** **Done**
+
+| Doc item | Status | Notes |
+|---|---|---|
+| Token (S-01) | **Done** (JWT stub) | |
+| `name` required, max 64; `content` required | **Done** | **422** if invalid |
+| Upsert by `(customer_no, name)` | **Done** | Update **content only** |
+| Return update datetime | **Done** | `{ "t": unix }` from `updated_at` |
+
+**Test class:** `SystemOverviewDesign137Test`.
+
+---
+
+## 138 — Get chart template
+
+**Path:** `GET /api/chart-templates/{name}`  
+**Table:** `m_tv_chart_templates`  
+**Status:** **Done**
+
+| Doc item | Status | Notes |
+|---|---|---|
+| Token (S-01) | **Done** (JWT stub) | |
+| `name` required, max 64 | **Done** | **422** if invalid |
+| Match customer + name | **Done** | Else **404** |
+| DTO `name` + `content` | **Done** | |
+
+**Test class:** `SystemOverviewDesign138Test`.
+
+---
+
+## 139 — Delete chart template
+
+**Path:** `DELETE /api/chart-templates/{name}`  
+**Table:** `m_tv_chart_templates`  
+**Status:** **Done**
+
+| Doc item | Status | Notes |
+|---|---|---|
+| Token (S-01) | **Done** (JWT stub) | |
+| `name` required, max 64 | **Done** | **422** if invalid |
+| Match customer + name | **Done** | Else **404** |
+| Hard delete + system datetime | **Done** | `{ "t": unix }` |
+
+**Test class:** `SystemOverviewDesign139Test`.
+
+**Come back later:** wire SaveLoadAdapter chart templates (`getAllChartTemplates` / `saveChartTemplate` / `removeChartTemplate`).
 
 ---
 
@@ -526,7 +612,7 @@ Short answer: **no for the four named Peach items as a set.** Two of them would 
 
 **Datafeed freeze (120–126)** remains the main vertical for chart load: stub auth, Flyway V1–V4, working widget.
 
-**127–131** layout APIs are Done. **132** indicator list is Done (V6). **133–134** upsert/get are Planned (Steps 14–15). They do **not** close S-01 / `t_chart_*` / Peach columns / strict CD name.
+**127–131** layout APIs are Done. **132–135** indicator templates (list/upsert/get/delete) are Done (V6). They do **not** close S-01 / `t_chart_*` / Peach columns / strict CD name.
 
 Leave unchecked on purpose:
 
@@ -535,8 +621,9 @@ Leave unchecked on purpose:
 3. Replacing widget history JSON with Peach-only columns  
 4. Rejecting `USD/JPY` as invalid `symbol`  
 5. SaveLoadAdapter → server layouts (backend CRUD ready; wire FE)  
-6. SaveLoadAdapter → study templates (needs 133–135)
+6. SaveLoadAdapter → study templates (backend 132–135 ready; wire FE)  
+7. SaveLoadAdapter → chart templates (backend 136–139 ready; wire FE)
 
 Optional small refactors **inside** datafeed (do not expand scope): extract shared marks validation; point history symbol lookup at `m_ccypairs`; dual-shape history only if the mentor asks.
 
-**Next:** implement **133–134** (Steps 14–15) per `plan.md`, or wire layout SaveLoadAdapter.
+**Next:** wire layout / study-template / chart-template SaveLoadAdapter to the REST APIs.

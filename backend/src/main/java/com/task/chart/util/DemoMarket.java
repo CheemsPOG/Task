@@ -27,14 +27,32 @@ public final class DemoMarket {
 	private DemoMarket() {
 	}
 
+	/**
+	 * Price scale used by the TradingView symbol info (JPY pairs use 1000).
+	 *
+	 * @param curpairName pair CD such as {@code USDJPY}
+	 * @return 1000 for JPY quotes, otherwise 100000
+	 */
 	public static int priceScale(String curpairName) {
 		return yenQuote(curpairName) ? 1000 : 100_000;
 	}
 
+	/**
+	 * Starting BID used by the mock bar and quote generators.
+	 *
+	 * @param curpairName pair CD
+	 * @return seed BID
+	 */
 	public static double seedBid(String curpairName) {
 		return seedMid(curpairName) - halfSpread(curpairName);
 	}
 
+	/**
+	 * Starting MID used by the mock generators.
+	 *
+	 * @param curpairName pair CD
+	 * @return seed MID
+	 */
 	public static double seedMid(String curpairName) {
 		return switch (curpairName) {
 			case "USDJPY" -> 149.850;
@@ -46,18 +64,42 @@ public final class DemoMarket {
 		};
 	}
 
+	/**
+	 * Inner bar amplitude for mock OHLC.
+	 *
+	 * @param curpairName pair CD
+	 * @return amplitude in price units
+	 */
 	public static double barAmplitude(String curpairName) {
 		return yenQuote(curpairName) ? 0.08 : 0.00080;
 	}
 
+	/**
+	 * Half of the BID/ASK spread.
+	 *
+	 * @param curpairName pair CD
+	 * @return half spread
+	 */
 	public static double halfSpread(String curpairName) {
 		return yenQuote(curpairName) ? 0.05 : 0.00050;
 	}
 
+	/**
+	 * Full BID/ASK spread ({@code ASK = BID + spread}).
+	 *
+	 * @param curpairName pair CD
+	 * @return full spread
+	 */
 	public static double fullSpread(String curpairName) {
 		return halfSpread(curpairName) * 2.0;
 	}
 
+	/**
+	 * Outer wick size for mock OHLC.
+	 *
+	 * @param curpairName pair CD
+	 * @return wick size
+	 */
 	public static double outerWick(String curpairName) {
 		return yenQuote(curpairName) ? 0.20 : 0.0020;
 	}

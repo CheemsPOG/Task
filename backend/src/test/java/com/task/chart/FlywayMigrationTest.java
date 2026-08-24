@@ -29,11 +29,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Assert V7 m_app_user + demo seeds</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Assert V9 m_tv_chart_templates</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @SpringBootTest
 class FlywayMigrationTest {
@@ -95,6 +96,14 @@ class FlywayMigrationTest {
 	void createsIndicatorTemplateTable() {
 		Integer count = jdbcTemplate.queryForObject(
 				"SELECT COUNT(*) FROM information_schema.tables WHERE lower(table_name) = 'm_tv_indicator_template'",
+				Integer.class);
+		assertThat(count).isEqualTo(1);
+	}
+
+	@Test
+	void createsChartTemplateTable() {
+		Integer count = jdbcTemplate.queryForObject(
+				"SELECT COUNT(*) FROM information_schema.tables WHERE lower(table_name) = 'm_tv_chart_templates'",
 				Integer.class);
 		assertThat(count).isEqualTo(1);
 	}

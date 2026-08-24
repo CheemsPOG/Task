@@ -27,11 +27,12 @@ import org.springframework.context.annotation.Configuration;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/24</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Tag order + JWT scheme for mentor review</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Add chart templates 136–139 tag</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @Configuration
 public class OpenApiConfig {
@@ -57,7 +58,7 @@ public class OpenApiConfig {
 				.title("CTFX Chart Backend")
 				.version("0.0.1-SNAPSHOT")
 				.description(
-						"Demo REST for TradingView Advanced Charts (design docs 120–132). "
+						"Demo REST for TradingView Advanced Charts (design docs 120–139). "
 								+ "Login first: POST /api/auth/login with demo/demo, then Authorize with the accessToken. "
 								+ "Public (no token): GET /api/health, POST /api/auth/login, GET /curpairs, Swagger UI.");
 	}
@@ -69,7 +70,10 @@ public class OpenApiConfig {
 						.description("UDF: config, history, time, symbols, search, marks"),
 				new Tag().name("Chart layouts (127–131)")
 						.description("Register, update, get, list, delete"),
-				new Tag().name("Indicator templates (132)").description("List study templates"),
+				new Tag().name("Indicator templates (132–135)")
+						.description("List, upsert, get, delete study templates"),
+				new Tag().name("Chart templates (136–139)")
+						.description("List, upsert, get, delete chart templates"),
 				new Tag().name("Currency pairs").description("Demo FX catalog"));
 	}
 

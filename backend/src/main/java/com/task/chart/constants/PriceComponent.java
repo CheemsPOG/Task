@@ -29,6 +29,12 @@ public enum PriceComponent {
 	ASK,
 	MID;
 
+	/**
+	 * Parses a free-form price side; blank or unknown becomes {@code MID}.
+	 *
+	 * @param raw widget or query value
+	 * @return BID, ASK, or MID
+	 */
 	public static PriceComponent from(String raw) {
 		if (raw == null || raw.isBlank()) {
 			return MID;
@@ -59,6 +65,9 @@ public enum PriceComponent {
 		};
 	}
 
+	/**
+	 * @return lowercase wire name ({@code bid}, {@code ask}, {@code mid})
+	 */
 	public String wireName() {
 		return name().toLowerCase(Locale.ROOT);
 	}

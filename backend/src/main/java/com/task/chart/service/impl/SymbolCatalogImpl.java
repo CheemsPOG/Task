@@ -37,6 +37,12 @@ public class SymbolCatalogImpl implements SymbolCatalog {
 
 	private final List<CachedSymbol> symbols;
 
+	/**
+	 * Builds the in-memory symbol list from {@code /curpairs} and {@code app.tradingview}.
+	 *
+	 * @param currencyPairService demo FX catalog
+	 * @param appProperties exchange / type flags
+	 */
 	public SymbolCatalogImpl(CurrencyPairService currencyPairService, AppProperties appProperties) {
 		AppProperties.TradingView tradingView = appProperties.getTradingView();
 		String exchange = tradingView.getExchanges();

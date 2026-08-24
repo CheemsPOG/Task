@@ -4,7 +4,6 @@
 
 package com.task.chart.security;
 
-import com.task.chart.config.CustomerContext;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

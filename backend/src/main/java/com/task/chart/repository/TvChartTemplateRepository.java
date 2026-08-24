@@ -4,13 +4,13 @@
 
 package com.task.chart.repository;
 
-import com.task.chart.entity.TvIndicatorTemplate;
+import com.task.chart.entity.TvChartTemplate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * TV indicator template master access.
+ * TV chart template master access.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -20,29 +20,29 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *   </colgroup>
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
- *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/24</td><td>Task</td><td>新規作成</td></tr>
  * </table>
  * <p>
  *
  * @author Task
  * @version 1.0.0
  */
-public interface TvIndicatorTemplateRepository extends JpaRepository<TvIndicatorTemplate, Long> {
+public interface TvChartTemplateRepository extends JpaRepository<TvChartTemplate, Long> {
 
 	/**
-	 * Templates for one customer, name ascending (design doc 132).
+	 * Templates for one customer, name ascending (design doc 136).
 	 *
 	 * @param customerNo token customer
 	 * @return templates ordered by {@code name} ascending
 	 */
-	List<TvIndicatorTemplate> findByCustomerNoOrderByNameAsc(long customerNo);
+	List<TvChartTemplate> findByCustomerNoOrderByNameAsc(long customerNo);
 
 	/**
-	 * One template for a customer by unique name (design docs 133–135).
+	 * One template for a customer by unique name (design docs 137–139).
 	 *
 	 * @param customerNo token customer
 	 * @param name template name
 	 * @return matching row, or empty
 	 */
-	Optional<TvIndicatorTemplate> findByCustomerNoAndName(long customerNo, String name);
+	Optional<TvChartTemplate> findByCustomerNoAndName(long customerNo, String name);
 }

@@ -45,6 +45,21 @@ import org.springframework.stereotype.Service;
 
 /**
  * Implementation of {@link ChartDataService}.
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.0.0
  */
 @Service
 public class ChartDataServiceImpl implements ChartDataService {
@@ -58,6 +73,18 @@ public class ChartDataServiceImpl implements ChartDataService {
 	private final TvMarkRepository tvMarkRepository;
 	private final TvTimescaleMarkRepository tvTimescaleMarkRepository;
 
+	/**
+	 * Creates the datafeed service.
+	 *
+	 * @param symbolCatalog in-memory pair catalog
+	 * @param chartCacheStore Redis bar cache
+	 * @param mockFxQuoteService live mid/bid/ask for stitching
+	 * @param appProperties tradingview flags
+	 * @param ccypairRepository pair master
+	 * @param seasonRepository season master
+	 * @param tvMarkRepository mark master
+	 * @param tvTimescaleMarkRepository timescale mark master
+	 */
 	public ChartDataServiceImpl(
 			SymbolCatalog symbolCatalog,
 			ChartCacheStore chartCacheStore,

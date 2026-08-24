@@ -2,7 +2,7 @@
 
 Frontend chart (TradingView Advanced Charts), a Java Spring Boot REST backend, and a Python WebSocket server. The chart datafeed calls Java for history and Python for live ticks. Both serve **local demo FX data** for the same currency pairs as `/curpairs`. No external market-data API is used.
 
-How the app is built (config, database, APIs 120–123, how to test): [`structure.md`](structure.md).
+How the app is built (config, database, APIs 120–139, how to test): [`structure.md`](structure.md).
 
 ## Prerequisites
 
@@ -104,7 +104,7 @@ After Java is running, open one of:
 | OpenAPI JSON | http://127.0.0.1:8080/v3/api-docs |
 | OpenAPI YAML | http://127.0.0.1:8080/v3/api-docs.yaml |
 
-This lists every REST endpoint (docs 120–132), grouped by tag. You can try them in the browser.
+This lists every REST endpoint (docs 120–139), grouped by tag. You can try them in the browser.
 
 1. Expand **Auth** → `POST /api/auth/login` → **Try it out** (example body is pre-filled: `demo` / `demo`).
 2. **Execute** → copy `accessToken` from the response.
@@ -208,3 +208,141 @@ Then open `http://127.0.0.1:5174`.
 Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are **local mocks**. The generator walks **BID**, sets **ASK = BID + spread**, and **MID = (BID + ASK) / 2** (~3 ticks per second). The forming candle close follows the selected BID/ASK/MID. A real FX feed can replace the generator later if it keeps the same `/curpairs` + quote JSON.
 
 Details, FX WebSocket contract, and a verification checklist: [spec.md](./spec.md).
+
+
+# How to Run
+
+## This PC
+
+### 1. Start PostgreSQL + Redis
+
+From the repository root:
+
+~~~bash
+docker compose up -d
+~~~
+
+### 2. Start Java
+
+Open a new terminal:
+
+~~~powershell
+cd "d:\Personal Projects\New\Task\backend"
+.\mvnw.cmd spring-boot:run
+~~~
+
+Wait for:
+
+~~~text
+Started ChartBackendApplication
+~~~
+
+### 3. Open API Documentation
+
+Open Swagger UI in your browser:
+
+- **UI:** http://127.0.0.1:8080/swagger-ui.html
+- **Alternative UI:** http://127.0.0.1:8080/swagger-ui/index.html
+- **JSON catalog:** http://127.0.0.1:8080/v3/api-docs
+- **YAML:** http://127.0.0.1:8080/v3/api-docs.yaml
+
+You should see the following tags:
+
+- **Auth**
+- **Datafeed** (120–126)
+- **Chart layouts** (127–131)
+- **Indicator templates** (132–135)
+- **Chart templates** (136–139)
+- **Currency pairs**
+
+These represent the implemented API list.
+
+### 4. Get an Access Token
+
+1. Go to **Auth → `POST /api/auth/login`**.
+2. Click **Try it out**.
+3. The request body is already configured with:
+
+~~~json
+{
+  "username": "demo",
+  "password": "demo"
+}
+~~~
+
+4. Click **Execute**.
+5. Copy the `accessToken` from the response.
+6. Click **Authorize** in the top-right corner.
+7. Paste the token **without** `Bearer `.
+8. Click **Authorize**, then **Close**.
+
+### 5. Call a Protected API
+
+For example:
+
+**Datafeed → `GET /api/config`**
+
+1. Click **Try it out**.
+2. Click **Execute**.
+3. You should receive:
+
+~~~text
+200 OK
+~~~
+
+Without authorization, the same request should return:
+
+~~~text
+401 Unauthorized
+~~~
+
+---
+
+# Mentor on Another PC
+
+The mentor only needs a web browser.
+
+On your PC, keep both **Docker** and **Spring Boot** running.
+
+### 1. Find Your Local IP Address
+
+Open Command Prompt or PowerShell:
+
+~~~powershell
+ipconfig
+~~~
+
+Find your **IPv4 Address**, for example:
+
+~~~text
+192.168.1.20
+~~~
+
+### 2. Allow TCP Port 8080
+
+If necessary, allow **TCP port 8080** through Windows Firewall.
+
+### 3. Open Swagger
+
+Your mentor can then open:
+
+~~~text
+http://192.168.1.20:8080/swagger-ui.html
+~~~
+
+The mentor can use the same authentication process:
+
+~~~text
+Username: demo
+Password: demo
+~~~
+
+Then use **Authorize** with the returned `accessToken`.
+
+### Requirements
+
+The mentor and your PC must be on the **same LAN**.
+
+Alternatively, port forwarding can be used if appropriate.
+
+> **Security:** Do not expose port `8080` directly to the public Internet.

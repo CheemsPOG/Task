@@ -4,17 +4,17 @@
 
 package com.task.chart.service.impl;
 
-import com.task.chart.dto.request.UpsertIndicatorTemplateRequest;
-import com.task.chart.dto.response.IndicatorTemplateDto;
-import com.task.chart.dto.response.IndicatorTemplateListItemDto;
+import com.task.chart.dto.request.UpsertChartTemplateRequest;
+import com.task.chart.dto.response.ChartTemplateDto;
+import com.task.chart.dto.response.ChartTemplateListItemDto;
 import com.task.chart.dto.response.SystemDatetimeResponse;
-import com.task.chart.entity.TvIndicatorTemplate;
+import com.task.chart.entity.TvChartTemplate;
 import com.task.chart.exception.ResourceNotFoundException;
 import com.task.chart.exception.ServerErrorException;
 import com.task.chart.exception.ValidationException;
-import com.task.chart.repository.TvIndicatorTemplateRepository;
+import com.task.chart.repository.TvChartTemplateRepository;
 import com.task.chart.security.CustomerContext;
-import com.task.chart.service.IndicatorTemplateService;
+import com.task.chart.service.ChartTemplateService;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Implementation of {@link IndicatorTemplateService}.
+ * Implementation of {@link ChartTemplateService}.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -32,42 +32,40 @@ import org.springframework.transaction.annotation.Transactional;
  *   </colgroup>
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
- *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
- *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Add upsert/get/delete for 133–135</td></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/24</td><td>Task</td><td>新規作成</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.0.0
  */
 @Service
-public class IndicatorTemplateServiceImpl implements IndicatorTemplateService {
+public class ChartTemplateServiceImpl implements ChartTemplateService {
 
 	private static final int NAME_MAX_LENGTH = 64;
 
-	private final TvIndicatorTemplateRepository tvIndicatorTemplateRepository;
+	private final TvChartTemplateRepository tvChartTemplateRepository;
 
 	/**
 	 * Creates the service.
 	 *
-	 * @param tvIndicatorTemplateRepository indicator template table
+	 * @param tvChartTemplateRepository chart template table
 	 */
-	public IndicatorTemplateServiceImpl(TvIndicatorTemplateRepository tvIndicatorTemplateRepository) {
-		this.tvIndicatorTemplateRepository = tvIndicatorTemplateRepository;
+	public ChartTemplateServiceImpl(TvChartTemplateRepository tvChartTemplateRepository) {
+		this.tvChartTemplateRepository = tvChartTemplateRepository;
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<IndicatorTemplateListItemDto> list() {
+	public List<ChartTemplateListItemDto> list() {
 		long customerNo = requireCustomerNo();
-		List<TvIndicatorTemplate> templates =
-				tvIndicatorTemplateRepository.findByCustomerNoOrderByNameAsc(customerNo);
-		return templates.stream().map(IndicatorTemplateServiceImpl::toListItem).toList();
+		List<TvChartTemplate> templates = tvChartTemplateRepository.findByCustomerNoOrderByNameAsc(customerNo);
+		return templates.stream().map(ChartTemplateServiceImpl::toListItem).toList();
 	}
 
 	@Override
 	@Transactional
-	public SystemDatetimeResponse upsert(UpsertIndicatorTemplateRequest request) {
+	public SystemDatetimeResponse upsert(UpsertChartTemplateRequest request) {
 		if (request == null) {
 			throw new ValidationException();
 		}
@@ -80,15 +78,14 @@ public class IndicatorTemplateServiceImpl implements IndicatorTemplateService {
 
 		long customerNo = requireCustomerNo();
 		Instant now = Instant.now();
-		Optional<TvIndicatorTemplate> found =
-				tvIndicatorTemplateRepository.findByCustomerNoAndName(customerNo, name);
-		TvIndicatorTemplate saved;
+		Optional<TvChartTemplate> found = tvChartTemplateRepository.findByCustomerNoAndName(customerNo, name);
+		TvChartTemplate saved;
 		if (found.isPresent()) {
-			TvIndicatorTemplate row = found.get();
+			TvChartTemplate row = found.get();
 			row.applyContent(content, now);
-			saved = tvIndicatorTemplateRepository.save(row);
+			saved = tvChartTemplateRepository.save(row);
 		} else {
-			saved = tvIndicatorTemplateRepository.save(new TvIndicatorTemplate(customerNo, name, content, now));
+			saved = tvChartTemplateRepository.save(new TvChartTemplate(customerNo, name, content, now));
 		}
 
 		return new SystemDatetimeResponse(saved.getUpdatedAt().getEpochSecond());
@@ -96,28 +93,28 @@ public class IndicatorTemplateServiceImpl implements IndicatorTemplateService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public IndicatorTemplateDto get(String name) {
-		TvIndicatorTemplate template = requireOwnedTemplate(name);
-		return new IndicatorTemplateDto(template.getName(), template.getContent());
+	public ChartTemplateDto get(String name) {
+		TvChartTemplate template = requireOwnedTemplate(name);
+		return new ChartTemplateDto(template.getName(), template.getContent());
 	}
 
 	@Override
 	@Transactional
 	public SystemDatetimeResponse delete(String name) {
-		TvIndicatorTemplate template = requireOwnedTemplate(name);
-		tvIndicatorTemplateRepository.delete(template);
+		TvChartTemplate template = requireOwnedTemplate(name);
+		tvChartTemplateRepository.delete(template);
 		return new SystemDatetimeResponse(Instant.now().getEpochSecond());
 	}
 
-	private static IndicatorTemplateListItemDto toListItem(TvIndicatorTemplate template) {
-		return new IndicatorTemplateListItemDto(template.getName());
+	private static ChartTemplateListItemDto toListItem(TvChartTemplate template) {
+		return new ChartTemplateListItemDto(template.getName());
 	}
 
-	private TvIndicatorTemplate requireOwnedTemplate(String name) {
+	private TvChartTemplate requireOwnedTemplate(String name) {
 		String templateName = requireTemplateName(name);
 		long customerNo = requireCustomerNo();
-		Optional<TvIndicatorTemplate> found =
-				tvIndicatorTemplateRepository.findByCustomerNoAndName(customerNo, templateName);
+		Optional<TvChartTemplate> found =
+				tvChartTemplateRepository.findByCustomerNoAndName(customerNo, templateName);
 		if (found.isEmpty()) {
 			throw new ResourceNotFoundException();
 		}

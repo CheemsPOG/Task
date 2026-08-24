@@ -47,7 +47,10 @@ class OpenApiDocsTest {
 				.andExpect(jsonPath("$.paths['/api/auth/login'].post.summary").value("Login and get JWT"))
 				.andExpect(jsonPath("$.paths['/api/config'].get.summary").value("120 Get datafeed configuration"))
 				.andExpect(jsonPath("$.paths['/api/layouts'].post.summary").value("127 Register chart layout"))
-				.andExpect(jsonPath("$.paths['/api/indicator-templates']").exists());
+				.andExpect(jsonPath("$.paths['/api/indicator-templates']").exists())
+				.andExpect(jsonPath("$.paths['/api/chart-templates']").exists())
+				.andExpect(jsonPath("$.paths['/api/chart-templates'].get.summary")
+						.value("136 Get chart template list"));
 	}
 
 	@Test

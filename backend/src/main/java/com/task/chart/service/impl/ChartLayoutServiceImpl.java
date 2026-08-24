@@ -4,7 +4,6 @@
 
 package com.task.chart.service.impl;
 
-import com.task.chart.config.CustomerContext;
 import com.task.chart.dto.request.RegisterChartLayoutRequest;
 import com.task.chart.dto.response.ChartLayoutDto;
 import com.task.chart.dto.response.ChartLayoutIdResponse;
@@ -17,6 +16,7 @@ import com.task.chart.exception.ServerErrorException;
 import com.task.chart.exception.ValidationException;
 import com.task.chart.repository.CcypairRepository;
 import com.task.chart.repository.TvChartLayoutRepository;
+import com.task.chart.security.CustomerContext;
 import com.task.chart.service.ChartLayoutService;
 import com.task.chart.util.ResolutionMapper;
 import java.time.Instant;

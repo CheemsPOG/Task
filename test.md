@@ -1,9 +1,9 @@
-# Verification guide — design docs 120–132
+# Verification guide — design docs 120–139
 
 Complete overview: **what the MD requires**, **what we implemented**, **how to test** (Postman URLs, expected JSON, DBeaver SQL, automated tests).
 
 **Spec folder:** [`System_Overview_Design/`](System_Overview_Design/)  
-**Code map:** [`structure.md`](structure.md) §5.1  
+**Code map:** [`structure.md`](structure.md)  
 **Gap summary:** [`checklist.md`](checklist.md)
 
 ---
@@ -68,7 +68,7 @@ Wait for Flyway + `AppUserSeedRunner` (demo users).
 {
   "accessToken": "eyJ...",
   "tokenType": "Bearer",
-  "expiresIn": 86400000
+  "expiresIn": 86400
 }
 ```
 
@@ -85,12 +85,12 @@ Authorization: Bearer eyJ...
 
 **Sanity:** `GET http://127.0.0.1:8080/api/config` + Bearer → `200`. No Bearer → `401`.
 
-### 0.4 Run all automated tests (120–132)
+### 0.4 Run all automated tests (120–139)
 
 ```powershell
 cd backend
 docker compose up -d redis
-.\mvnw.cmd "-Dtest=SystemOverviewDesign120Test,SystemOverviewDesign121Test,SystemOverviewDesign122Test,SystemOverviewDesign123Test,SystemOverviewDesign124Test,SystemOverviewDesign125Test,SystemOverviewDesign126Test,SystemOverviewDesign127Test,SystemOverviewDesign128Test,SystemOverviewDesign129Test,SystemOverviewDesign130Test,SystemOverviewDesign131Test,SystemOverviewDesign132Test" test
+.\mvnw.cmd "-Dtest=SystemOverviewDesign120Test,SystemOverviewDesign121Test,SystemOverviewDesign122Test,SystemOverviewDesign123Test,SystemOverviewDesign124Test,SystemOverviewDesign125Test,SystemOverviewDesign126Test,SystemOverviewDesign127Test,SystemOverviewDesign128Test,SystemOverviewDesign129Test,SystemOverviewDesign130Test,SystemOverviewDesign131Test,SystemOverviewDesign132Test,SystemOverviewDesign133Test,SystemOverviewDesign134Test,SystemOverviewDesign135Test,SystemOverviewDesign136Test,SystemOverviewDesign137Test,SystemOverviewDesign138Test,SystemOverviewDesign139Test" test
 ```
 
 **Expect:** BUILD SUCCESS.
@@ -1026,7 +1026,7 @@ Deleted id must be absent.
 |---|---|
 | **Path** | `GET /api/indicator-templates` |
 | **Table** | V6 `m_tv_indicator_template` |
-| **Implemented?** | **Yes** (list only; upsert is doc **133**) |
+| **Implemented?** | **Yes** |
 | **Test class** | `SystemOverviewDesign132Test` |
 | **Key code** | `IndicatorTemplateController.list` → `IndicatorTemplateServiceImpl` |
 
@@ -1038,12 +1038,11 @@ Deleted id must be absent.
 | DTO `name` only | Done |
 | Empty → `200 []` | Done |
 | Sort order in MD | not specified — app uses **name ASC** |
-| Upsert API (133) | **Not implemented** — seed via SQL or test |
 | SaveLoadAdapter `getAllStudyTemplates` | **Open** |
 
-### Postman — seed via DBeaver first
+### Postman — seed via 133 or DBeaver
 
-Flyway V6 creates empty table. Insert test rows in DBeaver:
+Prefer **POST /api/indicator-templates** (doc 133). Flyway V6 starts empty; DBeaver INSERT also works:
 
 ```sql
 INSERT INTO m_tv_indicator_template (customer_no, name, content, updated_at) VALUES
@@ -1105,17 +1104,818 @@ Test seeds its own rows in `@Transactional` tests:
 .\mvnw.cmd "-Dtest=SystemOverviewDesign132Test" test
 ```
 
-### Not yet implemented (related docs)
+---
 
-| Doc | Path | Status |
-|-----|------|--------|
-| 133 | `POST /api/indicator-templates` upsert | Planned |
-| 134 | `GET /api/indicator-templates/{name}` | Planned |
-| 135 | DELETE indicator template | Out of scope |
+## 133 — Register / update indicator template
+
+**MD:** [`System_Overview_Design_133_Register_Update_Indicator_Template_(TV).md`](System_Overview_Design/System_Overview_Design_133_Register_Update_Indicator_Template_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `POST /api/indicator-templates` |
+| **Table** | V6 `m_tv_indicator_template` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign133Test` |
+| **Key code** | `IndicatorTemplateController.upsert` → `IndicatorTemplateServiceImpl.upsert` |
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Body `name` required, max 64 | Done → 422 `CODE:30020` |
+| Body `content` required | Done → 422 `CODE:30020` |
+| Lookup by token `customer_no` + `name` | Done |
+| Found → update `content` only | Done (`name` / `customer_no` unchanged) |
+| Miss → register `customer_no`, `name`, `content` | Done |
+| Return update datetime of the row | Done → **200** `{ "t": unix }` from `updated_at` |
+| HTTP 201 on first insert | **Extra** — app always **200** (upsert) |
+| SaveLoadAdapter `saveStudyTemplate` | **Open** |
+
+Unique key: `(customer_no, name)`. Same name for `demo2` is a **different** row.
+
+### Postman — register then update (same name)
+
+**Step A — first POST (register):**
+
+```
+POST http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My RSI","content":"{\"studies\":[]}"}
+```
+
+**Expect `200`:**
+
+```json
+{ "t": 172... }
+```
+
+`t` within a few seconds of now. Note this `t` (call it `t1`).
+
+**Step B — second POST (update content only):**
+
+Wait 1 second, then:
+
+```
+POST http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My RSI","content":"{\"studies\":[1]}"}
+```
+
+**Expect `200`:** `{ "t": t2 }` with `t2` ≥ `t1`. Still **one** name in the list (doc 132).
+
+**Step C — tenant (optional):** login as `demo2` / `demo2`, POST the same body `{"name":"My RSI",...}` → **200** and a **second** DB row (`customer_no = 2`).
+
+**Errors:**
+
+```
+POST http://127.0.0.1:8080/api/indicator-templates
+  (no Bearer)                                              → 401
+
+POST http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+{"name":"","content":"{}"}                                 → 422 CODE:30020
+
+POST ...  {"name":"<65 A characters>","content":"{}"}      → 422 CODE:30020
+
+POST ...  {"name":"RSI","content":""}                      → 422 CODE:30020
+```
+
+### DBeaver (after step B)
+
+```sql
+SELECT id, customer_no, name, content,
+       EXTRACT(EPOCH FROM updated_at)::bigint AS t
+FROM m_tv_indicator_template
+WHERE customer_no = 1 AND name = 'My RSI';
+```
+
+**Expect:**
+
+| Column | Value |
+|--------|-------|
+| customer_no | 1 |
+| name | My RSI |
+| content | {"studies":[1]} |
+| t | ≈ API `t` from step B |
+
+Row **count** for that customer + name = **1** (not 2). `id` same as after step A.
+
+Tenant check after step C:
+
+```sql
+SELECT customer_no, name, content
+FROM m_tv_indicator_template
+WHERE name = 'My RSI'
+ORDER BY customer_no;
+```
+
+**Expect:** two rows (`1` and `2`) if you posted as both users.
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign133Test" test
+```
 
 ---
 
-## Summary table — implementation status 120–132
+## 134 — Get indicator template
+
+**MD:** [`System_Overview_Design_134_Get_Indicator_Template_(TV).md`](System_Overview_Design/System_Overview_Design_134_Get_Indicator_Template_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `GET /api/indicator-templates/{name}` |
+| **Table** | V6 `m_tv_indicator_template` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign134Test` |
+| **Key code** | `IndicatorTemplateController.get` → `IndicatorTemplateDto` |
+
+URL-encode spaces: `My RSI` → `My%20RSI`.
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Path `name` required, max 64 | Done → 422 `CODE:30020` |
+| Match token `customer_no` + `name` | Done → else 404 `CODE:30404` |
+| DTO `name`, `content` | Done |
+| No extra fields (`customer_no`, timestamp) | Done |
+| Other customer | **Extra** → 404 |
+| SaveLoadAdapter `getStudyTemplateContent` | **Open** |
+
+### Postman — full round-trip (133 → 134 → 133 → 134)
+
+**Step A — register (133):**
+
+```
+POST http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My RSI","content":"{\"studies\":[]}"}
+```
+
+**Step B — get after register:**
+
+```
+GET http://127.0.0.1:8080/api/indicator-templates/My%20RSI
+Authorization: Bearer <token>
+```
+
+**Expect `200`:**
+
+```json
+{
+  "name": "My RSI",
+  "content": "{\"studies\":[]}"
+}
+```
+
+Must **not** include `customer_no`, `id`, or `timestamp`.
+
+**Step C — update content (133):**
+
+```
+POST http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My RSI","content":"{\"studies\":[1]}"}
+```
+
+**Step D — get after update:**
+
+```
+GET http://127.0.0.1:8080/api/indicator-templates/My%20RSI
+Authorization: Bearer <token>
+```
+
+**Expect `200`:** `name=My RSI`, `content={"studies":[1]}`.
+
+**Errors:**
+
+```
+GET http://127.0.0.1:8080/api/indicator-templates/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  (65 × A)                                                         → 422 CODE:30020
+
+GET http://127.0.0.1:8080/api/indicator-templates/Missing
+Authorization: Bearer <token>                                      → 404 CODE:30404
+
+GET http://127.0.0.1:8080/api/indicator-templates/My%20RSI
+Authorization: Bearer <demo2 token>  (demo owns the row)           → 404 CODE:30404
+
+GET http://127.0.0.1:8080/api/indicator-templates/My%20RSI
+  (no Bearer)                                                      → 401
+```
+
+Compare list vs get — list (doc 132) has **no** `content`:
+
+```
+GET http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+```
+
+**Expect:** `{ "name": "My RSI" }` in the array, no `content`. GET-by-name is the only call that returns `content`.
+
+### DBeaver
+
+After step D:
+
+```sql
+SELECT name, content
+FROM m_tv_indicator_template
+WHERE customer_no = 1 AND name = 'My RSI';
+```
+
+**Expect:** API `name` and `content` match this row.
+
+```sql
+SELECT customer_no, name, content
+FROM m_tv_indicator_template
+WHERE name = 'My RSI'
+ORDER BY customer_no;
+```
+
+Customer `2` must not appear in GET when using the `demo` token.
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign134Test" test
+```
+
+---
+
+## 135 — Delete indicator template
+
+**MD:** [`System_Overview_Design_135_Delete_Indicator_Template_(TV).md`](System_Overview_Design/System_Overview_Design_135_Delete_Indicator_Template_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `DELETE /api/indicator-templates/{name}` |
+| **Table** | V6 `m_tv_indicator_template` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign135Test` |
+| **Key code** | `IndicatorTemplateController.delete` → `SystemDatetimeResponse` |
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Path `name` required, max 64 | Done → 422 `CODE:30020` |
+| Template exists for this customer | Done → 404 `CODE:30404` |
+| Hard delete row | Done |
+| Return system datetime | Done → `{ "t": unix }` (**now**, not row `updated_at`) |
+| Other customer | Done → 404, row **kept** |
+| SaveLoadAdapter `removeStudyTemplate` | **Open** |
+| Bare number vs `{t}` | **Extra wrapper** (same as 131) |
+
+### Postman — full delete flow
+
+**Step A — create template to delete (133):**
+
+```
+POST http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"ToDelete","content":"{\"pane\":1}"}
+```
+
+**Expect `200`:** `{ "t": … }`.
+
+**Step B — delete:**
+
+```
+DELETE http://127.0.0.1:8080/api/indicator-templates/ToDelete
+Authorization: Bearer <token>
+```
+
+**Expect `200`:**
+
+```json
+{ "t": 172... }
+```
+
+`t` within a few seconds of now.
+
+**Step C — confirm gone (134 + 132):**
+
+```
+GET http://127.0.0.1:8080/api/indicator-templates/ToDelete
+Authorization: Bearer <token>
+```
+
+**Expect `404`** `CODE:30404`.
+
+```
+GET http://127.0.0.1:8080/api/indicator-templates
+Authorization: Bearer <token>
+```
+
+**Expect:** array does **not** contain `{ "name": "ToDelete" }`.
+
+**Errors:**
+
+```
+DELETE http://127.0.0.1:8080/api/indicator-templates/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  (65 × A)                                                         → 422 CODE:30020
+
+DELETE http://127.0.0.1:8080/api/indicator-templates/Missing
+Authorization: Bearer <token>                                      → 404 CODE:30404
+
+DELETE http://127.0.0.1:8080/api/indicator-templates/ToDelete
+Authorization: Bearer <demo2 token>  (demo owns the row)           → 404 (row remains for demo)
+
+DELETE http://127.0.0.1:8080/api/indicator-templates/ToDelete
+  (no Bearer)                                                      → 401
+```
+
+### DBeaver
+
+Before delete:
+
+```sql
+SELECT COUNT(*) FROM m_tv_indicator_template
+WHERE customer_no = 1 AND name = 'ToDelete';
+```
+
+**Expect:** `1`.
+
+After delete:
+
+```sql
+SELECT COUNT(*) FROM m_tv_indicator_template
+WHERE customer_no = 1 AND name = 'ToDelete';
+```
+
+**Expect:** `0`.
+
+Full table check:
+
+```sql
+SELECT id, customer_no, name FROM m_tv_indicator_template ORDER BY customer_no, name;
+```
+
+Deleted name for customer `1` must be absent. If step “other customer” ran, `demo`’s row is still there until `demo` deletes it.
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign135Test" test
+```
+
+---
+
+## 136 — Get chart template list
+
+**MD:** [`System_Overview_Design_136_Get_Chart_Template_List_(TV).md`](System_Overview_Design/System_Overview_Design_136_Get_Chart_Template_List_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `GET /api/chart-templates` |
+| **Table** | V9 `m_tv_chart_templates` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign136Test` |
+| **Key code** | `ChartTemplateController.list` → `ChartTemplateServiceImpl` |
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Filter by token `customer_no` | Done |
+| DTO `name` only | Done |
+| Empty → `200 []` | Done |
+| Sort order in MD | not specified — app uses **name ASC** |
+| SaveLoadAdapter chart templates | **Open** (still `localStorage`) |
+
+### Postman — seed via 137 or DBeaver
+
+Prefer **POST /api/chart-templates** (doc 137). Flyway V9 starts empty; DBeaver INSERT also works:
+
+```sql
+INSERT INTO m_tv_chart_templates (customer_no, name, content, updated_at) VALUES
+  (1, 'Alpha', '{"theme":"a"}', NOW()),
+  (1, 'Zulu', '{"theme":"z"}', NOW()),
+  (2, 'Other', '{"theme":"o"}', NOW());
+```
+
+**List as demo (customer 1):**
+
+```
+GET http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+```
+
+**Expect `200`:**
+
+```json
+[
+  { "name": "Alpha" },
+  { "name": "Zulu" }
+]
+```
+
+Sorted A→Z. **No** `content`, **no** `customer_no`. Must **not** include `Other`.
+
+**List as demo2:**
+
+Login as `demo2` / `demo2`, same GET → only `[{ "name": "Other" }]`.
+
+**Empty customer:**
+
+Fresh DB with no rows for customer 99 → **200** `[]`.
+
+**Errors:** no Bearer → **401**.
+
+### DBeaver — verify source
+
+```sql
+SELECT id, customer_no, name, content, updated_at
+FROM m_tv_chart_templates
+WHERE customer_no = 1
+ORDER BY name ASC;
+```
+
+**Expect:** rows for `Alpha`, `Zulu` only; `content` present in DB but **not** returned by API.
+
+Tenant check:
+
+```sql
+SELECT customer_no, name FROM m_tv_chart_templates ORDER BY customer_no, name;
+```
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign136Test" test
+```
+
+---
+
+## 137 — Register / update chart template
+
+**MD:** [`System_Overview_Design_137_Register_Update_Chart_Template_(TV).md`](System_Overview_Design/System_Overview_Design_137_Register_Update_Chart_Template_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `POST /api/chart-templates` |
+| **Table** | V9 `m_tv_chart_templates` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign137Test` |
+| **Key code** | `ChartTemplateController.upsert` → `TvChartTemplate.applyContent` |
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Body `name` required, max 64 | Done → 422 `CODE:30020` |
+| Body `content` required | Done → 422 `CODE:30020` |
+| Match `(customer_no, name)` | Done |
+| Insert if missing | Done: `customer_no`, `name`, `content` |
+| Update if found | Done: **content only** (name / customer stay) |
+| Return update datetime of [1] | Done → `{ "t": unix }` from row `updated_at` |
+| Unique per customer | Done — `demo2` may reuse the same name |
+| SaveLoadAdapter | **Open** |
+| Bare number vs `{t}` | **Extra wrapper** (same as 133) |
+
+### Postman — register then update
+
+**Step A — first POST (insert):**
+
+```
+POST http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My Dark","content":"{\"theme\":\"dark\"}"}
+```
+
+**Expect `200`:**
+
+```json
+{ "t": 172... }
+```
+
+`t` within a few seconds of now.
+
+**Step B — second POST same name (update content only):**
+
+```
+POST http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My Dark","content":"{\"theme\":\"light\"}"}
+```
+
+**Expect `200`:** `{ "t": … }` (same or later unix). List still has one `My Dark` row, no `content` in the list DTO.
+
+**Errors:**
+
+```
+POST … {"name":"  ","content":"{}"}                         → 422 CODE:30020
+POST … {"name":"<65 × A>","content":"{}"}                   → 422 CODE:30020
+POST … {"name":"Dark","content":""}                         → 422 CODE:30020
+POST … (no Bearer)                                          → 401
+```
+
+### DBeaver
+
+After step A:
+
+```sql
+SELECT id, customer_no, name, content, updated_at
+FROM m_tv_chart_templates
+WHERE customer_no = 1 AND name = 'My Dark';
+```
+
+**Expect:** one row, `content` = `{"theme":"dark"}`.
+
+After step B: same `id`, same `name`, `content` = `{"theme":"light"}`, `updated_at` later.
+
+Same name, other customer:
+
+```sql
+SELECT customer_no, name, content
+FROM m_tv_chart_templates
+WHERE name = 'My Dark'
+ORDER BY customer_no;
+```
+
+Customer `2` can have its own `My Dark` after logging in as `demo2` and POSTing.
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign137Test" test
+```
+
+---
+
+## 138 — Get chart template
+
+**MD:** [`System_Overview_Design_138_Get_Chart_Template_(TV).md`](System_Overview_Design/System_Overview_Design_138_Get_Chart_Template_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `GET /api/chart-templates/{name}` |
+| **Table** | V9 `m_tv_chart_templates` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign138Test` |
+| **Key code** | `ChartTemplateController.get` → `ChartTemplateDto` |
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Path `name` required, max 64 | Done → 422 `CODE:30020` |
+| Match customer + name | Done |
+| Missing row | Done → 404 `CODE:30404` |
+| DTO `name` + `content` | Done |
+| Other customer | Done → 404 (same as 134) |
+| SaveLoadAdapter | **Open** |
+
+Spaces in names must be URL-encoded (`My%20Dark`).
+
+### Postman — full get flow
+
+**Step A — create (137):**
+
+```
+POST http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My Dark","content":"{\"theme\":\"dark\"}"}
+```
+
+**Step B — get:**
+
+```
+GET http://127.0.0.1:8080/api/chart-templates/My%20Dark
+Authorization: Bearer <token>
+```
+
+**Expect `200`:**
+
+```json
+{
+  "name": "My Dark",
+  "content": "{\"theme\":\"dark\"}"
+}
+```
+
+Must **not** include `customer_no`, `id`, or `timestamp`.
+
+**Step C — update content (137):**
+
+```
+POST http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"My Dark","content":"{\"theme\":\"light\"}"}
+```
+
+**Step D — get after update:**
+
+```
+GET http://127.0.0.1:8080/api/chart-templates/My%20Dark
+Authorization: Bearer <token>
+```
+
+**Expect `200`:** `name=My Dark`, `content={"theme":"light"}`.
+
+**Errors:**
+
+```
+GET http://127.0.0.1:8080/api/chart-templates/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  (65 × A)                                                         → 422 CODE:30020
+
+GET http://127.0.0.1:8080/api/chart-templates/Missing
+Authorization: Bearer <token>                                      → 404 CODE:30404
+
+GET http://127.0.0.1:8080/api/chart-templates/My%20Dark
+Authorization: Bearer <demo2 token>  (demo owns the row)           → 404 CODE:30404
+
+GET http://127.0.0.1:8080/api/chart-templates/My%20Dark
+  (no Bearer)                                                      → 401
+```
+
+Compare list vs get — list (doc 136) has **no** `content`:
+
+```
+GET http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+```
+
+**Expect:** `{ "name": "My Dark" }` in the array, no `content`. GET-by-name is the only call that returns `content`.
+
+### DBeaver
+
+After step D:
+
+```sql
+SELECT name, content
+FROM m_tv_chart_templates
+WHERE customer_no = 1 AND name = 'My Dark';
+```
+
+**Expect:** API `name` and `content` match this row.
+
+```sql
+SELECT customer_no, name, content
+FROM m_tv_chart_templates
+WHERE name = 'My Dark'
+ORDER BY customer_no;
+```
+
+Customer `2` must not appear in GET when using the `demo` token.
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign138Test" test
+```
+
+---
+
+## 139 — Delete chart template
+
+**MD:** [`System_Overview_Design_139_Delete_Chart_Template_(TV).md`](System_Overview_Design/System_Overview_Design_139_Delete_Chart_Template_(TV).md)
+
+| | |
+|---|---|
+| **Path** | `DELETE /api/chart-templates/{name}` |
+| **Table** | V9 `m_tv_chart_templates` |
+| **Implemented?** | **Yes** |
+| **Test class** | `SystemOverviewDesign139Test` |
+| **Key code** | `ChartTemplateController.delete` → `SystemDatetimeResponse` |
+
+### What MD requires vs app
+
+| MD rule | Status |
+|---------|--------|
+| Token | Stub (JWT) |
+| Path `name` required, max 64 | Done → 422 `CODE:30020` |
+| Template exists for this customer | Done → 404 `CODE:30404` |
+| Hard delete row | Done |
+| Return system datetime | Done → `{ "t": unix }` (**now**, not row `updated_at`) |
+| Other customer | Done → 404, row **kept** |
+| SaveLoadAdapter | **Open** |
+| Bare number vs `{t}` | **Extra wrapper** (same as 135) |
+
+### Postman — full delete flow
+
+**Step A — create template to delete (137):**
+
+```
+POST http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"name":"ToDelete","content":"{\"pane\":1}"}
+```
+
+**Expect `200`:** `{ "t": … }`.
+
+**Step B — delete:**
+
+```
+DELETE http://127.0.0.1:8080/api/chart-templates/ToDelete
+Authorization: Bearer <token>
+```
+
+**Expect `200`:**
+
+```json
+{ "t": 172... }
+```
+
+`t` within a few seconds of now.
+
+**Step C — confirm gone (138 + 136):**
+
+```
+GET http://127.0.0.1:8080/api/chart-templates/ToDelete
+Authorization: Bearer <token>
+```
+
+**Expect `404`** `CODE:30404`.
+
+```
+GET http://127.0.0.1:8080/api/chart-templates
+Authorization: Bearer <token>
+```
+
+**Expect:** array does **not** contain `{ "name": "ToDelete" }`.
+
+**Errors:**
+
+```
+DELETE http://127.0.0.1:8080/api/chart-templates/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  (65 × A)                                                         → 422 CODE:30020
+
+DELETE http://127.0.0.1:8080/api/chart-templates/Missing
+Authorization: Bearer <token>                                      → 404 CODE:30404
+
+DELETE http://127.0.0.1:8080/api/chart-templates/ToDelete
+Authorization: Bearer <demo2 token>  (demo owns the row)           → 404 (row remains for demo)
+
+DELETE http://127.0.0.1:8080/api/chart-templates/ToDelete
+  (no Bearer)                                                      → 401
+```
+
+### DBeaver
+
+Before delete:
+
+```sql
+SELECT COUNT(*) FROM m_tv_chart_templates
+WHERE customer_no = 1 AND name = 'ToDelete';
+```
+
+**Expect:** `1`.
+
+After delete:
+
+```sql
+SELECT COUNT(*) FROM m_tv_chart_templates
+WHERE customer_no = 1 AND name = 'ToDelete';
+```
+
+**Expect:** `0`.
+
+Full table check:
+
+```sql
+SELECT id, customer_no, name FROM m_tv_chart_templates ORDER BY customer_no, name;
+```
+
+Deleted name for customer `1` must be absent. If step “other customer” ran, `demo`’s row is still there until `demo` deletes it.
+
+### Automated
+
+```powershell
+.\mvnw.cmd "-Dtest=SystemOverviewDesign139Test" test
+```
+
+---
+
+## Summary table — implementation status 120–139
 
 | Doc | API | Implemented | Test class | Main gaps |
 |-----|-----|-------------|------------|-----------|
@@ -1131,9 +1931,16 @@ Test seeds its own rows in `@Transactional` tests:
 | 129 | `GET /api/layouts/{id}` | Yes | 129Test | Tenant filter extra; adapter open |
 | 130 | `GET /api/layouts` | Yes | 130Test | Sort name N/A; adapter open |
 | 131 | `DELETE /api/layouts/{id}` | Yes | 131Test | `{t}` wrapper; adapter open |
-| 132 | `GET /api/indicator-templates` | Yes | 132Test | Sort name ASC; 133–134 planned |
+| 132 | `GET /api/indicator-templates` | Yes | 132Test | Sort name ASC; adapter open |
+| 133 | `POST /api/indicator-templates` | Yes | 133Test | `{t}` wrapper; adapter open |
+| 134 | `GET /api/indicator-templates/{name}` | Yes | 134Test | Tenant 404 extra; adapter open |
+| 135 | `DELETE /api/indicator-templates/{name}` | Yes | 135Test | `{t}` wrapper; adapter open |
+| 136 | `GET /api/chart-templates` | Yes | 136Test | Sort name ASC; adapter open |
+| 137 | `POST /api/chart-templates` | Yes | 137Test | `{t}` wrapper; adapter open |
+| 138 | `GET /api/chart-templates/{name}` | Yes | 138Test | Tenant 404 extra; adapter open |
+| 139 | `DELETE /api/chart-templates/{name}` | Yes | 139Test | `{t}` wrapper; adapter open |
 
-**Frontend not wired to server layouts/templates:** [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) still uses **localStorage** for chart save/load and study templates. Backend 127–132 is ready; wiring is **Open**.
+**Frontend not wired to server layouts/templates:** [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) still uses **localStorage** for chart layouts (127–131), study templates (132–135), and chart templates (136–139). Backend CRUD is ready; wiring is **Open**.
 
 ---
 
@@ -1155,5 +1962,12 @@ Test seeds its own rows in `@Transactional` tests:
 | 130 | GET | `http://127.0.0.1:8080/api/layouts` |
 | 131 | DELETE | `http://127.0.0.1:8080/api/layouts/{id}` |
 | 132 | GET | `http://127.0.0.1:8080/api/indicator-templates` |
+| 133 | POST | `http://127.0.0.1:8080/api/indicator-templates` |
+| 134 | GET | `http://127.0.0.1:8080/api/indicator-templates/{name}` |
+| 135 | DELETE | `http://127.0.0.1:8080/api/indicator-templates/{name}` |
+| 136 | GET | `http://127.0.0.1:8080/api/chart-templates` |
+| 137 | POST | `http://127.0.0.1:8080/api/chart-templates` |
+| 138 | GET | `http://127.0.0.1:8080/api/chart-templates/{name}` |
+| 139 | DELETE | `http://127.0.0.1:8080/api/chart-templates/{name}` |
 
 All except login: `Authorization: Bearer <accessToken>`.

@@ -2,10 +2,8 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
-package com.task.chart.config;
+package com.task.chart.security;
 
-import com.task.chart.security.JsonUnauthorizedEntryPoint;
-import com.task.chart.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,11 +29,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Permit Swagger UI for mentor review</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Move to security package</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @Configuration
 @EnableWebSecurity

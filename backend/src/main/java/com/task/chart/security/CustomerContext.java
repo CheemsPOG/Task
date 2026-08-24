@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
-package com.task.chart.config;
+package com.task.chart.security;
 
 /**
  * Holds the customer number for the current request (from JWT claim).
@@ -16,11 +16,12 @@ package com.task.chart.config;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Move to security package</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class CustomerContext {
 
@@ -29,14 +30,25 @@ public final class CustomerContext {
 	private CustomerContext() {
 	}
 
+	/**
+	 * Stores the token customer for this thread.
+	 *
+	 * @param customerNo JWT {@code customer_no} claim
+	 */
 	public static void set(long customerNo) {
 		CUSTOMER_NO.set(customerNo);
 	}
 
+	/**
+	 * @return token customer, or {@code null} if unauthenticated
+	 */
 	public static Long get() {
 		return CUSTOMER_NO.get();
 	}
 
+	/**
+	 * Clears the thread-local so it cannot leak to the next request.
+	 */
 	public static void clear() {
 		CUSTOMER_NO.remove();
 	}

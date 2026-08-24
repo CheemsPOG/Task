@@ -41,6 +41,9 @@ public class LocalizedMessageServiceImpl implements LocalizedMessageService {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * @return localized text for the message key
+	 */
 	@Override
 	public String get(String code) {
 		return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());

@@ -23,6 +23,21 @@ import org.springframework.stereotype.Service;
 
 /**
  * Implementation of {@link MockFxQuoteService}.
+ *
+ * <br><br>
+ * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
+ *   <colgroup>
+ *     <col span="1" style="width:10%;">
+ *     <col span="2" style="width:15%;">
+ *   </colgroup>
+ *   <tr><th colspan="4">History</th></tr>
+ *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ * </table>
+ * <p>
+ *
+ * @author Task
+ * @version 1.0.0
  */
 @Service
 public class MockFxQuoteServiceImpl implements MockFxQuoteService {
@@ -31,6 +46,11 @@ public class MockFxQuoteServiceImpl implements MockFxQuoteService {
 	private final Map<Integer, SimulatedQuote> quotes = new ConcurrentHashMap<>();
 	private final List<QuoteListener> listeners = new CopyOnWriteArrayList<>();
 
+	/**
+	 * Seeds one simulated quote per catalog pair.
+	 *
+	 * @param currencyPairService demo FX catalog
+	 */
 	public MockFxQuoteServiceImpl(CurrencyPairService currencyPairService) {
 		this.currencyPairService = currencyPairService;
 		for (CurrencyPairDto pair : currencyPairService.list()) {
