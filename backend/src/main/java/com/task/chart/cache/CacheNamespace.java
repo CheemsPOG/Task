@@ -5,6 +5,9 @@
 package com.task.chart.cache;
 
 import com.task.chart.util.ResolutionMapper;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Locale;
 
 /**
@@ -19,12 +22,12 @@ import java.util.Locale;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
- *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>tableName for Phase 2</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/26</td><td>Task</td><td>skipWeekend helper</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 public enum CacheNamespace {
 
@@ -77,6 +80,22 @@ public enum CacheNamespace {
 
 	public long periodMillis() {
 		return ResolutionMapper.periodMillis(tvResolution);
+	}
+
+	/**
+	 * Day/week/month bars skip Saturday and Sunday (UTC), matching the boot seeder.
+	 *
+	 * @param openMs bar open epoch millis
+	 * @return true when this namespace should not write that open
+	 */
+	public boolean skipWeekend(long openMs) {
+		if (this != CACHE_SET_DAY && this != CACHE_SET_WEEK && this != CACHE_SET_MONTH) {
+			return false;
+		}
+		DayOfWeek day = Instant.ofEpochMilli(openMs)
+				.atZone(ZoneOffset.UTC)
+				.getDayOfWeek();
+		return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
 	}
 
 	/**

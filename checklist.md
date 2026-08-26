@@ -20,7 +20,7 @@ Header on every authenticated call (`/api/**` and `GET /curpairs`) except health
 | Postgres + Flyway | **Done** | V1–V9 (`m_app_user` for demo auth; `m_tv_chart_templates` for 136–139) |
 | Frontend datafeed | **Done** | `datafeed.ts` + `api.ts` sends Bearer + `Accept-Language` |
 
-**Not in 120–126 (do not treat as missing):** save/load still `LocalStorageSaveLoadAdapter`; quotes still mock WS; `GET /curpairs` is extra quote-stream catalog (same `m_ccypairs` master as 123/124; `curpairCd` = `priority`; JWT required).
+**Not in 120–126 (do not treat as missing):** save/load still `LocalStorageSaveLoadAdapter`; live quotes are a Java ingest mock published on Redis (Python WS only relays); `GET /curpairs` is extra quote-stream catalog (same `m_ccypairs` master as 123/124; `curpairCd` = `priority`; JWT required).
 
 ---
 
@@ -542,7 +542,7 @@ Empty DB → `[]`. After seeding two names for customer `1` and one for `2`, lis
 **Not in System_Overview_Design 120–139.** Spec from BE team (quote mapping for live header).
 
 | Path | `GET /curpairs` |
-| WS | `ws://…/ws/fx-quotes` (~3 ticks/s, Python demo) |
+| WS | `ws://…/ws/fx-quotes` (~3 ticks/s from Java ingest via Redis) |
 | Table | `m_ccypairs` (`is_deleted = 0`, sort `priority` ASC) |
 
 ### REST catalog (`GET /curpairs`)
@@ -566,7 +566,7 @@ Empty DB → `[]`. After seeding two names for customer `1` and one for `2`, lis
 |---|---|---|
 | `curpairCd` as **string** | **Done** | e.g. `"1"` |
 | `rateMiliSecondUTC`, bid/ask/mid/high/low | **Done** | Field name keeps spec typo |
-| ~3 ticks/second | **Done** | `TICK_MS = 333` in Python |
+| ~3 ticks/second | **Done** | Java `app.chart-cache.tick-ms: 333` → Redis `peach:quotes` → Python WS |
 | Map `curpairCd` → `/curpairs` row | **Done** | FE `quoteStore.applyQuote` |
 | Unknown `curpairCd` ignored | **Done** | Console warn |
 | Header shows mapped pair + live BID/ASK/MID | **Done** | `quoteToolbar.ts` |
@@ -622,7 +622,7 @@ ORDER BY priority;
 |---|------|-----|
 | 1 | Replace local JWT with **real Peach S-01** | Docs require Peach login token check |
 | 2 | Confirm Peach **quote API** (`curpairCd` meaning, auth, tick shape) | Our `curpairCd = priority` is a demo convention |
-| 3 | Replace mock bar writer with **real Peach bar pipeline** | Doc 121 warehouse from live data |
+| 3 | Replace mock bar writer / `TickIngestWorker` with **real Peach bar pipeline** | Doc 121 warehouse from live data; Redis quote keys stay |
 | 4 | Wire **SaveLoadAdapter** to 127–131, 132–135, 136–139 | Backend CRUD ready; FE still localStorage |
 | 5 | **Python WS** reads pair list from Java `/curpairs` or DB | Today `market.py` hardcodes 5 pairs |
 | 6 | **WebSocket auth** if Peach requires it | Demo WS is open |

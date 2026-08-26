@@ -18,12 +18,12 @@ import com.task.chart.dto.response.BarDto;
  *   </colgroup>
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
- *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/26</td><td>Task</td><td>applyTick for ingest open bars</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 public record CachedChartBar(
 		String curpairCd,
@@ -85,6 +85,52 @@ public record CachedChartBar(
 			case ASK -> askClose;
 			case MID -> mid(bidClose, askClose);
 		};
+	}
+
+	/**
+	 * Opens a new bar from the current BID/ASK tick.
+	 *
+	 * @param curpairCd warehouse pair CD
+	 * @param chartDatetimeSec bar open unix seconds
+	 * @param bid current BID
+	 * @param ask current ASK
+	 * @return new row
+	 */
+	public static CachedChartBar openFromTick(String curpairCd, long chartDatetimeSec, double bid, double ask) {
+		return new CachedChartBar(
+				curpairCd,
+				chartDatetimeSec,
+				bid,
+				bid,
+				bid,
+				bid,
+				ask,
+				ask,
+				ask,
+				ask,
+				1);
+	}
+
+	/**
+	 * Updates high/low/close from a live tick; volume increments by one.
+	 *
+	 * @param bid current BID
+	 * @param ask current ASK
+	 * @return updated row
+	 */
+	public CachedChartBar applyTick(double bid, double ask) {
+		return new CachedChartBar(
+				curpairCd,
+				chartDatetimeSec,
+				bidOpen,
+				Math.max(bidHigh, bid),
+				Math.min(bidLow, bid),
+				bid,
+				askOpen,
+				Math.max(askHigh, ask),
+				Math.min(askLow, ask),
+				ask,
+				volume + 1);
 	}
 
 	private static double mid(double bid, double ask) {

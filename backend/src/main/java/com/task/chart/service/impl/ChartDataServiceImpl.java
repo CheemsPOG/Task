@@ -30,7 +30,6 @@ import com.task.chart.repository.SeasonRepository;
 import com.task.chart.repository.TvMarkRepository;
 import com.task.chart.repository.TvTimescaleMarkRepository;
 import com.task.chart.service.ChartDataService;
-import com.task.chart.service.MockFxQuoteService;
 import com.task.chart.service.SymbolCatalog;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
 import com.task.chart.util.ResolutionMapper;
@@ -66,7 +65,6 @@ public class ChartDataServiceImpl implements ChartDataService {
 
 	private final SymbolCatalog symbolCatalog;
 	private final ChartCacheStore chartCacheStore;
-	private final MockFxQuoteService mockFxQuoteService;
 	private final AppProperties appProperties;
 	private final CcypairRepository ccypairRepository;
 	private final SeasonRepository seasonRepository;
@@ -78,7 +76,6 @@ public class ChartDataServiceImpl implements ChartDataService {
 	 *
 	 * @param symbolCatalog in-memory pair catalog
 	 * @param chartCacheStore Redis bar cache
-	 * @param mockFxQuoteService live mid/bid/ask for stitching
 	 * @param appProperties tradingview flags
 	 * @param ccypairRepository pair master
 	 * @param seasonRepository season master
@@ -88,7 +85,6 @@ public class ChartDataServiceImpl implements ChartDataService {
 	public ChartDataServiceImpl(
 			SymbolCatalog symbolCatalog,
 			ChartCacheStore chartCacheStore,
-			MockFxQuoteService mockFxQuoteService,
 			AppProperties appProperties,
 			CcypairRepository ccypairRepository,
 			SeasonRepository seasonRepository,
@@ -96,7 +92,6 @@ public class ChartDataServiceImpl implements ChartDataService {
 			TvTimescaleMarkRepository tvTimescaleMarkRepository) {
 		this.symbolCatalog = symbolCatalog;
 		this.chartCacheStore = chartCacheStore;
-		this.mockFxQuoteService = mockFxQuoteService;
 		this.appProperties = appProperties;
 		this.ccypairRepository = ccypairRepository;
 		this.seasonRepository = seasonRepository;
@@ -450,7 +445,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 		for (CachedChartBar row : cached) {
 			bars.add(row.toBarDto(component));
 		}
-		return HistoryResponse.ok(stitchCurrentBar(symbol, namespace.periodMillis(), bars, component));
+		return HistoryResponse.ok(bars);
 	}
 
 	private static void validateHistoryRequest(
@@ -504,28 +499,5 @@ public class ChartDataServiceImpl implements ChartDataService {
 	public String providerSymbol(String symbolName) {
 		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		return symbol == null ? null : symbol.providerSymbol();
-	}
-
-	private List<BarDto> stitchCurrentBar(
-			CachedSymbol symbol,
-			long periodMs,
-			List<BarDto> bars,
-			PriceComponent price) {
-		BarDto last = bars.get(bars.size() - 1);
-		long currentOpen = Math.floorDiv(Instant.now().toEpochMilli() - 1, periodMs) * periodMs;
-		if (last.time() != currentOpen) {
-			return bars;
-		}
-		double close = mockFxQuoteService.currentPrice(symbol.curpairCd(), price);
-		BarDto stitched = new BarDto(
-				last.time(),
-				last.open(),
-				Math.max(last.high(), close),
-				Math.min(last.low(), close),
-				close,
-				last.volume());
-		List<BarDto> copy = new ArrayList<>(bars);
-		copy.set(copy.size() - 1, stitched);
-		return copy;
 	}
 }

@@ -7,28 +7,55 @@ import pytest
 import websockets
 from websockets.asyncio.server import serve
 
-from market import TICK_MS
-from server import Hub, router
+from server import Hub, InMemoryQuoteSource, router
+
+
+def _quote(curpair_cd: str, bid: float, ask: float) -> dict:
+    return {
+        "curpairCd": curpair_cd,
+        "rateMiliSecondUTC": 1_700_000_000_000,
+        "bid": bid,
+        "ask": ask,
+        "mid": (bid + ask) / 2.0,
+        "high": ask,
+        "low": bid,
+    }
+
+
+SEED = [
+    _quote("1", 149.800, 149.900),
+    _quote("2", 162.370, 162.470),
+    _quote("3", 1.08490, 1.08590),
+    _quote("4", 1.27130, 1.27230),
+    _quote("5", 0.66200, 0.66300),
+]
 
 
 @pytest.fixture
-async def ws_base() -> str:
-    hub = Hub()
+async def ws_hub() -> tuple[str, InMemoryQuoteSource]:
+    source = InMemoryQuoteSource(SEED)
+    hub = Hub(source=source)
     async with serve(lambda connection: router(connection, hub), "127.0.0.1", 0, origins=None) as server:
         port = server.sockets[0].getsockname()[1]
-        tick = asyncio.create_task(hub.run_ticks())
+        ingest = asyncio.create_task(hub.run_ingest())
+        for _ in range(50):
+            if len(hub.latest) >= 5:
+                break
+            await asyncio.sleep(0.02)
         try:
-            yield f"ws://127.0.0.1:{port}"
+            yield f"ws://127.0.0.1:{port}", source
         finally:
-            tick.cancel()
+            source.close()
+            ingest.cancel()
             try:
-                await tick
+                await ingest
             except asyncio.CancelledError:
                 pass
 
 
-async def test_fx_quotes_snapshot_and_payload(ws_base: str) -> None:
-    async with websockets.connect(f"{ws_base}/ws/fx-quotes") as ws:
+async def test_fx_quotes_snapshot_from_ingest(ws_hub: tuple[str, InMemoryQuoteSource]) -> None:
+    base, _source = ws_hub
+    async with websockets.connect(f"{base}/ws/fx-quotes") as ws:
         seen: dict[str, dict] = {}
         while len(seen) < 5:
             quote = json.loads(await asyncio.wait_for(ws.recv(), timeout=2))
@@ -37,28 +64,49 @@ async def test_fx_quotes_snapshot_and_payload(ws_base: str) -> None:
         usd = seen["1"]
         assert usd["bid"] < usd["ask"]
         assert usd["mid"] == pytest.approx((usd["bid"] + usd["ask"]) / 2.0, abs=1e-6)
-        for key in ("rateMiliSecondUTC", "bid", "ask", "mid", "high", "low"):
-            assert key in usd
 
 
-async def test_fx_quotes_about_three_ticks_per_second(ws_base: str) -> None:
-    async with websockets.connect(f"{ws_base}/ws/fx-quotes") as ws:
+async def test_fx_quotes_forwards_published_ticks(
+    ws_hub: tuple[str, InMemoryQuoteSource],
+) -> None:
+    base, source = ws_hub
+    async with websockets.connect(f"{base}/ws/fx-quotes") as ws:
         seen: set[str] = set()
         while len(seen) < 5:
             quote = json.loads(await asyncio.wait_for(ws.recv(), timeout=2))
             seen.add(quote["curpairCd"])
-        count = 0
-        deadline = asyncio.get_running_loop().time() + 1.1
-        while asyncio.get_running_loop().time() < deadline:
-            await asyncio.wait_for(ws.recv(), timeout=2)
-            count += 1
-        # Five pairs per tick at ~3 ticks/s → about 15 messages/s.
-        assert 8 <= count <= 25
-        assert TICK_MS == 333
+        updated = _quote("1", 149.810, 149.910)
+        source.publish(updated)
+        forwarded = json.loads(await asyncio.wait_for(ws.recv(), timeout=2))
+        assert forwarded["curpairCd"] == "1"
+        assert forwarded["bid"] == 149.810
+        assert forwarded["ask"] == 149.910
 
 
-async def test_stream_subscribe_unsubscribe_and_error(ws_base: str) -> None:
-    async with websockets.connect(f"{ws_base}/ws/stream") as ws:
+async def test_fx_quotes_idle_without_ingest() -> None:
+    source = InMemoryQuoteSource([])
+    hub = Hub(source=source)
+    async with serve(lambda connection: router(connection, hub), "127.0.0.1", 0, origins=None) as server:
+        port = server.sockets[0].getsockname()[1]
+        ingest = asyncio.create_task(hub.run_ingest())
+        try:
+            async with websockets.connect(f"ws://127.0.0.1:{port}/ws/fx-quotes") as ws:
+                with pytest.raises(asyncio.TimeoutError):
+                    await asyncio.wait_for(ws.recv(), timeout=0.4)
+        finally:
+            source.close()
+            ingest.cancel()
+            try:
+                await ingest
+            except asyncio.CancelledError:
+                pass
+
+
+async def test_stream_subscribe_unsubscribe_and_error(
+    ws_hub: tuple[str, InMemoryQuoteSource],
+) -> None:
+    base, _source = ws_hub
+    async with websockets.connect(f"{base}/ws/stream") as ws:
         await ws.send(
             json.dumps(
                 {

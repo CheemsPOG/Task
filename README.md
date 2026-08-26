@@ -1,8 +1,8 @@
 # TradingView Advanced Charts
 
-Frontend chart (TradingView Advanced Charts), a Java Spring Boot REST backend, and a Python WebSocket server. The chart datafeed calls Java for history and Python for live ticks. Both serve **local demo FX data** for the same currency pairs as `/curpairs`. No external market-data API is used.
+Frontend chart (TradingView Advanced Charts), a Java Spring Boot REST backend, and a Python WebSocket gateway. Java owns **history and live prices** (demo ingest). Python only **relays** Redis ticks to the widget. No external market-data API is used.
 
-How the app is built (config, database, APIs 120–139, how to test): [`structure.md`](structure.md).
+How the app is built (config, database, APIs 120–139, how to test): [`structure.md`](structure.md). Spoken mentor walkthrough (every doc + extras): [`present.md`](present.md). Java class map: [`backend/src/main/java/README.md`](backend/src/main/java/README.md).
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ That starts:
 | Service | Port | Use |
 |---|---|---|
 | Postgres | `5432` | Flyway / JPA |
-| Redis | `6379` | Doc 121 Peach `cache_set_*` bar cache |
+| Redis | `6379` | Doc 121 `cache_set_*`, live quotes (`peach:quote:*` / `peach:quotes`), refresh tokens |
 
 DBeaver: host `127.0.0.1`, port `5432`, database `chart`, user `chart`, password `chart`.
 
@@ -39,6 +39,7 @@ Redis CLI peek (after Java has seeded):
 ```bash
 docker compose exec redis redis-cli ZCARD peach:cache_set_day:USDJPY
 docker compose exec redis redis-cli ZRANGE peach:cache_set_day:USDJPY 0 2 WITHSCORES
+docker compose exec redis redis-cli GET peach:quote:1
 ```
 
 Flyway creates `m_ccypairs` and `m_season` the first time Java starts.
@@ -144,7 +145,9 @@ Both PCs must be on the same network (or you must port-forward 8080). Postgres a
 
 Do **not** expose 8080 to the public internet — the JWT secret and `demo`/`demo` users are local demo credentials.
 
-### 2. Python WebSocket server
+### 2. Python WebSocket gateway
+
+Python does **not** invent prices. It snapshots `peach:quote:*` and `SUBSCRIBE`s `peach:quotes` published by Java `TickIngestWorker`. Start Java first.
 
 ```bash
 cd ws-python
@@ -152,7 +155,7 @@ python -m pip install -r requirements.txt
 python server.py
 ```
 
-Live sockets listen on **ws://127.0.0.1:8081** (`/ws/fx-quotes` and `/ws/stream`).
+Live sockets listen on **ws://127.0.0.1:8081** (`/ws/fx-quotes` and `/ws/stream`). Redis: `REDIS_HOST` / `REDIS_PORT` default `127.0.0.1:6379`. Stop Java and new ticks stop (the gateway is not a second walk).
 
 ### 3. Frontend
 
@@ -217,13 +220,13 @@ Then open `http://127.0.0.1:5174`.
 - Interval switcher (minutes, hours, daily, weekly, monthly)
 - Light / dark theme toggle and **Logout** on the right of the chart header
 - Login overlay before the chart (local JWT; not Peach S-01)
-- FX header controls: BID/ASK/MID dropdown and a live simulated quote that follows the chart symbol. Switching BID/ASK/MID reloads that pair's candles from that price side.
+- FX header controls: BID/ASK/MID dropdown and a live quote (Java ingest via Redis) that follows the chart symbol. Switching BID/ASK/MID reloads that pair's candles from that price side.
 
 ## Demo data
 
-Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are **local mocks**. The generator walks **BID**, sets **ASK = BID + spread**, and **MID = (BID + ASK) / 2** (~3 ticks per second). The forming candle close follows the selected BID/ASK/MID. A real FX feed can replace the generator later if it keeps the same `/curpairs` + quote JSON.
+Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are **local mocks**. Java `DemoTickEngine` walks **BID**, sets **ASK = BID + spread**, and **MID = (BID + ASK) / 2** (~3 ticks per second via `app.chart-cache.tick-ms: 333`). Python only relays those ticks. The forming candle close follows the selected BID/ASK/MID. A real FX feed can replace `TickIngestWorker` later without changing Redis keys, Python WS, or the chart.
 
-Details, FX WebSocket contract, and a verification checklist: [spec.md](./spec.md).
+Details: [structure.md](./structure.md).
 
 
 # How to Run

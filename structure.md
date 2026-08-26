@@ -6,19 +6,22 @@
 - which processes run, on which ports, and how they connect
 - where each design doc (120–139) is implemented in code
 - how login works (access JWT + refresh cookie) and **how to verify it step by step**
+- that **Java ingest** is the only live price source (Redis bus → Python WS gateway)
 
 **Suggested read order**
 
 | Step | Section | Why |
 |------|---------|-----|
-| 1 | §0 Glossary | Terms used everywhere (S-01, UDF, `customer_no`, …) |
+| 1 | §0 Glossary | Terms used everywhere (S-01, UDF, SSOT, `customer_no`, …) |
 | 2 | §1–3 | What the app is + how to start it + 5‑minute smoke test |
 | 3 | §6 + **§6.1** | Auth model and **refresh-token verification** (curl, browser, tests) |
-| 4 | §13 | Map each design doc to controller/service/test |
-| 5 | [`checklist.md`](checklist.md) | Intentional gaps vs the markdown specs |
-| 6 | [`test.md`](test.md) | Full Postman / DBeaver / Maven proof for every API |
+| 4 | §9–10 | Bar warehouse + **ingest SSOT** + Python as Redis listener |
+| 5 | §13 | Map each design doc to controller/service/test |
+| 6 | [`present.md`](present.md) | Spoken mentor script (same facts, deeper walkthrough) |
+| 7 | [`checklist.md`](checklist.md) | Intentional gaps vs the markdown specs |
+| 8 | [`test.md`](test.md) | Full Postman / DBeaver / Maven proof for every API |
 
-**Other docs:** run commands → [`README.md`](README.md). English specs → [`System_Overview_Design/`](System_Overview_Design/). Japanese originals → [`02_概要設計書/`](02_概要設計書/).
+**Other docs:** run commands → [`README.md`](README.md). Java file tree → [`backend/src/main/java/README.md`](backend/src/main/java/README.md). English specs → [`System_Overview_Design/`](System_Overview_Design/). Japanese originals → [`02_概要設計書/`](02_概要設計書/).
 
 ---
 
@@ -35,6 +38,9 @@
 | **Stand-in / stub** | Local demo code so the chart loads without production Peach services or live market data. |
 | **Warehouse / `t_chart_*`** | Postgres tables holding OHLC bars (doc 121). Reseeded on every Java boot in this demo. |
 | **`cache_set_*` / Redis** | Hot bar cache (doc 121). `/api/history` reads here first. |
+| **Quote bus** | Redis `SET peach:quote:{cd}` + `PUBLISH peach:quotes`. Java ingest is the live price source; Python WS only relays. |
+| **SSOT (single source of truth)** | One process owns live prices: [`TickIngestWorker`](backend/src/main/java/com/task/chart/cache/TickIngestWorker.java). History last bar and WS ticks both come from that ingest, not from a second Python random walk. |
+| **Ingest** | Runtime job that turns ticks into warehouse/Redis bars + quote messages. Today the tick is a mock (`DemoTickEngine`); later a real Peach LP would replace only that step. |
 
 ---
 
@@ -42,15 +48,15 @@
 
 A **local demo** of TradingView Advanced Charts talking to a CTFX-style Peach chart backend.
 
-**In one sentence:** the browser shows a TradingView chart; Java serves REST history/config and login; Python pushes fake live ticks; Postgres and Redis hold demo data.
+**In one sentence:** the browser shows a TradingView chart; Java serves REST, auth, and the demo market ingest; Python only relays Redis ticks over WebSocket; Postgres and Redis hold demo data.
 
 | Layer | Technology | What it does for the mentor |
 |-------|------------|----------------------------|
 | **Browser** | Vite + TypeScript + TradingView widget | Login overlay, chart UI, sends Bearer JWT on API calls, keeps refresh cookie for silent re-login |
-| **Java REST** | Spring Boot on `:8080` | Datafeed APIs (docs 120–126), layouts/templates (127–139), login/refresh/logout, `GET /curpairs` |
-| **Python WS** | `websockets` on `:8081` | Fake live BID/ASK ticks (~3/s) for the chart header and streaming bars |
+| **Java REST + ingest** | Spring Boot on `:8080` | Datafeed APIs (docs 120–126), layouts/templates (127–139), login/refresh/logout, `GET /curpairs`, **demo tick ingest** |
+| **Python WS** | `websockets` on `:8081` | Gateway: `SUBSCRIBE peach:quotes` → `/ws/fx-quotes` and `/ws/stream`. **Does not invent prices.** |
 | **Postgres** | Docker `:5432` | Masters (`m_ccypairs`, users, layouts, templates) + bar warehouse (`t_chart_*`) |
-| **Redis** | Docker `:6379` | Hot bar cache (doc 121) **and** refresh-token store (auth stand-in) |
+| **Redis** | Docker `:6379` | Bar cache (`cache_set_*`), live quotes (`peach:quote:*` + pub/sub), refresh tokens |
 
 **What is NOT in this demo:** live market feed, Peach SSO, production bar writer. History, quotes, and login are **local mocks** so the widget can load and you can review API shape against docs 120–139.
 
@@ -66,11 +72,11 @@ Nothing here is Peach production. The demo was assembled as three apps plus Dock
 | HTTP | Spring MVC `@RestController` | CTFX rule: REST JSON APIs. Datafeed paths stay **UDF names** (`/config`, `/history`, …) because the TradingView library calls those URLs. Layouts and templates are resource REST (`/api/layouts`, `/api/indicator-templates`, `/api/chart-templates`). |
 | Persistence | **Spring Data JPA** + **Flyway** | `spring.jpa.hibernate.ddl-auto: none`. Schema comes only from `backend/src/main/resources/db/migration/V*.sql`. JPA maps masters; `t_chart_*` is accessed with **JdbcTemplate** so table names come from an enum, not request strings. |
 | Database | **PostgreSQL 16** (Docker) | Matches Peach-ish SQL (`GENERATED BY DEFAULT AS IDENTITY`, `TIMESTAMP WITH TIME ZONE`). Tests use **H2** `MODE=PostgreSQL`. |
-| Cache | **Redis 7** (Docker) | Doc 121 `cache_set_*` is Redis sorted sets, not an in-JVM map. |
+| Cache | **Redis 7** (Docker) | Doc 121 `cache_set_*` ZSETs, live quote bus, refresh tokens. |
+| Live quotes | **Python 3.10+**, `websockets` + `redis` | Gateway on 8081. Listens to Java ingest on Redis; no local price formula. |
 | Auth | **Spring Security** + **JJWT 0.12.6** + **BCrypt** | Stand-in for supplementary **S-01**. HMAC-SHA256 JWT, not Peach SSO. |
 | API docs | **springdoc-openapi 3.0.2** | 3.0.x matches Boot 4 (2.8.x is Boot 3). |
 | Frontend | **Vite 7** + **TypeScript 5** | No React. Vanilla TS modules. TradingView **Advanced Charts** is vendored under `frontend/charting_library/` and `frontend/datafeeds/`. |
-| Live quotes | **Python 3.10+**, `websockets` | Separate process on port 8081 so Java stays REST-only for this demo. |
 | Compose | `docker-compose.yml` | Postgres volume `chart-pgdata`; Redis has **no** volume (cache is rebuilt on Java boot). |
 
 Maven is **not** installed globally. Use `backend/mvnw.cmd` (Windows) or `backend/mvnw`. Node 18+ and Java 21+ are required on the host.
@@ -87,11 +93,17 @@ Four processes after `docker compose up -d`:
 Browser  →  http://127.0.0.1:5173  (Vite)
               │
               ├─ /api/**  and /curpairs  ──proxy──►  Spring Boot :8080
-              └─ /ws/**                 ──proxy──►  Python      :8081
+              │                                         │
+              │                                         ├─ boot seed (MockBarGenerator) → t_chart_* + cache_set_*
+              │                                         └─ TickIngestWorker (~333ms)
+              │                                              SET peach:quote:* + PUBLISH peach:quotes
+              │                                              upsert current open bars
+              └─ /ws/**                 ──proxy──►  Python :8081
+                                                       SUBSCRIBE peach:quotes (no local prices)
 
 Docker
   postgres :5432  DB chart / user chart / password chart   volume chart-pgdata
-  redis    :6379  no volume
+  redis    :6379  cache_set_* + quote bus + refresh tokens   no volume
 ```
 
 The browser **never** talks to 8080 or 8081 in normal UI use. Vite [`frontend/vite.config.ts`](frontend/vite.config.ts) proxies (auth cookies are forwarded with `cookieDomainRewrite: ''`):
@@ -109,9 +121,9 @@ CORS on Java (`app.cors-origins`) allows `localhost`/`127.0.0.1` on **5173** and
 
 ### Typical start order
 
-1. **Docker** — `docker compose up -d` (Postgres + Redis). Redis is required for bar cache **and** refresh tokens.
-2. **Java** — `cd backend` → `.\mvnw.cmd spring-boot:run` until log shows `Started ChartBackendApplication`. Flyway migrates DB, seeds demo users, reseeds bar cache.
-3. **Python** (optional for live ticks) — `cd ws-python` → `python server.py`.
+1. **Docker** — `docker compose up -d` (Postgres + Redis). Redis is required for bar cache, the live quote bus, **and** refresh tokens.
+2. **Java** — `cd backend` → `.\mvnw.cmd spring-boot:run` until log shows `Started ChartBackendApplication`. Flyway migrates DB, seeds demo users, reseeds bar cache, then ingest starts publishing ticks.
+3. **Python** (optional for live ticks) — `cd ws-python` → `python server.py`. It only relays Redis `peach:quotes`; without Java ingest there are no new ticks.
 4. **Frontend** — `cd frontend` → `npm install` → `npm start` → open **http://127.0.0.1:5173**.
 5. **Login** — overlay: **demo** / **demo** (tenant `1`) or **demo2** / **demo2** (tenant `2`).
 
@@ -132,6 +144,7 @@ Do this once after start order above. Each step should pass before you dig into 
 | 5 | Same URL **without** Bearer | HTTP 401, `"errorCode": "E_UNAUTHORIZED"` |
 | 6 | Click **Logout** on chart toolbar | Login overlay returns; refresh cookie gone |
 | 7 | `.\mvnw.cmd test -Dtest=AuthLoginTest` (from `backend/`, Redis up) | BUILD SUCCESS |
+| 8 | `docker compose exec redis redis-cli SUBSCRIBE peach:quotes` (Java running) | JSON ticks ~3/s; **stop Java → ticks stop** |
 
 Full refresh-token walkthrough (curl, Postman, silent boot): **§6.1**.
 
@@ -149,9 +162,9 @@ Package: [`frontend/package.json`](frontend/package.json) — scripts `start`/`d
 | [`frontend/src/auth.ts`](frontend/src/auth.ts) | Login/refresh/logout with `credentials: 'include'`; access JWT in **sessionStorage** (`chart_access_token`); refresh in HttpOnly cookie only |
 | [`frontend/src/api.ts`](frontend/src/api.ts) | `fetch` helper: Bearer + `Accept-Language`; on 401 tries `POST /api/auth/refresh` once, then logout handler |
 | [`frontend/src/datafeed/datafeed.ts`](frontend/src/datafeed/datafeed.ts) | TradingView `IBasicDataFeed`: `/config`, `/symbols`, `/search`, `/history`, `/time`, `/marks`, `/timescale_marks` |
-| [`frontend/src/datafeed/streaming.ts`](frontend/src/datafeed/streaming.ts) | Widget `subscribeBars` → Python `/ws/stream` |
+| [`frontend/src/datafeed/streaming.ts`](frontend/src/datafeed/streaming.ts) | Widget `subscribeBars` → Python `/ws/stream` (ticks originated in Java ingest) |
 | [`frontend/src/fx/currencyPairs.ts`](frontend/src/fx/currencyPairs.ts) | `GET /curpairs` with Bearer JWT |
-| [`frontend/src/fx/fxQuotesSocket.ts`](frontend/src/fx/fxQuotesSocket.ts) | Python `/ws/fx-quotes` ~3 ticks/s |
+| [`frontend/src/fx/fxQuotesSocket.ts`](frontend/src/fx/fxQuotesSocket.ts) | Python `/ws/fx-quotes` (~3 ticks/s from Java ingest) |
 | [`frontend/src/fx/quoteStore.ts`](frontend/src/fx/quoteStore.ts) | In-memory quotes keyed by numeric `curpairCd` |
 | [`frontend/src/fx/quoteToolbar.ts`](frontend/src/fx/quoteToolbar.ts) | Loads `GET /curpairs`, maps WS `curpairCd`, shows live BID/ASK/MID on the header |
 | [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) | **Still localStorage** for layouts, study templates, and chart templates |
@@ -175,7 +188,7 @@ The chart header maps WS `curpairCd` through `GET /curpairs` and shows `curpairD
 
 **Mentor view:** one Spring Boot app on port 8080. Controllers are thin; business logic is in `service.impl`; database access via JPA repositories or JDBC for bar tables. Every authenticated request carries `customer_no` from the JWT (see §6).
 
-Entry: [`ChartBackendApplication.java`](backend/src/main/java/com/task/chart/ChartBackendApplication.java) — `@SpringBootApplication`, `@EnableConfigurationProperties(AppProperties.class)`, `@EnableScheduling` (bar refresh).
+Entry: [`ChartBackendApplication.java`](backend/src/main/java/com/task/chart/ChartBackendApplication.java) — `@SpringBootApplication`, `@EnableConfigurationProperties(AppProperties.class)`, `@EnableScheduling` (`TickIngestWorker` live ticks; scheduling **off** in tests).
 
 Config: [`backend/src/main/resources/application.yml`](backend/src/main/resources/application.yml)
 
@@ -189,7 +202,7 @@ Config: [`backend/src/main/resources/application.yml`](backend/src/main/resource
 | `app.jwt.secret` | HMAC key (local demo only, ≥256 bits) |
 | `app.jwt.access-expiration-ms` | `3600000` (1h) — access JWT signing; login/refresh JSON `expiresIn` is **seconds** (`3600`) |
 | `app.jwt.refresh-expiration-ms` | `86400000` (1d) — opaque refresh token TTL in Redis + cookie `Max-Age`; login JSON `refreshExpiresIn` is **seconds** (`86400`) |
-| `app.chart-cache.refresh-ms` | `60000` — writer refreshes the current open bar |
+| `app.chart-cache.tick-ms` | `333` — Java ingest interval (quotes + open-bar upsert). Tests use `3600000` and scheduling **off**. |
 | `app.tradingview.*` | Doc 120 `GET /api/config` flags, CTFX/FOREX, 12 resolutions, Tokyo session strings |
 | `springdoc` | `/v3/api-docs`, UI `/swagger-ui.html` |
 
@@ -206,7 +219,7 @@ Test override: [`backend/src/test/resources/application.yml`](backend/src/test/r
 | `dto.request` / `dto.response` | Wire JSON. |
 | `security` | JWT create/parse, Bearer filter, refresh cookie + Redis store, `SecurityConfig`, `CustomerContext`, 401 JSON. |
 | `config` | CORS, BCrypt, OpenAPI, `AppProperties`, user seed. |
-| `cache` | Doc 121 warehouse + Redis. |
+| `cache` | Doc 121 warehouse + Redis, plus live ingest (`TickIngestWorker`, `QuoteBus`). |
 | `exception` | Typed errors + `GlobalExceptionHandler`. |
 | `constants` | `ErrorCodes`, mark seed window, price component. |
 | `util` | `ResolutionMapper`, `DemoMarket`. |
@@ -470,29 +483,34 @@ Peach design: 13 chart types → 13 tables → 13 Redis namespaces.
 
 1. For every namespace × every catalog pair, generate a **short mock series** (`MockBarGenerator`).
 2. [`ChartBarRepository.replacePair`](backend/src/main/java/com/task/chart/cache/ChartBarRepository.java) **DELETE** that pair from the table, then INSERT. **Every Java boot wipes and reseeds warehouse rows for those pairs.** Depth examples: 1S → 900 bars (~15 min), 1m → 600 bars (~10 hours), 1D → 400 weekdays (weekends skipped for day/week/month).
-3. Same series written to Redis ZSETs.
-4. `@Scheduled` every `app.chart-cache.refresh-ms` upserts the current open bar (DB + Redis). Disabled in tests.
+3. Same series written to Redis ZSETs. **Boot seed only** — there is no scheduled `peachBarAt` refresh.
 
-[`ChartCacheStore`](backend/src/main/java/com/task/chart/cache/ChartCacheStore.java): history **reads Redis**. On miss it can warm from DB.
+[`TickIngestWorker`](backend/src/main/java/com/task/chart/cache/TickIngestWorker.java) (`@Order(200)`, `@Scheduled` every `app.chart-cache.tick-ms` = 333): demo BID walk (`DemoTickEngine`) → `SET peach:quote:{cd}` + `PUBLISH peach:quotes` → upsert the **current open bar** on every namespace (DB + Redis). Scheduling is **off** in tests; tests call `tick()` directly.
+
+[`ChartCacheStore`](backend/src/main/java/com/task/chart/cache/ChartCacheStore.java): history **reads Redis**. On miss it can warm from DB. The last candle is whatever ingest last wrote — no `stitchCurrentBar`.
 
 `/api/history` query: `symbol`, `resolution`, `from`, `to`, **required** `bid_ask` = `BID|MID|ASK`. Columns are `bid_*` / `ask_*` OHLC; MID averages them. Response is dual: Peach columnar `{ s, t[], o[], h[], l[], c[] }` **and** widget `bars[]`. `s=no_data` can include `nextTime`.
 
-Python ticks are **not** written to `t_chart_*`. Live candles on the widget come from `/ws/stream`, not from Java history.
+Python does **not** write `t_chart_*`. Java ingest does (open bars). Live forming candles on the widget come from `/ws/stream` aggregating the same Redis ticks.
 
 ---
 
 ## 10. Python WebSocket (not in 120–139)
 
-[`ws-python/server.py`](ws-python/server.py) + [`ws-python/market.py`](ws-python/market.py). Deps: `websockets>=14`, pytest.
+[`ws-python/server.py`](ws-python/server.py) + [`ws-python/market.py`](ws-python/market.py). Deps: `websockets>=14`, `redis>=5`, pytest.
+
+Python is a **gateway**, not a price engine. On start it `SCAN`s `peach:quote:*` for a snapshot, then `SUBSCRIBE peach:quotes`. Forming bars apply incoming tick bid/ask/mid — they do not call a local `bar_at` formula.
 
 | Path | Purpose |
 |------|---------|
-| `/ws/fx-quotes` | Snapshot then ~3 quotes/s (`TICK_MS = 333`). Payload `curpairCd` is a **string**. |
-| `/ws/stream` | Subscribe/unsubscribe forming bars for the widget |
+| `/ws/fx-quotes` | Snapshot from Redis, then fan-out each published tick. Payload `curpairCd` is a **string**. Rate is Java `tick-ms` (333). |
+| `/ws/stream` | Subscribe/unsubscribe forming bars for the widget (OHLC from ingest ticks) |
 
 Catalog duplicated in Python `market.py` (must match `m_ccypairs.priority`). Java `GET /curpairs` reads the same master as docs 123 / 124.
 
-Port: `WS_PORT` default `8081`. Allowed browser origins: Vite 5173 and 3000.
+Port: `WS_PORT` default `8081`. Redis: `REDIS_HOST` / `REDIS_PORT` default `127.0.0.1:6379`. Allowed browser origins: Vite 5173 and 3000.
+
+Prove the gateway: with Java up, `redis-cli SUBSCRIBE peach:quotes` shows ticks; stop Java and Python stops receiving new quotes.
 
 This is demo plumbing for the header quote and live candle, not a Peach API.
 
@@ -519,7 +537,7 @@ From `backend/`:
 .\mvnw.cmd test
 ```
 
-Per-doc classes: `SystemOverviewDesign120Test` … `SystemOverviewDesign139Test`, plus `FlywayMigrationTest`, `OpenApiDocsTest`, `AuthLoginTest`, `CurrencyPairControllerTest`. Long command list: [`test.md`](test.md) §0.4.
+Per-doc classes: `SystemOverviewDesign120Test` … `SystemOverviewDesign139Test`, plus `FlywayMigrationTest`, `OpenApiDocsTest`, `AuthLoginTest`, `CurrencyPairControllerTest`, `TickIngestWorkerTest`. Long command list: [`test.md`](test.md) §0.4.
 
 ### Other
 
@@ -538,7 +556,8 @@ Task/
   README.md                 run book
   docker-compose.yml        postgres + redis
   test.md                   how to prove 120–139
-  structure.md              this file
+  structure.md              this file (onboarding)
+  present.md                spoken mentor script (docs 120–139 + extras)
   checklist.md              mentor Done / Open
   System_Overview_Design/   English specs 120–139
   02_概要設計書/              Japanese originals
@@ -557,7 +576,7 @@ Task/
       service/impl/         rules
       repository/           JPA
       entity/               tables
-      cache/                121
+      cache/                121 warehouse + TickIngestWorker / QuoteBus
       security/             JWT, refresh cookie, Redis refresh store, SecurityConfig
       config/               CORS, OpenAPI, BCrypt, AppProperties, user seed
   frontend/
@@ -575,7 +594,7 @@ Task/
 
 ## 13. Design docs 120–139 — what the MD says vs where it lives
 
-**For mentors:** each subsection below answers three questions: (1) what the markdown requires, (2) which Java class implements it, (3) which automated test proves it. Run auth first (§6.1), then pick a doc number.
+**For mentors:** each subsection below answers three questions: (1) what the markdown requires, (2) which Java class implements it, (3) which automated test proves it. Run auth first (§6.1), then pick a doc number. For a **spoken walkthrough** (what to say, what to click, what is extra vs the spec), use [`present.md`](present.md) — grouped the same way: 120, 121, 122, … 139, then extras (auth, `/curpairs`, Python WS, frontend).
 
 Shared for almost every doc: **token** → JWT stand-in (§6); validation errors **422 `CODE:30020`**; missing tenant row **404 `CODE:30404`**.
 
@@ -591,9 +610,9 @@ Shared for almost every doc: **token** → JWT stand-in (§6); validation errors
 
 **MD:** `t_chart_*` + `cache_set_*` + writer; `bid_ask`; columnar OHLC.
 
-**Code:** `ChartDataController.history` → cache read → `HistoryResponse` (columnar + `bars[]`). Writer: `ChartCacheWriter` + `ChartBarRepository` + `ChartCacheStore`. Mock generator, not a live Peach writer.
+**Code:** `ChartDataController.history` → Redis/DB read → `HistoryResponse` (columnar + `bars[]`). Boot seed: `ChartCacheWriter` + `MockBarGenerator`. Live open bars: `TickIngestWorker` (not a Peach LP).
 
-**Test:** `SystemOverviewDesign121Test`, `FlywayMigrationTest`.
+**Test:** `SystemOverviewDesign121Test`, `TickIngestWorkerTest`, `FlywayMigrationTest`.
 
 ### 122 — Get server time
 
@@ -671,12 +690,12 @@ Spaces in `{name}`: URL-encode (`My%20Dark`).
 ## 14. What is still Open (do not assume it works in the widget)
 
 1. **Peach S-01 SSO** — we use a **local** username/password stand-in with 1h access JWT + 1d refresh cookie (see §6). Not Peach production SSO.
-2. **Live Peach bar writer** — mock generator + wipe-on-boot.
+2. **Live Peach bar writer** — `MockBarGenerator` boot seed + `TickIngestWorker` mock ticks (not a real LP). Wipe-on-boot still applies to historical warehouse rows.
 3. **History JSON** — library still needs `bars[]`; Peach columns are extra.
 4. **Strict symbol length-6** — `USD/JPY` is accepted so the widget does not 422.
 5. **SaveLoadAdapter** — layouts 127–131, study templates 132–135, chart templates 136–139 are REST-ready and **not** called from the chart UI.
 6. **Python pair catalog** — `market.py` still hardcodes the same five rows as `m_ccypairs`. Java `GET /curpairs` reads the master.
-7. **WS ticks → DB** — never.
+7. **Python WS → DB** — never. Java ingest upserts open bars; the socket only forwards Redis.
 8. **Access-token denylist on logout** — logout revokes **refresh** only; access JWT remains valid until its 1h expiry (acceptable for this demo).
 
 When those change, update this file, [`test.md`](test.md), and [`checklist.md`](checklist.md) together.

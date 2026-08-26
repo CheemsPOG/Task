@@ -7,9 +7,7 @@ package com.task.chart.cache;
 import com.task.chart.service.MockBarGenerator;
 import com.task.chart.service.SymbolCatalog;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
-import java.time.DayOfWeek;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -17,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * Doc 121 background writer: persists {@code t_chart_*} then refreshes Redis {@code cache_set_*}.
+ * Doc 121 boot seeder: writes historical {@code t_chart_*} and Redis {@code cache_set_*}.
+ * Live open bars come from {@link TickIngestWorker}.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -32,12 +30,12 @@ import org.springframework.stereotype.Component;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>Phase 1 in-memory / Redis</td></tr>
- *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Phase 2 warehouse + Redis</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/26</td><td>Task</td><td>Boot seed only; live bars from ingest</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @Component
 @Order(100)
@@ -77,6 +75,15 @@ public class ChartCacheWriter implements ApplicationRunner {
 	}
 
 	/**
+	 * Whether boot seed finished (ingest must not tick before this).
+	 *
+	 * @return true after {@link #seedAll()}
+	 */
+	public boolean isSeedComplete() {
+		return seedComplete;
+	}
+
+	/**
 	 * Full seed: warehouse tables then Redis namespaces.
 	 */
 	public synchronized void seedAll() {
@@ -99,29 +106,6 @@ public class ChartCacheWriter implements ApplicationRunner {
 				symbols.size());
 	}
 
-	/**
-	 * Refreshes the current open bar (DB + Redis) — doc 121 concurrent writer stand-in.
-	 */
-	@Scheduled(fixedDelayString = "${app.chart-cache.refresh-ms:60000}")
-	public void refreshCurrentBars() {
-		if (!seedComplete) {
-			return;
-		}
-		long nowMs = Instant.now().toEpochMilli();
-		for (CacheNamespace namespace : CacheNamespace.values()) {
-			long periodMs = namespace.periodMillis();
-			long openMs = Math.floorDiv(nowMs - 1, periodMs) * periodMs;
-			for (CachedSymbol symbol : symbolCatalog.getAll()) {
-				if (skipWeekend(namespace, openMs)) {
-					continue;
-				}
-				CachedChartBar bar = mockBarGenerator.peachBarAt(symbol, periodMs, openMs);
-				chartBarRepository.upsert(namespace, bar);
-				chartCacheStore.put(namespace, bar);
-			}
-		}
-	}
-
 	private List<CachedChartBar> buildSeries(
 			CachedSymbol symbol,
 			CacheNamespace namespace,
@@ -135,23 +119,13 @@ public class ChartCacheWriter implements ApplicationRunner {
 		int maxGuard = depth * 4 + 64;
 		while (bySec.size() < depth && cursor >= 0 && guard < maxGuard) {
 			guard++;
-			if (!skipWeekend(namespace, cursor)) {
+			if (!namespace.skipWeekend(cursor)) {
 				CachedChartBar bar = mockBarGenerator.peachBarAt(symbol, periodMs, cursor);
 				bySec.putIfAbsent(bar.chartDatetimeSec(), bar);
 			}
 			cursor -= periodMs;
 		}
 		return new ArrayList<>(bySec.values());
-	}
-
-	private static boolean skipWeekend(CacheNamespace namespace, long openMs) {
-		if (namespace != CacheNamespace.CACHE_SET_DAY
-				&& namespace != CacheNamespace.CACHE_SET_WEEK
-				&& namespace != CacheNamespace.CACHE_SET_MONTH) {
-			return false;
-		}
-		DayOfWeek day = Instant.ofEpochMilli(openMs).atZone(ZoneOffset.UTC).getDayOfWeek();
-		return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
 	}
 
 	private static int seedDepth(CacheNamespace namespace) {

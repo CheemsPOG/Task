@@ -129,7 +129,7 @@ The chart maps live ticks to a pair name using this extra catalog, then the same
 |---|---|
 | **Path** | `GET /curpairs` (**JWT required**) |
 | **Table** | `m_ccypairs` (`priority` → `curpairCd`, `ccypair_cd` → `curpairName`) |
-| **WS** | `ws://127.0.0.1:5173/ws/fx-quotes` (Vite proxy → Python `:8081`) |
+| **WS** | `ws://127.0.0.1:5173/ws/fx-quotes` (Vite proxy → Python `:8081`; ticks from Java ingest on Redis) |
 | **Test class** | `CurrencyPairControllerTest` |
 
 **Postman:** `GET http://127.0.0.1:8080/curpairs` with `Authorization: Bearer <accessToken>`.

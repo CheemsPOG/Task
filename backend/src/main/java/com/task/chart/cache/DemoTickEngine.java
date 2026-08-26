@@ -2,13 +2,11 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
-package com.task.chart.service.impl;
+package com.task.chart.cache;
 
-import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.CurrencyPairDto;
 import com.task.chart.dto.response.FxQuoteMessage;
 import com.task.chart.service.CurrencyPairService;
-import com.task.chart.service.MockFxQuoteService;
 import com.task.chart.util.DemoMarket;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,13 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
- * Implementation of {@link MockFxQuoteService}.
+ * Demo Peach-feed stand-in: Gaussian BID walk, ASK = BID + spread, MID = (BID + ASK) / 2.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -32,82 +28,90 @@ import org.springframework.stereotype.Service;
  *   </colgroup>
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
- *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/26</td><td>Task</td><td>新規作成</td></tr>
  * </table>
  * <p>
  *
  * @author Task
  * @version 1.0.0
  */
-@Service
-public class MockFxQuoteServiceImpl implements MockFxQuoteService {
+@Component
+public class DemoTickEngine {
 
 	private final CurrencyPairService currencyPairService;
+	private final ChartCacheStore chartCacheStore;
 	private final Map<Integer, SimulatedQuote> quotes = new ConcurrentHashMap<>();
-	private final List<QuoteListener> listeners = new CopyOnWriteArrayList<>();
 
 	/**
-	 * Seeds one simulated quote per catalog pair.
+	 * Creates the engine.
 	 *
-	 * @param currencyPairService demo FX catalog
+	 * @param currencyPairService pair catalog
+	 * @param chartCacheStore last 1S bar for a smooth handoff from seed
 	 */
-	public MockFxQuoteServiceImpl(CurrencyPairService currencyPairService) {
+	public DemoTickEngine(CurrencyPairService currencyPairService, ChartCacheStore chartCacheStore) {
 		this.currencyPairService = currencyPairService;
+		this.chartCacheStore = chartCacheStore;
+	}
+
+	/**
+	 * Seeds in-memory quotes from the last 1S warehouse bar (or {@link DemoMarket} if empty).
+	 */
+	public void loadFromWarehouse() {
+		quotes.clear();
 		for (CurrencyPairDto pair : currencyPairService.list()) {
-			quotes.put(pair.curpairCd(), SimulatedQuote.seed(pair));
+			quotes.put(pair.curpairCd(), SimulatedQuote.fromPair(pair, lastOneSecondBar(pair)));
 		}
 	}
 
-	@Override
-	public void addListener(QuoteListener listener) {
-		listeners.add(listener);
-	}
-
-	@Override
-	public void removeListener(QuoteListener listener) {
-		listeners.remove(listener);
-	}
-
-	@Override
-	public List<FxQuoteMessage> snapshot() {
+	/**
+	 * Steps every pair once and returns the new ticks.
+	 *
+	 * @return one message per catalog pair
+	 */
+	public List<FxQuoteMessage> stepAll() {
+		ensureLoaded();
 		List<FxQuoteMessage> messages = new ArrayList<>(quotes.size());
-		quotes.values().forEach(quote -> messages.add(quote.toMessage()));
+		for (SimulatedQuote quote : quotes.values()) {
+			quote.step();
+			messages.add(quote.toMessage());
+		}
 		return messages;
 	}
 
-	@Override
-	public double currentMid(int curpairCd) {
-		return currentPrice(curpairCd, PriceComponent.MID);
-	}
-
-	@Override
-	public double currentPrice(int curpairCd, PriceComponent price) {
-		SimulatedQuote quote = quotes.get(curpairCd);
-		if (quote == null) {
-			throw new IllegalArgumentException("unknown pair " + curpairCd);
-		}
-		return switch (price == null ? PriceComponent.MID : price) {
-			case BID -> quote.bidValue();
-			case ASK -> quote.askValue();
-			case MID -> quote.midValue();
-		};
-	}
-
-	@Override
-	@Scheduled(fixedRate = 333)
-	public void tick() {
+	/**
+	 * Current snapshot without stepping.
+	 *
+	 * @return one message per catalog pair
+	 */
+	public List<FxQuoteMessage> snapshot() {
+		ensureLoaded();
 		List<FxQuoteMessage> messages = new ArrayList<>(quotes.size());
-		quotes.values().forEach(quote -> {
-			quote.step();
+		for (SimulatedQuote quote : quotes.values()) {
 			messages.add(quote.toMessage());
-		});
-		if (listeners.isEmpty()) {
-			return;
 		}
-		listeners.forEach(listener -> listener.onQuotes(messages));
+		return messages;
+	}
+
+	private void ensureLoaded() {
+		if (quotes.isEmpty()) {
+			loadFromWarehouse();
+		}
+	}
+
+	private CachedChartBar lastOneSecondBar(CurrencyPairDto pair) {
+		List<CachedChartBar> bars = chartCacheStore.query(
+				CacheNamespace.CACHE_SET_1S,
+				pair.curpairName(),
+				null,
+				null);
+		if (bars.isEmpty()) {
+			return null;
+		}
+		return bars.get(bars.size() - 1);
 	}
 
 	static final class SimulatedQuote {
+
 		private final int curpairCd;
 		private final int scale;
 		private final BigDecimal spread;
@@ -134,14 +138,25 @@ public class MockFxQuoteServiceImpl implements MockFxQuoteService {
 			this.low = bid;
 		}
 
-		static SimulatedQuote seed(CurrencyPairDto pair) {
+		static SimulatedQuote fromPair(CurrencyPairDto pair, CachedChartBar lastBar) {
 			boolean yenQuote = pair.curpairName().endsWith("JPY");
 			int scale = yenQuote ? 3 : 5;
 			BigDecimal spread = BigDecimal.valueOf(DemoMarket.fullSpread(pair.curpairName()))
 					.setScale(scale, RoundingMode.HALF_UP);
-			BigDecimal bid = BigDecimal.valueOf(DemoMarket.seedBid(pair.curpairName()))
+			BigDecimal bid = startingBid(pair, lastBar, scale);
+			return new SimulatedQuote(pair.curpairCd(), scale, spread, maxStep(pair, yenQuote, scale), bid);
+		}
+
+		private static BigDecimal startingBid(CurrencyPairDto pair, CachedChartBar lastBar, int scale) {
+			if (lastBar != null) {
+				return BigDecimal.valueOf(lastBar.bidClose()).setScale(scale, RoundingMode.HALF_UP);
+			}
+			return BigDecimal.valueOf(DemoMarket.seedBid(pair.curpairName()))
 					.setScale(scale, RoundingMode.HALF_UP);
-			BigDecimal maxStep = switch (pair.curpairName()) {
+		}
+
+		private static BigDecimal maxStep(CurrencyPairDto pair, boolean yenQuote, int scale) {
+			return switch (pair.curpairName()) {
 				case "USDJPY" -> bd("0.012", scale);
 				case "EURJPY" -> bd("0.014", scale);
 				case "EURUSD" -> bd("0.00012", scale);
@@ -149,7 +164,6 @@ public class MockFxQuoteServiceImpl implements MockFxQuoteService {
 				case "AUDUSD" -> bd("0.00010", scale);
 				default -> yenQuote ? bd("0.010", scale) : bd("0.00010", scale);
 			};
-			return new SimulatedQuote(pair.curpairCd(), scale, spread, maxStep, bid);
 		}
 
 		void step() {
@@ -168,18 +182,6 @@ public class MockFxQuoteServiceImpl implements MockFxQuoteService {
 			}
 		}
 
-		double midValue() {
-			return mid.doubleValue();
-		}
-
-		double bidValue() {
-			return bid.doubleValue();
-		}
-
-		double askValue() {
-			return ask.doubleValue();
-		}
-
 		FxQuoteMessage toMessage() {
 			return new FxQuoteMessage(
 					String.valueOf(curpairCd),
@@ -194,13 +196,9 @@ public class MockFxQuoteServiceImpl implements MockFxQuoteService {
 		private void applyAskFromBid() {
 			ask = bid.add(spread).setScale(scale, RoundingMode.HALF_UP);
 			if (bid.compareTo(ask) >= 0) {
-				ask = bid.add(tick());
+				ask = bid.add(BigDecimal.ONE.movePointLeft(scale));
 			}
 			mid = bid.add(ask).divide(BigDecimal.TWO, scale, RoundingMode.HALF_UP);
-		}
-
-		private BigDecimal tick() {
-			return BigDecimal.ONE.movePointLeft(scale);
 		}
 
 		private static BigDecimal bd(String value, int scale) {

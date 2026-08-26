@@ -40,8 +40,8 @@ app:
     access-expiration-ms: 3600000
     refresh-expiration-ms: 86400000
   chart-cache:
-    # Writer thread refresh interval (doc 121 concurrent cache writer stand-in).
-    refresh-ms: 60000
+    # Demo feed tick interval (ingest worker → Redis quotes + open bars).
+    tick-ms: 333
   tradingview:
     supports-search: true
     # Enabled for design docs 125 / 126 (marks + timescale marks).

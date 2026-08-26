@@ -18,6 +18,7 @@ import com.task.chart.constants.ErrorCodes;
 import com.task.chart.security.AuthCookieSupport;
 import com.task.chart.support.TestAuthSupport;
 import jakarta.servlet.http.Cookie;
+import java.time.Instant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +153,12 @@ class AuthLoginTest {
 			String originalAccessToken = objectMapper.readTree(loginResult.getResponse().getContentAsString())
 					.get("accessToken")
 					.asText();
+
+			// Access JWT iat/exp are second-resolution; wait so refresh cannot reuse the same compact token.
+			long issuedSecond = Instant.now().getEpochSecond();
+			while (Instant.now().getEpochSecond() == issuedSecond) {
+				Thread.sleep(10L);
+			}
 
 			MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
 							.cookie(TestAuthSupport.refreshCookie(refreshTokenId)))
