@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +29,12 @@ import org.springframework.context.annotation.Configuration;
  *   <tr><td>1.0.0</td><td>2026/08/24</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Tag order + JWT scheme for mentor review</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Add chart templates 136–139 tag</td></tr>
+ *   <tr><td>1.3.0</td><td>2026/08/24</td><td>Task</td><td>Relative server URL for Swagger Try it out</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.3.0
  */
 @Configuration
 public class OpenApiConfig {
@@ -47,10 +49,15 @@ public class OpenApiConfig {
 	@Bean
 	OpenAPI chartOpenApi() {
 		return new OpenAPI()
+				.servers(relativeServer())
 				.info(apiInfo())
 				.tags(apiTags())
 				.addSecurityItem(new SecurityRequirement().addList(BEARER_JWT))
 				.components(new Components().addSecuritySchemes(BEARER_JWT, bearerScheme()));
+	}
+
+	private static List<Server> relativeServer() {
+		return List.of(new Server().url("/").description("Same origin as Swagger UI"));
 	}
 
 	private static Info apiInfo() {
@@ -60,7 +67,8 @@ public class OpenApiConfig {
 				.description(
 						"Demo REST for TradingView Advanced Charts (design docs 120–139). "
 								+ "Login first: POST /api/auth/login with demo/demo, then Authorize with the accessToken. "
-								+ "Public (no token): GET /api/health, POST /api/auth/login, GET /curpairs, Swagger UI.");
+								+ "Public (no token): GET /api/health, POST /api/auth/login, Swagger UI. "
+								+ "GET /curpairs requires Bearer JWT like other chart APIs.");
 	}
 
 	private static List<Tag> apiTags() {
@@ -74,7 +82,8 @@ public class OpenApiConfig {
 						.description("List, upsert, get, delete study templates"),
 				new Tag().name("Chart templates (136–139)")
 						.description("List, upsert, get, delete chart templates"),
-				new Tag().name("Currency pairs").description("Demo FX catalog"));
+				new Tag().name("Currency pairs")
+						.description("GET /curpairs from m_ccypairs for WebSocket curpairCd mapping"));
 	}
 
 	private static SecurityScheme bearerScheme() {

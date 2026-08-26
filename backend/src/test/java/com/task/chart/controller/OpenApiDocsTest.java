@@ -50,7 +50,10 @@ class OpenApiDocsTest {
 				.andExpect(jsonPath("$.paths['/api/indicator-templates']").exists())
 				.andExpect(jsonPath("$.paths['/api/chart-templates']").exists())
 				.andExpect(jsonPath("$.paths['/api/chart-templates'].get.summary")
-						.value("136 Get chart template list"));
+						.value("136 Get chart template list"))
+				.andExpect(jsonPath("$.paths['/curpairs'].get.summary")
+						.value("List FX pairs for quote mapping"))
+				.andExpect(jsonPath("$.servers[0].url").value("/"));
 	}
 
 	@Test

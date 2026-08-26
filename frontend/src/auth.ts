@@ -8,6 +8,13 @@ export type LoginResponse = {
 	accessToken: string;
 	tokenType: string;
 	expiresIn: number;
+	refreshExpiresIn: number;
+};
+
+export type RefreshResponse = {
+	accessToken: string;
+	tokenType: string;
+	expiresIn: number;
 };
 
 export type AuthErrorBody = {
@@ -53,6 +60,26 @@ export function getAcceptLanguage(): string {
 	return language.toLowerCase().startsWith('ja') ? 'ja' : 'en';
 }
 
+function authHeaders(extra: Record<string, string> = {}): HeadersInit {
+	return {
+		'Accept-Language': getAcceptLanguage(),
+		...extra,
+	};
+}
+
+async function parseAuthError(response: Response, fallback: string): Promise<Error> {
+	let message = fallback;
+	try {
+		const body = (await response.json()) as AuthErrorBody;
+		if (body.message) {
+			message = body.message;
+		}
+	} catch {
+		/* keep default message */
+	}
+	return new Error(message);
+}
+
 /**
  * Logs in and stores the Bearer token.
  *
@@ -63,24 +90,13 @@ export function getAcceptLanguage(): string {
 export async function login(username: string, password: string): Promise<LoginResponse> {
 	const response = await fetch('/api/auth/login', {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Accept-Language': getAcceptLanguage(),
-		},
+		credentials: 'include',
+		headers: authHeaders({ 'Content-Type': 'application/json' }),
 		body: JSON.stringify({ username, password }),
 	});
 
 	if (!response.ok) {
-		let message = `Login failed (${response.status})`;
-		try {
-			const body = (await response.json()) as AuthErrorBody;
-			if (body.message) {
-				message = body.message;
-			}
-		} catch {
-			/* keep default message */
-		}
-		throw new Error(message);
+		throw await parseAuthError(response, `Login failed (${response.status})`);
 	}
 
 	const payload = (await response.json()) as LoginResponse;
@@ -93,8 +109,42 @@ export async function login(username: string, password: string): Promise<LoginRe
 }
 
 /**
- * Clears the session token (caller should re-show login / reload).
+ * Exchanges the HttpOnly refresh cookie for a new access token.
+ *
+ * @throws Error when refresh fails
  */
-export function logout(): void {
+export async function refreshAccessToken(): Promise<RefreshResponse> {
+	const response = await fetch('/api/auth/refresh', {
+		method: 'POST',
+		credentials: 'include',
+		headers: authHeaders(),
+	});
+
+	if (!response.ok) {
+		throw await parseAuthError(response, `Refresh failed (${response.status})`);
+	}
+
+	const payload = (await response.json()) as RefreshResponse;
+	if (!payload.accessToken) {
+		throw new Error('Refresh response missing accessToken');
+	}
+
+	setToken(payload.accessToken);
+	return payload;
+}
+
+/**
+ * Revokes the refresh cookie server-side, then clears the access token.
+ */
+export async function logout(): Promise<void> {
+	try {
+		await fetch('/api/auth/logout', {
+			method: 'POST',
+			credentials: 'include',
+			headers: authHeaders(),
+		});
+	} catch {
+		/* best effort */
+	}
 	clearToken();
 }

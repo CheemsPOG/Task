@@ -2,10 +2,10 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
-package com.task.chart.dto.response;
+package com.task.chart.exception;
 
 /**
- * Successful login payload with Bearer access token.
+ * Missing or invalid refresh token / session.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -15,17 +15,21 @@ package com.task.chart.dto.response;
  *   </colgroup>
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
- *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
- *   <tr><td>1.1.0</td><td>2026/08/25</td><td>Task</td><td>Add refreshExpiresIn</td></tr>
+ *   <tr><td>1.0.0</td><td>2026/08/25</td><td>Task</td><td>新規作成</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.0.0
  */
-public record LoginResponse(
-		String accessToken,
-		String tokenType,
-		long expiresIn,
-		long refreshExpiresIn) {
+public class UnauthorizedAppException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Creates the exception.
+	 */
+	public UnauthorizedAppException() {
+		super("unauthorized");
+	}
 }

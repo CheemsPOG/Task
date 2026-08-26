@@ -67,19 +67,33 @@ curl http://127.0.0.1:8080/api/health
 
 Expected: `{"status":"ok","service":"chart-backend"}` (no auth header).
 
-Chart datafeed routes under `/api` (except `/health` and `/api/auth/login`) require:
+Chart datafeed routes under `/api` (except `/health`, `/api/auth/login`, `/api/auth/refresh`, and `/api/auth/logout`) require:
 
 ```http
 Authorization: Bearer <jwt>
 Accept-Language: en
 ```
 
-Login (no Bearer):
+Login (no Bearer; also sets HttpOnly refresh cookie — use `-c`/`-b` with curl if testing refresh):
 
 ```bash
-curl -s -X POST http://127.0.0.1:8080/api/auth/login ^
+curl -s -c cookies.txt -X POST http://127.0.0.1:8080/api/auth/login ^
   -H "Content-Type: application/json" ^
   -d "{\"username\":\"demo\",\"password\":\"demo\"}"
+```
+
+Response includes `accessToken` (1h), `expiresIn: 3600`, and `refreshExpiresIn: 86400`. Refresh token is in the cookie only.
+
+Refresh (cookie only, no Bearer):
+
+```bash
+curl -s -b cookies.txt -c cookies.txt -X POST http://127.0.0.1:8080/api/auth/refresh
+```
+
+Logout:
+
+```bash
+curl -s -b cookies.txt -X POST http://127.0.0.1:8080/api/auth/logout
 ```
 
 Then:
@@ -110,6 +124,8 @@ This lists every REST endpoint (docs 120–139), grouped by tag. You can try the
 2. **Execute** → copy `accessToken` from the response.
 3. Click **Authorize** (lock icon at the top) → paste the token only (no `Bearer ` prefix) → **Authorize** → **Close**.
 4. Expand **Datafeed (120–126)** or **Chart layouts (127–131)** → **Try it out** → **Execute**. Swagger sends `Authorization: Bearer …` for you.
+
+Swagger uses the access token only. The browser app at `:5173` also stores a 1-day HttpOnly refresh cookie for silent re-login and server-side logout (`POST /api/auth/refresh`, `POST /api/auth/logout`).
 
 If the UI says “Failed to load remote configuration”, open `/v3/api-docs` first. A JSON document means docs are up; then reload Swagger UI.
 
@@ -146,9 +162,9 @@ npm install
 npm start
 ```
 
-Open **http://127.0.0.1:5173**. A login overlay appears first — use **Demo** (`demo` / `demo`) or type credentials, then the chart loads on `USD/JPY`, interval `1D`. **Logout** is on the chart header (reloads to the login form).
+Open **http://127.0.0.1:5173**. A login overlay appears first — use **Demo** (`demo` / `demo`) or type credentials, then the chart loads on `USD/JPY`, interval `1D`. If you logged in within the last day, reopening the tab may skip login via silent refresh (HttpOnly cookie). **Logout** on the chart header revokes the refresh token server-side and reloads to the login form.
 
-The frontend server proxies `/api` and `/curpairs` to Java (8080) and `/ws` to Python (8081), so the browser only talks to port 5173.
+The frontend server proxies `/api` and `/curpairs` to Java (8080) and `/ws` to Python (8081), so the browser only talks to port 5173. Auth cookies are forwarded through the Vite proxy (`credentials: 'include'`).
 
 ## If a port is already in use
 

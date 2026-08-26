@@ -79,10 +79,12 @@ export default defineConfig({
 			'/api': {
 				target: `http://${backendHost}:${backendPort}`,
 				changeOrigin: true,
+				cookieDomainRewrite: '',
 			},
 			'/curpairs': {
 				target: `http://${backendHost}:${backendPort}`,
 				changeOrigin: true,
+				cookieDomainRewrite: '',
 			},
 			'/ws': {
 				target: `ws://${wsHost}:${wsPort}`,

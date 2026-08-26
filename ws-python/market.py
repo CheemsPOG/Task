@@ -11,6 +11,7 @@ from typing import Literal
 
 PriceName = Literal["bid", "ask", "mid"]
 
+# Must match GET /curpairs (m_ccypairs.priority, ccypair_cd, slash display).
 PAIRS: tuple[tuple[int, str, str], ...] = (
     (1, "USDJPY", "USD/JPY"),
     (2, "EURJPY", "EUR/JPY"),

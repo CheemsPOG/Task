@@ -90,6 +90,15 @@ public class GlobalExceptionHandler {
 						localizedMessageService.get(ErrorCodes.MSG_BAD_CREDENTIALS)));
 	}
 
+	@ExceptionHandler(UnauthorizedAppException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedAppException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(ErrorResponse.of(
+						ErrorCodes.UNAUTHORIZED,
+						localizedMessageService.get(ErrorCodes.MSG_UNAUTHORIZED)));
+	}
+
 	@ExceptionHandler(ServerErrorException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<ErrorResponse> handleServer(ServerErrorException ex) {

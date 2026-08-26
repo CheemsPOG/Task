@@ -25,15 +25,33 @@ import org.springframework.data.repository.query.Param;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Add active search for doc 124</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Add list for GET /curpairs</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 public interface CcypairRepository extends JpaRepository<Ccypair, String> {
 
 	Optional<Ccypair> findByCcypairCdAndIsDeleted(String ccypairCd, int isDeleted);
+
+	/**
+	 * Active pairs for {@code GET /curpairs}, ordered like design doc 124 (priority ascending).
+	 *
+	 * @param isDeleted deleted flag ({@link Ccypair#ACTIVE})
+	 * @return active rows
+	 */
+	List<Ccypair> findByIsDeletedOrderByPriorityAsc(int isDeleted);
+
+	/**
+	 * Active pair whose {@code priority} is the quote-stream {@code curpairCd}.
+	 *
+	 * @param priority quote-stream pair code
+	 * @param isDeleted deleted flag ({@link Ccypair#ACTIVE})
+	 * @return matching row, if any
+	 */
+	Optional<Ccypair> findFirstByPriorityAndIsDeletedOrderByCcypairCdAsc(int priority, int isDeleted);
 
 	/**
 	 * Active pairs ordered by priority; optional partial match on CD or Japanese name.

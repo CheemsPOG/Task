@@ -38,7 +38,7 @@ public class JwtService {
 	public static final String CLAIM_CUSTOMER_NO = "customer_no";
 
 	private final SecretKey secretKey;
-	private final long expirationMs;
+	private final long accessExpirationMs;
 
 	/**
 	 * Creates the service from {@code app.jwt} properties.
@@ -48,7 +48,7 @@ public class JwtService {
 	public JwtService(AppProperties appProperties) {
 		AppProperties.Jwt jwt = appProperties.getJwt();
 		this.secretKey = Keys.hmacShaKeyFor(jwt.getSecret().getBytes(StandardCharsets.UTF_8));
-		this.expirationMs = jwt.getExpirationMs();
+		this.accessExpirationMs = jwt.getAccessExpirationMs();
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class JwtService {
 	 */
 	public String createToken(String username, long customerNo) {
 		Date now = new Date();
-		Date expiry = new Date(now.getTime() + expirationMs);
+		Date expiry = new Date(now.getTime() + accessExpirationMs);
 		return Jwts.builder()
 				.subject(username)
 				.claim(CLAIM_CUSTOMER_NO, customerNo)
@@ -71,10 +71,10 @@ public class JwtService {
 	}
 
 	/**
-	 * @return configured token lifetime in milliseconds
+	 * @return configured access token lifetime in milliseconds
 	 */
-	public long getExpirationMs() {
-		return expirationMs;
+	public long getAccessExpirationMs() {
+		return accessExpirationMs;
 	}
 
 	/**

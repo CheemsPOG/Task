@@ -9,11 +9,13 @@ import static org.assertj.core.api.Assertions.within;
 
 import com.task.chart.dto.response.CurrencyPairDto;
 import com.task.chart.dto.response.FxQuoteMessage;
-import com.task.chart.service.impl.CurrencyPairServiceImpl;
+import com.task.chart.service.CurrencyPairService;
 import com.task.chart.service.impl.MockFxQuoteServiceImpl;
 import com.task.chart.util.DemoMarket;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * Unit tests for mock FX quote relationships.
@@ -26,18 +28,21 @@ import org.junit.jupiter.api.Test;
  *   </colgroup>
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
- *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Use m_ccypairs catalog</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
+@SpringBootTest
 class MockFxQuoteServiceTest {
+
+	@Autowired
+	private CurrencyPairService pairs;
 
 	@Test
 	void snapshotKeepsBidAskMidRelationship() {
-		CurrencyPairService pairs = new CurrencyPairServiceImpl();
 		MockFxQuoteService service = new MockFxQuoteServiceImpl(pairs);
 
 		for (int i = 0; i < 40; i++) {
@@ -63,7 +68,7 @@ class MockFxQuoteServiceTest {
 
 	@Test
 	void firstPairCodeResolvesToUsdJpy() {
-		CurrencyPairDto pair = new CurrencyPairServiceImpl().find(1);
+		CurrencyPairDto pair = pairs.find(1);
 		assertThat(pair).isNotNull();
 		assertThat(pair.curpairName()).isEqualTo("USDJPY");
 		assertThat(pair.curpairDisplay()).isEqualTo("USD/JPY");
@@ -71,7 +76,7 @@ class MockFxQuoteServiceTest {
 
 	@Test
 	void currentMidMatchesSnapshot() {
-		MockFxQuoteService service = new MockFxQuoteServiceImpl(new CurrencyPairServiceImpl());
+		MockFxQuoteService service = new MockFxQuoteServiceImpl(pairs);
 		FxQuoteMessage usdJpy = service.snapshot().stream()
 				.filter(quote -> "1".equals(quote.curpairCd()))
 				.findFirst()

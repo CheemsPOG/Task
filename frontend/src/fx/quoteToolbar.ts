@@ -7,7 +7,7 @@ import { resubscribeAllWithCurrentPrice } from '../datafeed/streaming.ts';
 import { fetchCurpairs } from './currencyPairs.ts';
 import { connectFxQuotes } from './fxQuotesSocket.ts';
 import { quoteStore } from './quoteStore.ts';
-import type { PriceMode } from './types.ts';
+import { formatQuotePrice, type PriceMode } from './types.ts';
 
 const MODES: PriceMode[] = ['bid', 'ask', 'mid'];
 
@@ -20,6 +20,24 @@ function modeItems(): DropdownItem[] {
 		title: quoteStore.mode === mode ? `✓ ${modeLabel(mode)}` : modeLabel(mode),
 		onSelect: () => quoteStore.setMode(mode),
 	}));
+}
+
+function quoteLabel(): string {
+	if (quoteStore.pairsError) {
+		return 'Pairs unavailable';
+	}
+	const pair = quoteStore.pair();
+	if (!pair) {
+		return '—';
+	}
+	const quote = quoteStore.quote();
+	if (!quote) {
+		return `${pair.curpairDisplay} …`;
+	}
+	const bid = formatQuotePrice(pair, quote.bid);
+	const ask = formatQuotePrice(pair, quote.ask);
+	const mid = formatQuotePrice(pair, quote.mid);
+	return `${pair.curpairDisplay}  BID ${bid}  ASK ${ask}  MID ${mid}`;
 }
 
 function syncQuoteToChartSymbol(widget: IChartingLibraryWidget): void {
@@ -63,6 +81,16 @@ export function installFxQuoteToolbar(widget: IChartingLibraryWidget): void {
 		syncQuoteToChartSymbol(widget);
 		connectFxQuotes();
 
+		const quoteEl = widget.createButton({
+			useTradingViewStyle: false,
+			align: 'left',
+		});
+		if (quoteEl) {
+			quoteEl.id = 'fx-quote-ticker';
+			quoteEl.style.padding = '0 10px';
+			quoteEl.style.pointerEvents = 'none';
+		}
+
 		const modeDropdown = await widget.createDropdown({
 			title: modeLabel(quoteStore.mode),
 			tooltip: 'Quote type: BID, ASK, or MID',
@@ -73,6 +101,11 @@ export function installFxQuoteToolbar(widget: IChartingLibraryWidget): void {
 		let lastMode = quoteStore.mode;
 
 		function render(modeApi: IDropdownApi): void {
+			if (quoteEl) {
+				const label = quoteLabel();
+				quoteEl.textContent = label;
+				quoteEl.title = label;
+			}
 			if (quoteStore.mode === lastMode) {
 				return;
 			}

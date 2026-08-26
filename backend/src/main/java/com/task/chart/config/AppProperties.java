@@ -21,11 +21,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/25</td><td>Task</td><td>Split access and refresh TTL</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
@@ -66,7 +67,8 @@ public class AppProperties {
 	public static class Jwt {
 
 		private String secret = "chart-local-demo-jwt-secret-key-at-least-256-bits-long";
-		private long expirationMs = 86_400_000L;
+		private long accessExpirationMs = 3_600_000L;
+		private long refreshExpirationMs = 86_400_000L;
 
 		public String getSecret() {
 			return secret;
@@ -76,12 +78,20 @@ public class AppProperties {
 			this.secret = secret;
 		}
 
-		public long getExpirationMs() {
-			return expirationMs;
+		public long getAccessExpirationMs() {
+			return accessExpirationMs;
 		}
 
-		public void setExpirationMs(long expirationMs) {
-			this.expirationMs = expirationMs;
+		public void setAccessExpirationMs(long accessExpirationMs) {
+			this.accessExpirationMs = accessExpirationMs;
+		}
+
+		public long getRefreshExpirationMs() {
+			return refreshExpirationMs;
+		}
+
+		public void setRefreshExpirationMs(long refreshExpirationMs) {
+			this.refreshExpirationMs = refreshExpirationMs;
 		}
 	}
 

@@ -26,6 +26,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
+    use-root-path: true
 
 app:
   cors-origins:
@@ -36,7 +37,8 @@ app:
   jwt:
     # Local demo only — replace for any shared environment.
     secret: "chart-local-demo-jwt-secret-key-at-least-256-bits-long"
-    expiration-ms: 86400000
+    access-expiration-ms: 3600000
+    refresh-expiration-ms: 86400000
   chart-cache:
     # Writer thread refresh interval (doc 121 concurrent cache writer stand-in).
     refresh-ms: 60000

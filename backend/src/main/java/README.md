@@ -10,11 +10,11 @@ com/task/chart/
 ├── package-info.java                 this package
 │
 ├── controller/                       HTTP only (no SQL, no JWT parse)
-│   ├── AuthController.java           POST /api/auth/login
+│   ├── AuthController.java           POST /api/auth/login, /refresh, /logout
 │   ├── ChartDataController.java      /api/health + datafeed 120–126
 │   ├── ChartLayoutController.java    /api/layouts 127–131
 │   ├── ChartTemplateController.java  /api/chart-templates 136–139
-│   ├── CurrencyPairController.java   GET /curpairs (public)
+│   ├── CurrencyPairController.java   GET /curpairs (JWT)
 │   └── IndicatorTemplateController.java  /api/indicator-templates 132–135
 │
 ├── service/                          interfaces (verb methods)
@@ -33,7 +33,7 @@ com/task/chart/
 │       ├── ChartDataServiceImpl.java
 │       ├── ChartLayoutServiceImpl.java
 │       ├── ChartTemplateServiceImpl.java
-│       ├── CurrencyPairServiceImpl.java
+│       ├── CurrencyPairServiceImpl.java  GET /curpairs from m_ccypairs
 │       ├── IndicatorTemplateServiceImpl.java
 │       ├── LocalizedMessageServiceImpl.java
 │       ├── MockBarGeneratorImpl.java
@@ -82,6 +82,7 @@ com/task/chart/
 │       ├── IndicatorTemplateDto.java
 │       ├── IndicatorTemplateListItemDto.java
 │       ├── LoginResponse.java
+│       ├── RefreshResponse.java
 │       ├── MarkDto.java
 │       ├── SearchSymbolDto.java
 │       ├── ServerTimeResponse.java
@@ -90,11 +91,14 @@ com/task/chart/
 │       └── TimescaleMarkDto.java
 │
 ├── security/                         JWT stand-in for S-01
+│   ├── AuthCookieSupport.java        HttpOnly refresh cookie
 │   ├── ChartPrincipal.java           username + customer_no
 │   ├── CustomerContext.java          ThreadLocal tenant for this request
 │   ├── JsonUnauthorizedEntryPoint.java   401 JSON
 │   ├── JwtAuthenticationFilter.java  Bearer → SecurityContext + CustomerContext
-│   ├── JwtService.java               HS256 create / parse
+│   ├── JwtService.java               HS256 access token create / parse
+│   ├── RefreshTokenSession.java      username + customer_no in Redis
+│   ├── RefreshTokenStore.java        opaque refresh ids in Redis
 │   └── SecurityConfig.java           filter chain, public matchers
 │
 ├── config/                           Spring beans that are not the JWT filter
@@ -116,6 +120,7 @@ com/task/chart/
 │   ├── GlobalExceptionHandler.java   CODE:30020 / 30404 / E_* JSON
 │   ├── ResourceNotFoundException.java
 │   ├── ServerErrorException.java
+│   ├── UnauthorizedAppException.java
 │   └── ValidationException.java
 │
 ├── constants/

@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
-import { clearToken, getAcceptLanguage, getToken } from './auth.ts';
+import { clearToken, getAcceptLanguage, getToken, refreshAccessToken } from './auth.ts';
 
 const API_BASE = '/api';
 
@@ -26,6 +26,7 @@ export class ApiHttpError extends Error {
 type UnauthorizedHandler = () => void;
 
 let onUnauthorized: UnauthorizedHandler | null = null;
+let refreshInFlight: Promise<boolean> | null = null;
 
 /**
  * Registers a handler for HTTP 401 from authenticated API calls.
@@ -71,6 +72,77 @@ function handleUnauthorizedStatus(status: number): void {
 	onUnauthorized?.();
 }
 
+async function tryRefreshOnce(): Promise<boolean> {
+	if (!refreshInFlight) {
+		refreshInFlight = refreshAccessToken()
+			.then(() => true)
+			.catch(() => false)
+			.finally(() => {
+				refreshInFlight = null;
+			});
+	}
+	return refreshInFlight;
+}
+
+type FetchOptions = RequestInit & {
+	retryOnUnauthorized?: boolean;
+};
+
+async function fetchWithAuth(url: URL, options: FetchOptions = {}): Promise<Response> {
+	const { retryOnUnauthorized = true, ...fetchOptions } = options;
+	const response = await fetch(url, {
+		...fetchOptions,
+		credentials: 'include',
+		headers: buildHeaders(
+			(fetchOptions.headers as Record<string, string> | undefined) ?? {}
+		),
+	});
+
+	if (response.status === 401 && retryOnUnauthorized) {
+		const refreshed = await tryRefreshOnce();
+		if (refreshed) {
+			const retryResponse = await fetch(url, {
+				...fetchOptions,
+				credentials: 'include',
+				headers: buildHeaders(
+					(fetchOptions.headers as Record<string, string> | undefined) ?? {}
+				),
+			});
+			if (retryResponse.status === 401) {
+				handleUnauthorizedStatus(retryResponse.status);
+			}
+			return retryResponse;
+		}
+		handleUnauthorizedStatus(response.status);
+	}
+
+	return response;
+}
+
+/**
+ * GET JSON from an authenticated backend path (e.g. `/curpairs`).
+ *
+ * @param path absolute path on the same origin
+ * @returns parsed JSON
+ */
+export async function fetchAuthenticatedJson<T>(path: string): Promise<T> {
+	const url = new URL(path, window.location.origin);
+
+	try {
+		const response = await fetchWithAuth(url);
+		if (!response.ok) {
+			throw await parseError(response);
+		}
+
+		return response.json() as Promise<T>;
+	} catch (error) {
+		if (error instanceof Error) {
+			throw error;
+		}
+		throw new Error(`Request failed for ${url.pathname}`);
+	}
+}
+
 /**
  * GET JSON from the chart backend.
  *
@@ -91,11 +163,8 @@ export async function apiGet<T>(
 	});
 
 	try {
-		const response = await fetch(url, {
-			headers: buildHeaders(),
-		});
+		const response = await fetchWithAuth(url);
 		if (!response.ok) {
-			handleUnauthorizedStatus(response.status);
 			throw await parseError(response);
 		}
 
@@ -119,13 +188,12 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
 	const url = new URL(`${API_BASE}${path}`, window.location.origin);
 
 	try {
-		const response = await fetch(url, {
+		const response = await fetchWithAuth(url, {
 			method: 'POST',
 			headers: buildHeaders({ 'Content-Type': 'application/json' }),
 			body: JSON.stringify(body),
 		});
 		if (!response.ok) {
-			handleUnauthorizedStatus(response.status);
 			throw await parseError(response);
 		}
 

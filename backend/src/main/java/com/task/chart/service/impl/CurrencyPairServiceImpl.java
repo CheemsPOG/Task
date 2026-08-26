@@ -5,15 +5,19 @@
 package com.task.chart.service.impl;
 
 import com.task.chart.dto.response.CurrencyPairDto;
+import com.task.chart.entity.Ccypair;
+import com.task.chart.repository.CcypairRepository;
 import com.task.chart.service.CurrencyPairService;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of {@link CurrencyPairService}.
+ *
+ * <p>{@code GET /curpairs} is mapped from design-doc {@code m_ccypairs} (123 / 124):
+ * {@code curpairCd} = {@code priority}, {@code curpairName} = {@code ccypair_cd},
+ * {@code curpairDisplay} = slash form ({@code USDJPY} → {@code USD/JPY}).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -24,43 +28,64 @@ import org.springframework.stereotype.Service;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Read catalog from m_ccypairs</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @Service
 public class CurrencyPairServiceImpl implements CurrencyPairService {
 
-	private static final List<CurrencyPairDto> PAIRS = List.of(
-			new CurrencyPairDto(1, "USDJPY", "USD/JPY"),
-			new CurrencyPairDto(2, "EURJPY", "EUR/JPY"),
-			new CurrencyPairDto(3, "EURUSD", "EUR/USD"),
-			new CurrencyPairDto(4, "GBPUSD", "GBP/USD"),
-			new CurrencyPairDto(5, "AUDUSD", "AUD/USD"));
-
-	private final Map<Integer, CurrencyPairDto> byCode = PAIRS.stream()
-			.collect(Collectors.toUnmodifiableMap(CurrencyPairDto::curpairCd, Function.identity()));
+	private final CcypairRepository ccypairRepository;
 
 	/**
-	 * Returns the hardcoded demo pair catalog (same five pairs as {@code m_ccypairs}).
+	 * Creates the service.
+	 *
+	 * @param ccypairRepository currency pair master
+	 */
+	public CurrencyPairServiceImpl(CcypairRepository ccypairRepository) {
+		this.ccypairRepository = ccypairRepository;
+	}
+
+	/**
+	 * Returns active pairs for the quote-stream catalog.
 	 *
 	 * @return catalog rows
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<CurrencyPairDto> list() {
-		return PAIRS;
+		List<Ccypair> rows = ccypairRepository.findByIsDeletedOrderByPriorityAsc(Ccypair.ACTIVE);
+		return rows.stream().map(CurrencyPairServiceImpl::toDto).toList();
 	}
 
 	/**
-	 * Looks up one catalog row by numeric {@code curpairCd}.
+	 * Looks up one catalog row by numeric {@code curpairCd} (master {@code priority}).
 	 *
 	 * @param curpairCd quote-stream pair code
 	 * @return matching row, or {@code null}
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public CurrencyPairDto find(int curpairCd) {
-		return byCode.get(curpairCd);
+		return ccypairRepository
+				.findFirstByPriorityAndIsDeletedOrderByCcypairCdAsc(curpairCd, Ccypair.ACTIVE)
+				.map(CurrencyPairServiceImpl::toDto)
+				.orElse(null);
+	}
+
+	private static CurrencyPairDto toDto(Ccypair row) {
+		String name = row.getCcypairCd();
+		return new CurrencyPairDto(row.getPriority(), name, toDisplay(name));
+	}
+
+	private static String toDisplay(String ccypairCd) {
+		if (ccypairCd == null || ccypairCd.length() != 6) {
+			return ccypairCd;
+		}
+
+		return ccypairCd.substring(0, 3) + "/" + ccypairCd.substring(3);
 	}
 }

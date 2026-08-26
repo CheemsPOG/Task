@@ -18,7 +18,7 @@ Complete overview: **what the MD requires**, **what we implemented**, **how to t
 | **Open** | Not wired yet (usually frontend adapter) |
 | **Stub** | Local JWT + BCrypt stand-in for Peach S-01 |
 
-**Auth:** All `/api/**` except `GET /api/health` and `POST /api/auth/login` need `Authorization: Bearer <accessToken>`.
+**Auth:** All `/api/**` except `GET /api/health`, `POST /api/auth/login`, `POST /api/auth/refresh`, and `POST /api/auth/logout` need `Authorization: Bearer <accessToken>`. The browser app also uses an HttpOnly refresh cookie (see §0.3).
 
 ---
 
@@ -68,7 +68,8 @@ Wait for Flyway + `AppUserSeedRunner` (demo users).
 {
   "accessToken": "eyJ...",
   "tokenType": "Bearer",
-  "expiresIn": 86400
+  "expiresIn": 3600,
+  "refreshExpiresIn": 86400
 }
 ```
 
@@ -78,12 +79,37 @@ Copy **`accessToken`**. Use on every call below:
 Authorization: Bearer eyJ...
 ```
 
+**Refresh cookie:** Login also sets `Set-Cookie: chart_refresh_token=…; HttpOnly; Path=/; SameSite=Lax`. Postman stores it in the cookie jar automatically. The refresh token is **not** in the JSON body.
+
 | User | Password | `customer_no` |
 |------|----------|---------------|
 | `demo` | `demo` | `1` |
 | `demo2` | `demo2` | `2` |
 
 **Sanity:** `GET http://127.0.0.1:8080/api/config` + Bearer → `200`. No Bearer → `401`.
+
+### 0.3a Refresh and logout (Postman)
+
+**Refresh** (no Bearer; cookie from login required):
+
+| | |
+|---|---|
+| Method | `POST` |
+| URL | `http://127.0.0.1:8080/api/auth/refresh` |
+| Auth | **No Auth** (Postman sends cookies from jar) |
+
+**Expect `200`:** new `accessToken`, `expiresIn: 3600`, rotated `Set-Cookie`.
+
+**Logout:**
+
+| | |
+|---|---|
+| Method | `POST` |
+| URL | `http://127.0.0.1:8080/api/auth/logout` |
+
+**Expect `200`** and cookie cleared (`Max-Age=0`). Subsequent refresh → `401` `E_UNAUTHORIZED`.
+
+**Automated:** `AuthLoginTest` covers login cookie, refresh rotation, and logout revoke (requires Redis on `127.0.0.1:6379`).
 
 ### 0.4 Run all automated tests (120–139)
 
@@ -94,6 +120,51 @@ docker compose up -d redis
 ```
 
 **Expect:** BUILD SUCCESS.
+
+### 0.5 Extra — `GET /curpairs` and WebSocket quotes (not in 120–139)
+
+The chart maps live ticks to a pair name using this extra catalog, then the same `m_ccypairs` rows as docs **123** / **124**.
+
+| | |
+|---|---|
+| **Path** | `GET /curpairs` (**JWT required**) |
+| **Table** | `m_ccypairs` (`priority` → `curpairCd`, `ccypair_cd` → `curpairName`) |
+| **WS** | `ws://127.0.0.1:5173/ws/fx-quotes` (Vite proxy → Python `:8081`) |
+| **Test class** | `CurrencyPairControllerTest` |
+
+**Postman:** `GET http://127.0.0.1:8080/curpairs` with `Authorization: Bearer <accessToken>`.
+
+**Expect `401`** without Bearer.
+
+**Expect `200`:**
+
+```json
+[
+  { "curpairCd": 1, "curpairName": "USDJPY", "curpairDisplay": "USD/JPY" },
+  { "curpairCd": 2, "curpairName": "EURJPY", "curpairDisplay": "EUR/JPY" },
+  { "curpairCd": 3, "curpairName": "EURUSD", "curpairDisplay": "EUR/USD" },
+  { "curpairCd": 4, "curpairName": "GBPUSD", "curpairDisplay": "GBP/USD" },
+  { "curpairCd": 5, "curpairName": "AUDUSD", "curpairDisplay": "AUD/USD" }
+]
+```
+
+WebSocket tick (`curpairCd` is a **string**; field name keeps the spec typo `rateMiliSecondUTC`; ~3/s):
+
+```json
+{
+  "curpairCd": "1",
+  "rateMiliSecondUTC": 1787195533139,
+  "bid": 158.456,
+  "ask": 158.458,
+  "mid": 158.457,
+  "high": 158.766,
+  "low": 158.036
+}
+```
+
+Chart UI: `quoteToolbar.ts` loads `/curpairs` with Bearer, ignores unknown WS codes, shows `USD/JPY  BID …  ASK …  MID …` for the active chart symbol.
+
+Docs 123 / 124 are unchanged: `GET /api/symbols` and `GET /api/search` still use 6-char `ccypair_cd` and JWT.
 
 ---
 
@@ -1949,6 +2020,7 @@ Deleted name for customer `1` must be absent. If step “other customer” ran, 
 | Doc | Method | URL |
 |-----|--------|-----|
 | Login | POST | `http://127.0.0.1:8080/api/auth/login` |
+| Extra | GET | `http://127.0.0.1:8080/curpairs` |
 | 120 | GET | `http://127.0.0.1:8080/api/config` |
 | 121 | GET | `http://127.0.0.1:8080/api/history?symbol=USDJPY&resolution=1D&from=<sec>&to=<sec>&bid_ask=MID` |
 | 122 | GET | `http://127.0.0.1:8080/api/time` |
@@ -1970,4 +2042,4 @@ Deleted name for customer `1` must be absent. If step “other customer” ran, 
 | 138 | GET | `http://127.0.0.1:8080/api/chart-templates/{name}` |
 | 139 | DELETE | `http://127.0.0.1:8080/api/chart-templates/{name}` |
 
-All except login: `Authorization: Bearer <accessToken>`.
+All except login and health: `Authorization: Bearer <accessToken>` (includes `GET /curpairs`).

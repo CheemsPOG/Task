@@ -4,7 +4,7 @@
 
 import type { ChartingLibraryFeatureset, ResolutionString } from 'charting_library';
 import { setUnauthorizedHandler } from './api.ts';
-import { getToken, logout } from './auth.ts';
+import { getToken, logout, refreshAccessToken } from './auth.ts';
 import Datafeed from './datafeed/datafeed.ts';
 import { installFxQuoteToolbar } from './fx/quoteToolbar.ts';
 import {
@@ -57,15 +57,17 @@ function initChart(): void {
 	installThemeToolbar(widget);
 	installFxQuoteToolbar(widget);
 	installLogoutButton(widget, () => {
-		logout();
-		window.location.reload();
+		void logout().finally(() => {
+			window.location.reload();
+		});
 	});
 }
 
-function boot(): void {
+async function boot(): Promise<void> {
 	setUnauthorizedHandler(() => {
-		logout();
-		window.location.reload();
+		void logout().finally(() => {
+			window.location.reload();
+		});
 	});
 
 	installLoginOverlay({
@@ -78,9 +80,18 @@ function boot(): void {
 	if (getToken()) {
 		hideLoginOverlay();
 		initChart();
-	} else {
+		return;
+	}
+
+	try {
+		await refreshAccessToken();
+		hideLoginOverlay();
+		initChart();
+	} catch {
 		showLoginOverlay();
 	}
 }
 
-window.addEventListener('DOMContentLoaded', boot, { once: true });
+window.addEventListener('DOMContentLoaded', () => {
+	void boot();
+}, { once: true });

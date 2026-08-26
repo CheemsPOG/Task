@@ -8,10 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.task.chart.config.AppProperties;
-import com.task.chart.service.impl.CurrencyPairServiceImpl;
-import com.task.chart.service.impl.SymbolCatalogImpl;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * Unit tests for demo FX symbol resolve.
@@ -26,15 +25,18 @@ import org.junit.jupiter.api.Test;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/20</td><td>Task</td><td>Expect CTFX/FOREX from app.tradingview</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Catalog from m_ccypairs</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
+@SpringBootTest
 class SymbolCatalogTest {
 
-	private final SymbolCatalog catalog = new SymbolCatalogImpl(new CurrencyPairServiceImpl(), new AppProperties());
+	@Autowired
+	private SymbolCatalog catalog;
 
 	@Test
 	void resolvesUsdJpyByDisplayTickerAndProviderName() {

@@ -7,13 +7,17 @@ package com.task.chart.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task.chart.constants.ErrorCodes;
+import com.task.chart.security.AuthCookieSupport;
 import com.task.chart.support.TestAuthSupport;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +68,10 @@ class AuthLoginTest {
 					.andExpect(status().isOk())
 					.andExpect(jsonPath("$.accessToken").isString())
 					.andExpect(jsonPath("$.tokenType").value("Bearer"))
-					.andExpect(jsonPath("$.expiresIn").isNumber())
+					.andExpect(jsonPath("$.expiresIn").value(3600))
+					.andExpect(jsonPath("$.refreshExpiresIn").value(86400))
+					.andExpect(cookie().exists(AuthCookieSupport.REFRESH_COOKIE_NAME))
+					.andExpect(header().string("Set-Cookie", org.hamcrest.Matchers.containsString("HttpOnly")))
 					.andReturn();
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
@@ -132,6 +139,59 @@ class AuthLoginTest {
 		@Test
 		void healthRemainsOpen() throws Exception {
 			mockMvc.perform(get("/api/health")).andExpect(status().isOk());
+		}
+	}
+
+	@Nested
+	class RefreshAndLogout {
+
+		@Test
+		void refreshWithCookieReturnsNewAccessTokenAndRotatesCookie() throws Exception {
+			MvcResult loginResult = TestAuthSupport.login(mockMvc, "demo", "demo");
+			String refreshTokenId = TestAuthSupport.refreshCookieFromLogin(loginResult);
+			String originalAccessToken = objectMapper.readTree(loginResult.getResponse().getContentAsString())
+					.get("accessToken")
+					.asText();
+
+			MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
+							.cookie(TestAuthSupport.refreshCookie(refreshTokenId)))
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.accessToken").isString())
+					.andExpect(jsonPath("$.tokenType").value("Bearer"))
+					.andExpect(jsonPath("$.expiresIn").value(3600))
+					.andExpect(cookie().exists(AuthCookieSupport.REFRESH_COOKIE_NAME))
+					.andReturn();
+
+			String newAccessToken = objectMapper.readTree(refreshResult.getResponse().getContentAsString())
+					.get("accessToken")
+					.asText();
+			String rotatedRefreshTokenId = TestAuthSupport.refreshCookieFromLogin(refreshResult);
+
+			assertThat(newAccessToken).isNotBlank().isNotEqualTo(originalAccessToken);
+			assertThat(rotatedRefreshTokenId).isNotEqualTo(refreshTokenId);
+		}
+
+		@Test
+		void refreshWithoutCookieReturns401() throws Exception {
+			mockMvc.perform(post("/api/auth/refresh").header(HttpHeaders.ACCEPT_LANGUAGE, "en"))
+					.andExpect(status().isUnauthorized())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.UNAUTHORIZED))
+					.andExpect(jsonPath("$.message").value("Authentication is required."));
+		}
+
+		@Test
+		void logoutClearsCookieAndRevokesRefreshToken() throws Exception {
+			MvcResult loginResult = TestAuthSupport.login(mockMvc, "demo", "demo");
+			String refreshTokenId = TestAuthSupport.refreshCookieFromLogin(loginResult);
+			Cookie refreshCookie = TestAuthSupport.refreshCookie(refreshTokenId);
+
+			mockMvc.perform(post("/api/auth/logout").cookie(refreshCookie))
+					.andExpect(status().isOk())
+					.andExpect(cookie().maxAge(AuthCookieSupport.REFRESH_COOKIE_NAME, 0));
+
+			mockMvc.perform(post("/api/auth/refresh").cookie(refreshCookie))
+					.andExpect(status().isUnauthorized())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.UNAUTHORIZED));
 		}
 	}
 }

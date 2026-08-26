@@ -30,11 +30,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Permit Swagger UI for mentor review</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Move to security package</td></tr>
+ *   <tr><td>1.3.0</td><td>2026/08/24</td><td>Task</td><td>Require JWT on GET /curpairs</td></tr>
+ *   <tr><td>1.4.0</td><td>2026/08/25</td><td>Task</td><td>Permit refresh + logout</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.4.0
  */
 @Configuration
 @EnableWebSecurity
@@ -85,7 +87,8 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-						.requestMatchers("/curpairs").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
 						.requestMatchers(
 								"/swagger-ui.html",
 								"/swagger-ui/**",
@@ -93,6 +96,7 @@ public class SecurityConfig {
 								"/v3/api-docs/**")
 						.permitAll()
 						.requestMatchers("/api/**").authenticated()
+						.requestMatchers(HttpMethod.GET, "/curpairs").authenticated()
 						.anyRequest().permitAll())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();

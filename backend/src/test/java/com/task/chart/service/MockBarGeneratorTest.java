@@ -7,13 +7,10 @@ package com.task.chart.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
-import com.task.chart.config.AppProperties;
 import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.BarDto;
 import com.task.chart.service.SymbolCatalog.CachedSymbol;
-import com.task.chart.service.impl.CurrencyPairServiceImpl;
 import com.task.chart.service.impl.MockBarGeneratorImpl;
-import com.task.chart.service.impl.SymbolCatalogImpl;
 import com.task.chart.util.DemoMarket;
 import java.time.Instant;
 import java.util.List;
@@ -31,17 +28,25 @@ import org.junit.jupiter.api.Test;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Drop hardcoded CurrencyPairServiceImpl</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 class MockBarGeneratorTest {
 
 	private final MockBarGenerator generator = new MockBarGeneratorImpl();
-	private final CachedSymbol usdJpy =
-			new SymbolCatalogImpl(new CurrencyPairServiceImpl(), new AppProperties()).find("USD/JPY");
+	private final CachedSymbol usdJpy = new CachedSymbol(
+			"USD/JPY",
+			"USD/JPY",
+			"USD/JPY",
+			"USDJPY",
+			"CTFX",
+			"FOREX",
+			1000,
+			1);
 
 	@Test
 	void historyIsDeterministicAndDropsBarAtTo() {

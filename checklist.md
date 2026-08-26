@@ -4,7 +4,7 @@
 
 **How to read:** `Done` = matches the markdown for this demo. `Planned` = in `plan.md`, not coded yet. `Intentional gap` = doc says X, we kept Y so the widget still loads. `Open` = not done and still unsafe or incomplete.
 
-Header on every `/api/**` call except health and login: `Authorization: Bearer <jwt>` (after `POST /api/auth/login`). Optional: `Accept-Language: en|ja` for localized error `message`.
+Header on every authenticated call (`/api/**` and `GET /curpairs`) except health, login, refresh, and logout: `Authorization: Bearer <jwt>` (after `POST /api/auth/login`). Browser app also keeps a 1-day HttpOnly refresh cookie for silent re-login. Optional: `Accept-Language: en|ja` for localized error `message`.
 
 ---
 
@@ -12,7 +12,7 @@ Header on every `/api/**` call except health and login: `Authorization: Bearer <
 
 | Doc requirement | Status | What we did |
 |---|---|---|
-| S-01 token auth | **Intentional gap** | Local JWT stand-in (not Peach SSO). `POST /api/auth/login` → Bearer on `/api/**`. Seeded `demo`/`demo` (customer 1), `demo2`/`demo2` (customer 2). FE login overlay. |
+| S-01 token auth | **Intentional gap** | Local JWT stand-in (not Peach SSO). 1h access JWT + 1d HttpOnly refresh cookie (Redis, revocable). `POST /api/auth/login` → Bearer on `/api/**`; `POST /api/auth/refresh` / `POST /api/auth/logout`. Seeded `demo`/`demo` (customer 1), `demo2`/`demo2` (customer 2). FE silent refresh + server logout. |
 | 422 `CODE:30020` | **Done** | `ValidationException` → `{ "errorCode": "CODE:30020", "message": "<localized>" }` |
 | 404 `CODE:30404` | **Done** | `{ "errorCode": "CODE:30404", "message": "<localized>" }`. History unknown symbol is `{ s: "error" }` (UDF), not 404. |
 | 500 `E_SERVER` | **Done** | `{ "errorCode": "E_SERVER", "message": "<localized>" }` (EN default; JA if `Accept-Language: ja`) |
@@ -20,7 +20,7 @@ Header on every `/api/**` call except health and login: `Authorization: Bearer <
 | Postgres + Flyway | **Done** | V1–V9 (`m_app_user` for demo auth; `m_tv_chart_templates` for 136–139) |
 | Frontend datafeed | **Done** | `datafeed.ts` + `api.ts` sends Bearer + `Accept-Language` |
 
-**Not in 120–126 (do not treat as missing):** save/load still `LocalStorageSaveLoadAdapter`; quotes still mock WS; `/curpairs` is extra.
+**Not in 120–126 (do not treat as missing):** save/load still `LocalStorageSaveLoadAdapter`; quotes still mock WS; `GET /curpairs` is extra quote-stream catalog (same `m_ccypairs` master as 123/124; `curpairCd` = `priority`; JWT required).
 
 ---
 
@@ -534,6 +534,108 @@ Empty DB → `[]`. After seeding two names for customer `1` and one for `2`, lis
 **Test class:** `SystemOverviewDesign139Test`.
 
 **Come back later:** wire SaveLoadAdapter chart templates (`getAllChartTemplates` / `saveChartTemplate` / `removeChartTemplate`).
+
+---
+
+## Extra — `GET /curpairs` + WebSocket quote stream
+
+**Not in System_Overview_Design 120–139.** Spec from BE team (quote mapping for live header).
+
+| Path | `GET /curpairs` |
+| WS | `ws://…/ws/fx-quotes` (~3 ticks/s, Python demo) |
+| Table | `m_ccypairs` (`is_deleted = 0`, sort `priority` ASC) |
+
+### REST catalog (`GET /curpairs`)
+
+| Spec item | Status | Notes |
+|---|---|---|
+| Token (S-01 stand-in) | **Done** | **401** without Bearer (aligned with other APIs) |
+| Source = `m_ccypairs` | **Done** | Not hardcoded |
+| `curpairCd` = `priority` | **Done** | JSON number |
+| `curpairName` = `ccypair_cd` | **Done** | e.g. `USDJPY` |
+| `curpairDisplay` = slash form | **Done** | e.g. `USD/JPY` |
+| Active rows only | **Done** | `is_deleted = 0` |
+| Sort by `priority` ASC | **Done** | Same order as doc 124 |
+| All active DB pairs in response | **Done** | Grows when rows added to `m_ccypairs` |
+
+**Test class:** `CurrencyPairControllerTest`.
+
+### WebSocket ticks (`/ws/fx-quotes`)
+
+| Spec item | Status | Notes |
+|---|---|---|
+| `curpairCd` as **string** | **Done** | e.g. `"1"` |
+| `rateMiliSecondUTC`, bid/ask/mid/high/low | **Done** | Field name keeps spec typo |
+| ~3 ticks/second | **Done** | `TICK_MS = 333` in Python |
+| Map `curpairCd` → `/curpairs` row | **Done** | FE `quoteStore.applyQuote` |
+| Unknown `curpairCd` ignored | **Done** | Console warn |
+| Header shows mapped pair + live BID/ASK/MID | **Done** | `quoteToolbar.ts` |
+| WS auth | **Open** | Demo WS is public |
+| All DB pairs on WS | **Open** | Python `market.py` still hardcodes 5 pairs |
+
+### DBeaver check
+
+```sql
+SELECT priority AS curpair_cd, ccypair_cd, ccypair_jp, is_deleted
+FROM m_ccypairs
+WHERE is_deleted = 0
+ORDER BY priority;
+```
+
+---
+
+## Summary — all 20 design docs (120–139)
+
+| Doc | API | Status | Test class | Main intentional gaps |
+|-----|-----|--------|------------|----------------------|
+| 120 | `GET /api/config` | **Done** | 120Test | JWT stub; extra `supports_group_request` |
+| 121 | `GET /api/history` | **Done** | 121Test, Flyway | Mock bars; extra `bars[]` |
+| 122 | `GET /api/time` | **Done** | 122Test | Extra `serverTime` |
+| 123 | `GET /api/symbols` | **Done** | 123Test | Extra library fields; accepts `USD/JPY` |
+| 124 | `GET /api/search` | **Done** | 124Test | Extra ticker/filters |
+| 125 | `GET /api/marks` | **Done** | 125Test | Extra mark fonts |
+| 126 | `GET /api/timescale_marks` | **Done** | 126Test | tooltip array |
+| 127 | `POST /api/layouts` | **Done** | 127Test | FE SaveLoadAdapter not wired |
+| 128 | `PUT /api/layouts/{id}` | **Done** | 128Test | FE not wired |
+| 129 | `GET /api/layouts/{id}` | **Done** | 129Test | FE not wired |
+| 130 | `GET /api/layouts` | **Done** | 130Test | FE not wired |
+| 131 | `DELETE /api/layouts/{id}` | **Done** | 131Test | FE not wired |
+| 132 | `GET /api/indicator-templates` | **Done** | 132Test | FE not wired |
+| 133 | `POST /api/indicator-templates` | **Done** | 133Test | FE not wired |
+| 134 | `GET /api/indicator-templates/{name}` | **Done** | 134Test | FE not wired |
+| 135 | `DELETE /api/indicator-templates/{name}` | **Done** | 135Test | FE not wired |
+| 136 | `GET /api/chart-templates` | **Done** | 136Test | FE not wired |
+| 137 | `POST /api/chart-templates` | **Done** | 137Test | FE not wired |
+| 138 | `GET /api/chart-templates/{name}` | **Done** | 138Test | FE not wired |
+| 139 | `DELETE /api/chart-templates/{name}` | **Done** | 139Test | FE not wired |
+| — | `GET /curpairs` + WS quotes | **Done (extra)** | CurrencyPairControllerTest | Not in MD; WS catalog still hardcoded |
+
+**Shared across 120–139:** local JWT (not Peach S-01); Flyway V1–V9; 422/404/500 error shapes; Postgres + Redis for bars.
+
+---
+
+## Future work
+
+### Peach / production
+
+| # | Item | Why |
+|---|------|-----|
+| 1 | Replace local JWT with **real Peach S-01** | Docs require Peach login token check |
+| 2 | Confirm Peach **quote API** (`curpairCd` meaning, auth, tick shape) | Our `curpairCd = priority` is a demo convention |
+| 3 | Replace mock bar writer with **real Peach bar pipeline** | Doc 121 warehouse from live data |
+| 4 | Wire **SaveLoadAdapter** to 127–131, 132–135, 136–139 | Backend CRUD ready; FE still localStorage |
+| 5 | **Python WS** reads pair list from Java `/curpairs` or DB | Today `market.py` hardcodes 5 pairs |
+| 6 | **WebSocket auth** if Peach requires it | Demo WS is open |
+| 7 | Drop widget-only **`bars[]`** if product accepts Peach columnar only | Dual shape kept for TradingView |
+| 8 | Validate **`curpairCd`** with Peach — may not equal `priority` | Confirm before go-live |
+
+### Demo / polish (optional)
+
+| # | Item |
+|---|------|
+| 9 | i18n for header quote strings (CTFX FE rule) |
+| 10 | Move `/curpairs` under `/api/curpairs` for one URL prefix (breaking change — coordinate with FE/Vite proxy) |
+| 11 | Automated browser test for header quote ticker |
 
 ---
 

@@ -1,8 +1,40 @@
-# Project structure — from zero to docs 120–139
+# Project structure — mentor onboarding (docs 120–139)
 
-This file is the onboarding map. A reader who has never seen this repo should be able to answer: what runs, why those tools exist, how data moves, where each design doc lands in code, and what is still a demo stand-in.
+**Audience:** a mentor or reviewer with **no prior context** on this repo. After reading this file you should know:
 
-How to verify APIs (Postman, DBeaver, Maven): [`test.md`](test.md). Mentor gap list: [`checklist.md`](checklist.md). Specs: [`System_Overview_Design/`](System_Overview_Design/). Japanese originals: [`02_概要設計書/`](02_概要設計書/). Run commands: [`README.md`](README.md).
+- what the application does and what is demo vs production Peach
+- which processes run, on which ports, and how they connect
+- where each design doc (120–139) is implemented in code
+- how login works (access JWT + refresh cookie) and **how to verify it step by step**
+
+**Suggested read order**
+
+| Step | Section | Why |
+|------|---------|-----|
+| 1 | §0 Glossary | Terms used everywhere (S-01, UDF, `customer_no`, …) |
+| 2 | §1–3 | What the app is + how to start it + 5‑minute smoke test |
+| 3 | §6 + **§6.1** | Auth model and **refresh-token verification** (curl, browser, tests) |
+| 4 | §13 | Map each design doc to controller/service/test |
+| 5 | [`checklist.md`](checklist.md) | Intentional gaps vs the markdown specs |
+| 6 | [`test.md`](test.md) | Full Postman / DBeaver / Maven proof for every API |
+
+**Other docs:** run commands → [`README.md`](README.md). English specs → [`System_Overview_Design/`](System_Overview_Design/). Japanese originals → [`02_概要設計書/`](02_概要設計書/).
+
+---
+
+## 0. Glossary (zero prior context)
+
+| Term | Meaning in this repo |
+|------|----------------------|
+| **S-01** | Peach supplementary design for token authentication. We **do not** call Peach SSO. We use a **local JWT stand-in**: username/password login, 1h access JWT, 1d refresh cookie. |
+| **Access token** | Short-lived JWT (1 hour). Sent as `Authorization: Bearer …` on `/api/**` and `GET /curpairs`. Stored in browser **sessionStorage** (tab-scoped). |
+| **Refresh token** | Opaque id (UUID), **not** a JWT. Stored in an **HttpOnly cookie** (`chart_refresh_token`) and in **Redis** (`peach:auth:refresh:{uuid}`). Used by `POST /api/auth/refresh` to mint a new access token without re-entering the password. |
+| **`customer_no`** | Tenant id embedded in the JWT. Seeded users: `demo` → `1`, `demo2` → `2`. Layouts and templates are scoped to this value. |
+| **UDF** | TradingView *Universal Data Feed* JSON contract (`/config`, `/history`, `/symbols`, …). |
+| **Doc 120–139** | API specs in [`System_Overview_Design/`](System_Overview_Design/) (datafeed, layouts, templates). |
+| **Stand-in / stub** | Local demo code so the chart loads without production Peach services or live market data. |
+| **Warehouse / `t_chart_*`** | Postgres tables holding OHLC bars (doc 121). Reseeded on every Java boot in this demo. |
+| **`cache_set_*` / Redis** | Hot bar cache (doc 121). `/api/history` reads here first. |
 
 ---
 
@@ -10,17 +42,19 @@ How to verify APIs (Postman, DBeaver, Maven): [`test.md`](test.md). Mentor gap l
 
 A **local demo** of TradingView Advanced Charts talking to a CTFX-style Peach chart backend.
 
-- The **browser** hosts the TradingView widget and a login overlay.
-- **Java Spring Boot** serves the datafeed (UDF-shaped JSON), layout/template REST, login, and a small FX pair catalog.
-- **Python** pushes live demo ticks over WebSocket.
-- **Postgres** holds masters, layouts, templates, users, and bar warehouse tables.
-- **Redis** holds the hot Peach `cache_set_*` bar sets that `/api/history` reads.
+**In one sentence:** the browser shows a TradingView chart; Java serves REST history/config and login; Python pushes fake live ticks; Postgres and Redis hold demo data.
 
-There is **no live market feed** and **no Peach SSO**. History bars, quotes, and login are local mocks so the widget can load.
+| Layer | Technology | What it does for the mentor |
+|-------|------------|----------------------------|
+| **Browser** | Vite + TypeScript + TradingView widget | Login overlay, chart UI, sends Bearer JWT on API calls, keeps refresh cookie for silent re-login |
+| **Java REST** | Spring Boot on `:8080` | Datafeed APIs (docs 120–126), layouts/templates (127–139), login/refresh/logout, `GET /curpairs` |
+| **Python WS** | `websockets` on `:8081` | Fake live BID/ASK ticks (~3/s) for the chart header and streaming bars |
+| **Postgres** | Docker `:5432` | Masters (`m_ccypairs`, users, layouts, templates) + bar warehouse (`t_chart_*`) |
+| **Redis** | Docker `:6379` | Hot bar cache (doc 121) **and** refresh-token store (auth stand-in) |
 
-Product docs in this slice are **120–139**. Anything not in those files (login UI, `/curpairs`, Python WS, Swagger) exists so the demo can run.
+**What is NOT in this demo:** live market feed, Peach SSO, production bar writer. History, quotes, and login are **local mocks** so the widget can load and you can review API shape against docs 120–139.
 
----
+Product specs in this slice are **120–139**. Extra pieces (login UI, `/curpairs`, Python WS, Swagger) exist so the demo runs end-to-end—they are not missing requirements from 120–139.
 
 ## 2. How the repo was initialized (stack choices)
 
@@ -60,12 +94,12 @@ Docker
   redis    :6379  no volume
 ```
 
-The browser **never** talks to 8080 or 8081 in normal UI use. Vite [`frontend/vite.config.ts`](frontend/vite.config.ts) proxies:
+The browser **never** talks to 8080 or 8081 in normal UI use. Vite [`frontend/vite.config.ts`](frontend/vite.config.ts) proxies (auth cookies are forwarded with `cookieDomainRewrite: ''`):
 
 | Browser path | Target | Env override |
 |--------------|--------|--------------|
 | `/api` | `http://BACKEND_HOST:BACKEND_PORT` default `127.0.0.1:8080` | `BACKEND_HOST`, `BACKEND_PORT` |
-| `/curpairs` | same Java host | same |
+| `/curpairs` | same Java host (Bearer JWT) | same |
 | `/ws` | `ws://WS_HOST:WS_PORT` default `127.0.0.1:8081` | `WS_HOST`, `WS_PORT` |
 | `/charting_library/`, `/datafeeds/` | files on disk (Vite plugin, not Java) | — |
 
@@ -75,35 +109,51 @@ CORS on Java (`app.cors-origins`) allows `localhost`/`127.0.0.1` on **5173** and
 
 ### Typical start order
 
-1. `docker compose up -d` (Postgres + Redis).
-2. `cd backend` → `.\mvnw.cmd spring-boot:run` until `Started ChartBackendApplication`. Flyway runs, then `AppUserSeedRunner`, then `ChartCacheWriter` seeds bars.
-3. `cd ws-python` → `python -m pip install -r requirements.txt` → `python server.py`.
-4. `cd frontend` → `npm install` → `npm start` → open `http://127.0.0.1:5173`.
-5. Login overlay: **demo** / **demo** (customer `1`) or **demo2** / **demo2** (customer `2`).
+1. **Docker** — `docker compose up -d` (Postgres + Redis). Redis is required for bar cache **and** refresh tokens.
+2. **Java** — `cd backend` → `.\mvnw.cmd spring-boot:run` until log shows `Started ChartBackendApplication`. Flyway migrates DB, seeds demo users, reseeds bar cache.
+3. **Python** (optional for live ticks) — `cd ws-python` → `python server.py`.
+4. **Frontend** — `cd frontend` → `npm install` → `npm start` → open **http://127.0.0.1:5173**.
+5. **Login** — overlay: **demo** / **demo** (tenant `1`) or **demo2** / **demo2** (tenant `2`).
 
 Health (no token): `GET http://127.0.0.1:8080/api/health` → `{"status":"ok","service":"chart-backend"}`.
 
-Swagger (no token to open UI): `http://127.0.0.1:8080/swagger-ui.html`. Login in **Auth**, then **Authorize** with the `accessToken` (no `Bearer ` prefix).
+Swagger (open UI without token): **http://127.0.0.1:8080/swagger-ui.html**. Use **Auth → login**, copy `accessToken`, click **Authorize** (paste token only, no `Bearer` prefix). Swagger does **not** use the refresh cookie—see §6.1 for refresh testing.
 
----
+### Mentor smoke test (~5 minutes)
+
+Do this once after start order above. Each step should pass before you dig into docs 120–139.
+
+| # | Action | Pass criteria |
+|---|--------|---------------|
+| 1 | Open `http://127.0.0.1:5173`, log in as `demo` / `demo` | Chart loads on USD/JPY |
+| 2 | DevTools → Application → Cookies | `chart_refresh_token` present (HttpOnly) |
+| 3 | DevTools → Application → Session Storage | `chart_access_token` present |
+| 4 | `GET http://127.0.0.1:8080/api/config` with Bearer from login | HTTP 200 JSON |
+| 5 | Same URL **without** Bearer | HTTP 401, `"errorCode": "E_UNAUTHORIZED"` |
+| 6 | Click **Logout** on chart toolbar | Login overlay returns; refresh cookie gone |
+| 7 | `.\mvnw.cmd test -Dtest=AuthLoginTest` (from `backend/`, Redis up) | BUILD SUCCESS |
+
+Full refresh-token walkthrough (curl, Postman, silent boot): **§6.1**.
 
 ## 4. Frontend (what we used and why)
+
+**Mentor view:** the UI is **not** React. It is plain TypeScript modules loaded by Vite. The TradingView library is vendored under `frontend/charting_library/`. All API traffic goes through `/api` (proxied to Java); live ticks through `/ws` (proxied to Python).
 
 Package: [`frontend/package.json`](frontend/package.json) — scripts `start`/`dev` = Vite, `typecheck`, `build`. **No React, no Redux.**
 
 | File | Role |
 |------|------|
 | [`frontend/index.html`](frontend/index.html) | Chart container `#tv_chart_container` + login overlay markup |
-| [`frontend/src/main.ts`](frontend/src/main.ts) | Boot: login overlay → TradingView `widget` (`USD/JPY`, interval `1D`, `datafeed`, `library_path: /charting_library/`) |
+| [`frontend/src/main.ts`](frontend/src/main.ts) | Boot: login overlay or silent refresh → TradingView `widget` (`USD/JPY`, interval `1D`, `datafeed`, `library_path: /charting_library/`) |
 | [`frontend/src/login.ts`](frontend/src/login.ts) | Overlay form; Demo button fills `demo`/`demo` |
-| [`frontend/src/auth.ts`](frontend/src/auth.ts) | `POST /api/auth/login`; stores JWT in **sessionStorage** key `chart_access_token` (tab-scoped, not localStorage) |
-| [`frontend/src/api.ts`](frontend/src/api.ts) | `fetch` helper: `Authorization: Bearer`, `Accept-Language` from `navigator.language` (`ja` vs `en`); 401 → logout handler |
+| [`frontend/src/auth.ts`](frontend/src/auth.ts) | Login/refresh/logout with `credentials: 'include'`; access JWT in **sessionStorage** (`chart_access_token`); refresh in HttpOnly cookie only |
+| [`frontend/src/api.ts`](frontend/src/api.ts) | `fetch` helper: Bearer + `Accept-Language`; on 401 tries `POST /api/auth/refresh` once, then logout handler |
 | [`frontend/src/datafeed/datafeed.ts`](frontend/src/datafeed/datafeed.ts) | TradingView `IBasicDataFeed`: `/config`, `/symbols`, `/search`, `/history`, `/time`, `/marks`, `/timescale_marks` |
 | [`frontend/src/datafeed/streaming.ts`](frontend/src/datafeed/streaming.ts) | Widget `subscribeBars` → Python `/ws/stream` |
-| [`frontend/src/fx/currencyPairs.ts`](frontend/src/fx/currencyPairs.ts) | `GET /curpairs` (no JWT) |
+| [`frontend/src/fx/currencyPairs.ts`](frontend/src/fx/currencyPairs.ts) | `GET /curpairs` with Bearer JWT |
 | [`frontend/src/fx/fxQuotesSocket.ts`](frontend/src/fx/fxQuotesSocket.ts) | Python `/ws/fx-quotes` ~3 ticks/s |
 | [`frontend/src/fx/quoteStore.ts`](frontend/src/fx/quoteStore.ts) | In-memory quotes keyed by numeric `curpairCd` |
-| [`frontend/src/fx/quoteToolbar.ts`](frontend/src/fx/quoteToolbar.ts) | BID/ASK/MID dropdown on the chart header |
+| [`frontend/src/fx/quoteToolbar.ts`](frontend/src/fx/quoteToolbar.ts) | Loads `GET /curpairs`, maps WS `curpairCd`, shows live BID/ASK/MID on the header |
 | [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) | **Still localStorage** for layouts, study templates, and chart templates |
 | [`frontend/src/theme.ts`](frontend/src/theme.ts) | Light/dark overrides |
 | [`frontend/src/toolbar.ts`](frontend/src/toolbar.ts) | Theme + logout |
@@ -114,14 +164,16 @@ Two pair encodings (easy to confuse):
 
 | Place | Identifier | Example |
 |-------|------------|---------|
-| Chart / datafeed / `m_ccypairs` / `t_chart_*` | 6-char CD, slash optional on input | `USDJPY` or `USD/JPY` |
-| `/curpairs` + Python quotes | integer `curpairCd` as JSON number on REST, **string** `"1"` on WS | `1` = USDJPY |
+| Chart / datafeed 123–124 / `m_ccypairs` / `t_chart_*` | 6-char CD, slash optional on input | `USDJPY` or `USD/JPY` |
+| `GET /curpairs` + Python `/ws/fx-quotes` | integer `curpairCd` as JSON number on REST, **string** `"1"` on WS | `1` = USDJPY (`m_ccypairs.priority`) |
 
-The FE maps numeric codes to display names in memory. That mapping is **not** in design docs 120–139.
+The chart header maps WS `curpairCd` through `GET /curpairs` and shows `curpairDisplay` plus live BID/ASK/MID. That mapping is **not** in design docs 120–139.
 
 ---
 
 ## 5. Backend Spring Boot
+
+**Mentor view:** one Spring Boot app on port 8080. Controllers are thin; business logic is in `service.impl`; database access via JPA repositories or JDBC for bar tables. Every authenticated request carries `customer_no` from the JWT (see §6).
 
 Entry: [`ChartBackendApplication.java`](backend/src/main/java/com/task/chart/ChartBackendApplication.java) — `@SpringBootApplication`, `@EnableConfigurationProperties(AppProperties.class)`, `@EnableScheduling` (bar refresh).
 
@@ -135,7 +187,8 @@ Config: [`backend/src/main/resources/application.yml`](backend/src/main/resource
 | `spring.jpa.hibernate.ddl-auto` | `none` |
 | `spring.flyway.locations` | `classpath:db/migration` |
 | `app.jwt.secret` | HMAC key (local demo only, ≥256 bits) |
-| `app.jwt.expiration-ms` | `86400000` (24h) — JWT *signing* uses this; login JSON `expiresIn` is **seconds** (`86400`) |
+| `app.jwt.access-expiration-ms` | `3600000` (1h) — access JWT signing; login/refresh JSON `expiresIn` is **seconds** (`3600`) |
+| `app.jwt.refresh-expiration-ms` | `86400000` (1d) — opaque refresh token TTL in Redis + cookie `Max-Age`; login JSON `refreshExpiresIn` is **seconds** (`86400`) |
 | `app.chart-cache.refresh-ms` | `60000` — writer refreshes the current open bar |
 | `app.tradingview.*` | Doc 120 `GET /api/config` flags, CTFX/FOREX, 12 resolutions, Tokyo session strings |
 | `springdoc` | `/v3/api-docs`, UI `/swagger-ui.html` |
@@ -151,7 +204,7 @@ Test override: [`backend/src/test/resources/application.yml`](backend/src/test/r
 | `repository` | Spring Data JPA for masters. |
 | `entity` | JPA rows. Never returned as API JSON. |
 | `dto.request` / `dto.response` | Wire JSON. |
-| `security` | JWT create/parse, Bearer filter, `SecurityConfig`, `CustomerContext`, 401 JSON. |
+| `security` | JWT create/parse, Bearer filter, refresh cookie + Redis store, `SecurityConfig`, `CustomerContext`, 401 JSON. |
 | `config` | CORS, BCrypt, OpenAPI, `AppProperties`, user seed. |
 | `cache` | Doc 121 warehouse + Redis. |
 | `exception` | Typed errors + `GlobalExceptionHandler`. |
@@ -167,8 +220,10 @@ Layering: Controller → Service → Repository (or `ChartBarRepository` / `Char
 | Doc | Method | Path | Controller |
 |-----|--------|------|------------|
 | — | GET | `/api/health` | `ChartDataController` (public) |
-| — | POST | `/api/auth/login` | `AuthController` (public) |
-| — | GET | `/curpairs` | `CurrencyPairController` (public) |
+| — | POST | `/api/auth/login` | `AuthController` (public; sets HttpOnly refresh cookie) |
+| — | POST | `/api/auth/refresh` | `AuthController` (public; cookie only) |
+| — | POST | `/api/auth/logout` | `AuthController` (public; revokes refresh + clears cookie) |
+| — | GET | `/curpairs` | `CurrencyPairController` (JWT, from `m_ccypairs`) |
 | 120 | GET | `/api/config` | `ChartDataController` |
 | 121 | GET | `/api/history` | same |
 | 122 | GET | `/api/time` | same |
@@ -192,27 +247,163 @@ Layering: Controller → Service → Repository (or `ChartBarRepository` / `Char
 
 Swagger tags: Auth, Datafeed (120–126), Chart layouts (127–131), Indicator templates (132–135), Chart templates (136–139), Currency pairs.
 
-Public matchers in [`SecurityConfig.java`](backend/src/main/java/com/task/chart/security/SecurityConfig.java): `OPTIONS /**`, `GET /api/health`, `POST /api/auth/login`, `/curpairs`, Swagger UI + `/v3/api-docs`. Everything else under `/api/**` needs a valid Bearer. CSRF off, session **STATELESS**.
+Authenticated matchers: `/api/**` and `GET /curpairs` need a valid Bearer. Public: `OPTIONS /**`, `GET /api/health`, `POST /api/auth/login`, `POST /api/auth/refresh`, `POST /api/auth/logout`, Swagger UI + `/v3/api-docs`. CSRF off, session **STATELESS**.
 
 ---
 
 ## 6. JWT and login (S-01 stand-in)
 
-Design docs say “token authentication / S-01”. This repo does **not** call Peach SSO. Local flow:
+Design docs refer to “token authentication / S-01”. This repo does **not** call Peach SSO. Instead we implement a **local dual-token** flow:
+
+| Token | Lifetime | Where stored | How it is sent |
+|-------|----------|--------------|----------------|
+| **Access** | 1 hour | Browser `sessionStorage` key `chart_access_token` | Header: `Authorization: Bearer <jwt>` |
+| **Refresh** | 1 day | HttpOnly cookie `chart_refresh_token` + Redis `peach:auth:refresh:{uuid}` | Browser sends cookie automatically on `POST /api/auth/refresh` and `/logout` |
+
+```mermaid
+sequenceDiagram
+participant Browser
+participant Java as Spring Boot
+participant Redis
+
+Browser->>Java: POST /api/auth/login (demo/demo)
+Java->>Redis: store refresh uuid (TTL 1d)
+Java-->>Browser: accessToken JSON + Set-Cookie refresh
+
+Browser->>Java: GET /api/config (Bearer accessToken)
+Java-->>Browser: 200 config
+
+Note over Browser: access token expires or tab reload clears sessionStorage
+
+Browser->>Java: POST /api/auth/refresh (cookie only)
+Java->>Redis: rotate refresh uuid
+Java-->>Browser: new accessToken + new cookie
+
+Browser->>Java: POST /api/auth/logout (cookie)
+Java->>Redis: delete refresh uuid
+Java-->>Browser: Clear-Cookie
+```
+
+### Backend flow (step by step)
 
 1. Flyway **V7** creates `m_app_user`.
-2. [`AppUserSeedRunner`](backend/src/main/java/com/task/chart/config/AppUserSeedRunner.java) inserts users if missing: `demo`/`demo` → `customer_no=1`, `demo2`/`demo2` → `customer_no=2`. Passwords hashed with [`PasswordConfig`](backend/src/main/java/com/task/chart/config/PasswordConfig.java) `BCryptPasswordEncoder`.
-3. [`POST /api/auth/login`](backend/src/main/java/com/task/chart/controller/AuthController.java) body `{ "username", "password" }`. Blank → 422 `CODE:30020`. Unknown user / bad password / disabled → 401 `E_BAD_CREDENTIALS`.
-4. [`JwtService`](backend/src/main/java/com/task/chart/security/JwtService.java) builds HS256 JWT: `sub` = username, claim `customer_no` = long, `iat` / `exp`. Secret from `app.jwt.secret` via `Keys.hmacShaKeyFor`.
-5. Response: `{ "accessToken", "tokenType": "Bearer", "expiresIn": 86400 }` (`expiresIn` is **seconds**).
-6. Client sends `Authorization: Bearer <accessToken>`.
-7. [`JwtAuthenticationFilter`](backend/src/main/java/com/task/chart/security/JwtAuthenticationFilter.java) parses the token, sets `SecurityContext` (`ROLE_USER`) and [`CustomerContext`](backend/src/main/java/com/task/chart/security/CustomerContext.java) `ThreadLocal`. Invalid/expired token is treated as anonymous → 401 on `/api/**`. `finally` **always** clears context (no leak across threads).
-8. Services read `CustomerContext.get()` for tenant filter. Missing context → `ServerErrorException` (should not happen if the filter ran).
-9. Missing/invalid Bearer on a protected route → [`JsonUnauthorizedEntryPoint`](backend/src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java) `401` `{ "errorCode": "E_UNAUTHORIZED", "message": "..." }`.
+2. [`AppUserSeedRunner`](backend/src/main/java/com/task/chart/config/AppUserSeedRunner.java) inserts users if missing: `demo`/`demo` → `customer_no=1`, `demo2`/`demo2` → `customer_no=2`. Passwords hashed with BCrypt.
+3. **`POST /api/auth/login`** — body `{ "username", "password" }`. Blank → 422 `CODE:30020`. Bad credentials → 401 `E_BAD_CREDENTIALS`.
+4. [`JwtService`](backend/src/main/java/com/task/chart/security/JwtService.java) issues HS256 access JWT: `sub` = username, claim `customer_no`, `exp` = now + 1h.
+5. [`RefreshTokenStore`](backend/src/main/java/com/task/chart/security/RefreshTokenStore.java) stores opaque refresh UUID in Redis (TTL 1d). [`AuthCookieSupport`](backend/src/main/java/com/task/chart/security/AuthCookieSupport.java) sets HttpOnly cookie `chart_refresh_token` (`Path=/`, `SameSite=Lax`).
+6. Login JSON: `{ "accessToken", "tokenType": "Bearer", "expiresIn": 3600, "refreshExpiresIn": 86400 }`. The refresh value is **never** in JSON.
+7. **`POST /api/auth/refresh`** — public; **no Bearer**; requires valid cookie. Rotates Redis entry + cookie; returns new access token. Missing/invalid → 401 `E_UNAUTHORIZED`.
+8. **`POST /api/auth/logout`** — revokes Redis entry, clears cookie. Idempotent 200.
+9. Protected routes: [`JwtAuthenticationFilter`](backend/src/main/java/com/task/chart/security/JwtAuthenticationFilter.java) validates Bearer access JWT, sets [`CustomerContext`](backend/src/main/java/com/task/chart/security/CustomerContext.java) for tenant filtering.
 
-FE stores the token in **sessionStorage**, so closing the tab logs you out. Logout clears the key and reloads.
+### Frontend behaviour
 
-This is enough for docs 120–139 “confirm token validity”. It is **not** Peach S-01.
+| File | Behaviour |
+|------|-----------|
+| [`auth.ts`](frontend/src/auth.ts) | `credentials: 'include'` on login/refresh/logout; access token in sessionStorage only |
+| [`api.ts`](frontend/src/api.ts) | On HTTP 401 from an API call: try refresh **once**, retry original request; if refresh fails → logout overlay |
+| [`main.ts`](frontend/src/main.ts) | On page load: if no access token but refresh cookie still valid → silent refresh, then show chart |
+
+**Swagger** uses Bearer access token only (no cookie jar). Use §6.1 below to test refresh.
+
+This satisfies docs 120–139 “confirm token validity” for review. It is **not** production Peach S-01.
+
+---
+
+### 6.1 How to verify refresh-token auth (mentor walkthrough)
+
+**Prerequisites:** Docker running (`docker compose up -d`), Java on `:8080`. For automated tests, Redis on `127.0.0.1:6379` is required.
+
+#### A. Automated test (recommended first)
+
+From `backend/`:
+
+```powershell
+docker compose up -d redis
+.\mvnw.cmd test -Dtest=AuthLoginTest
+```
+
+| Test | Proves |
+|------|--------|
+| `happyPathReturnsBearerToken` | `expiresIn: 3600`, `refreshExpiresIn: 86400`, HttpOnly cookie on login |
+| `refreshWithCookieReturnsNewAccessTokenAndRotatesCookie` | Refresh returns new JWT; cookie value changes (rotation) |
+| `refreshWithoutCookieReturns401` | Refresh rejected without cookie |
+| `logoutClearsCookieAndRevokesRefreshToken` | Logout clears cookie; same refresh id cannot be reused |
+
+#### B. curl (cookie jar — works without the browser)
+
+Run from repo root. `-c` / `-b` save and replay the HttpOnly cookie.
+
+```powershell
+# 1. Login — saves cookie to cookies.txt
+curl -s -c cookies.txt -X POST http://127.0.0.1:8080/api/auth/login `
+  -H "Content-Type: application/json" `
+  -d "{\"username\":\"demo\",\"password\":\"demo\"}"
+```
+
+**Expect:** JSON with `"expiresIn":3600,"refreshExpiresIn":86400` and a non-empty `"accessToken"`.
+
+```powershell
+# 2. Protected API — copy accessToken from step 1
+curl -s http://127.0.0.1:8080/api/config -H "Authorization: Bearer <accessToken>"
+```
+
+**Expect:** HTTP 200.
+
+```powershell
+# 3. Refresh — no Bearer; cookie from jar
+curl -s -b cookies.txt -c cookies.txt -X POST http://127.0.0.1:8080/api/auth/refresh
+```
+
+**Expect:** HTTP 200, **new** `accessToken`, new `Set-Cookie` for `chart_refresh_token`.
+
+```powershell
+# 4. Logout
+curl -s -b cookies.txt -X POST http://127.0.0.1:8080/api/auth/logout
+```
+
+**Expect:** HTTP 200; response clears cookie (`Max-Age=0`).
+
+```powershell
+# 5. Refresh after logout — must fail
+curl -s -b cookies.txt -X POST http://127.0.0.1:8080/api/auth/refresh
+```
+
+**Expect:** HTTP 401, `"errorCode":"E_UNAUTHORIZED"`.
+
+#### C. Postman
+
+1. **POST** `http://127.0.0.1:8080/api/auth/login` — body `{"username":"demo","password":"demo"}`, no auth.
+2. Check **Cookies** tab → `chart_refresh_token` should appear.
+3. Copy `accessToken` → **GET** `http://127.0.0.1:8080/api/config` with Bearer → 200.
+4. **POST** `http://127.0.0.1:8080/api/auth/refresh` — **no Bearer**; Postman sends cookies automatically → 200 + new token.
+5. **POST** `http://127.0.0.1:8080/api/auth/logout` → cookie cleared.
+6. Repeat refresh → 401.
+
+#### D. Browser app (`http://127.0.0.1:5173`)
+
+Use the Vite dev server (not a static file open)—the proxy forwards auth cookies to Java.
+
+| Scenario | Steps | Pass criteria |
+|----------|-------|---------------|
+| **Login sets both tokens** | Log in as `demo`/`demo` → DevTools → Application | Cookie `chart_refresh_token` + sessionStorage `chart_access_token` |
+| **Silent refresh on reload** | Delete **only** `chart_access_token` in sessionStorage → reload page | Chart loads without login overlay; Network shows `POST /api/auth/refresh` → 200 |
+| **API auto-refresh on 401** | Delete sessionStorage token, then change symbol / trigger API | One refresh call, then original request succeeds |
+| **Server logout** | Click **Logout** on chart header | Login overlay; cookie gone; `fetch('/api/auth/refresh',{method:'POST',credentials:'include'})` in console → 401 |
+
+#### E. Redis (optional — proves server-side revoke)
+
+After login, an opaque key exists:
+
+```powershell
+docker compose exec redis redis-cli KEYS "peach:auth:refresh:*"
+```
+
+After logout, that key should be **gone** (revoked). After refresh, the key **value changes** (rotation).
+
+#### F. What Swagger does *not* test
+
+Swagger **Authorize** uses the access Bearer token only. It cannot exercise refresh/logout cookies. Use §6.1 B–D for refresh verification.
 
 ---
 
@@ -225,7 +416,7 @@ This is enough for docs 120–139 “confirm token validity”. It is **not** Pe
 | 422 | `CODE:30020` | Validation (blank name, name > 64, bad `bid_ask`, …) |
 | 404 | `CODE:30404` | Missing row or other customer’s row |
 | 500 | `E_SERVER` | Unexpected |
-| 401 | `E_UNAUTHORIZED` | No/invalid JWT |
+| 401 | `E_UNAUTHORIZED` | No/invalid access JWT; missing/invalid refresh cookie on `/api/auth/refresh` |
 | 401 | `E_BAD_CREDENTIALS` | Login failed |
 
 Body is always `{ "errorCode", "message" }`. Messages from `messages.properties` / `messages_ja.properties` via `Accept-Language`. History **unknown symbol** stays UDF `{ "s": "error" }`, not 404.
@@ -299,7 +490,7 @@ Python ticks are **not** written to `t_chart_*`. Live candles on the widget come
 | `/ws/fx-quotes` | Snapshot then ~3 quotes/s (`TICK_MS = 333`). Payload `curpairCd` is a **string**. |
 | `/ws/stream` | Subscribe/unsubscribe forming bars for the widget |
 
-Catalog duplicated from Java `/curpairs`: `(1, USDJPY, USD/JPY)` … `(5, AUDUSD, AUD/USD)`. Keep both lists in sync by hand.
+Catalog duplicated in Python `market.py` (must match `m_ccypairs.priority`). Java `GET /curpairs` reads the same master as docs 123 / 124.
 
 Port: `WS_PORT` default `8081`. Allowed browser origins: Vite 5173 and 3000.
 
@@ -309,17 +500,32 @@ This is demo plumbing for the header quote and live candle, not a Peach API.
 
 ## 11. Testing
 
-Backend (from `backend/`, Redis must be up):
+### Auth and refresh (start here for S-01 stand-in)
+
+Redis must be running (`docker compose up -d redis`).
+
+```powershell
+cd backend
+.\mvnw.cmd test -Dtest=AuthLoginTest
+```
+
+Manual steps: **§6.1** (curl, Postman, browser). Per-API Postman details: [`test.md`](test.md) §0.3–0.3a.
+
+### Full backend suite
+
+From `backend/`:
 
 ```powershell
 .\mvnw.cmd test
 ```
 
-Per-doc classes: `SystemOverviewDesign120Test` … `SystemOverviewDesign139Test`, plus `FlywayMigrationTest`, `OpenApiDocsTest`, auth tests. Full command list: [`test.md`](test.md) §0.4.
+Per-doc classes: `SystemOverviewDesign120Test` … `SystemOverviewDesign139Test`, plus `FlywayMigrationTest`, `OpenApiDocsTest`, `AuthLoginTest`, `CurrencyPairControllerTest`. Long command list: [`test.md`](test.md) §0.4.
+
+### Other
 
 Python: `cd ws-python` → `pytest`.
 
-Frontend: `npm run typecheck`.
+Frontend: `cd frontend` → `npm run typecheck`.
 
 H2 tests use `ON CONFLICT`-free SQL (DELETE+INSERT) so Postgres and H2 stay portable.
 
@@ -352,7 +558,7 @@ Task/
       repository/           JPA
       entity/               tables
       cache/                121
-      security/             JWT, SecurityConfig, CustomerContext
+      security/             JWT, refresh cookie, Redis refresh store, SecurityConfig
       config/               CORS, OpenAPI, BCrypt, AppProperties, user seed
   frontend/
     vite.config.ts          proxies + charting_library static
@@ -369,7 +575,9 @@ Task/
 
 ## 13. Design docs 120–139 — what the MD says vs where it lives
 
-Shared for almost every doc: **token** → JWT stub; validation errors **422 `CODE:30020`**; missing tenant row **404 `CODE:30404`**.
+**For mentors:** each subsection below answers three questions: (1) what the markdown requires, (2) which Java class implements it, (3) which automated test proves it. Run auth first (§6.1), then pick a doc number.
+
+Shared for almost every doc: **token** → JWT stand-in (§6); validation errors **422 `CODE:30020`**; missing tenant row **404 `CODE:30404`**.
 
 ### 120 — Get datafeed configuration
 
@@ -462,12 +670,13 @@ Spaces in `{name}`: URL-encode (`My%20Dark`).
 
 ## 14. What is still Open (do not assume it works in the widget)
 
-1. **Peach S-01** — local JWT only.
+1. **Peach S-01 SSO** — we use a **local** username/password stand-in with 1h access JWT + 1d refresh cookie (see §6). Not Peach production SSO.
 2. **Live Peach bar writer** — mock generator + wipe-on-boot.
 3. **History JSON** — library still needs `bars[]`; Peach columns are extra.
 4. **Strict symbol length-6** — `USD/JPY` is accepted so the widget does not 422.
 5. **SaveLoadAdapter** — layouts 127–131, study templates 132–135, chart templates 136–139 are REST-ready and **not** called from the chart UI.
-6. **Two pair catalogs** — `m_ccypairs` vs hardcoded `/curpairs` + `market.py`.
+6. **Python pair catalog** — `market.py` still hardcodes the same five rows as `m_ccypairs`. Java `GET /curpairs` reads the master.
 7. **WS ticks → DB** — never.
+8. **Access-token denylist on logout** — logout revokes **refresh** only; access JWT remains valid until its 1h expiry (acceptable for this demo).
 
 When those change, update this file, [`test.md`](test.md), and [`checklist.md`](checklist.md) together.
