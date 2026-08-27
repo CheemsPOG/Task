@@ -9,6 +9,11 @@ import java.util.List;
 /**
  * One timescale mark for GET /api/timescale_marks (design doc 126 + TradingView TimescaleMark).
  *
+ * <p>This JSON is a label on the time axis, not a pin on the price series. {@code ChartDataServiceImpl}
+ * maps {@code m_tv_timescale_mark} (global demo seed). {@code tooltip} is an array for the library;
+ * the table stores one string. {@code labelFontColor} is a library extra. It is not
+ * {@link MarkDto} (design doc 125).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -19,11 +24,12 @@ import java.util.List;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Doc 126 fields + library tooltip array</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 public record TimescaleMarkDto(
 		String id,

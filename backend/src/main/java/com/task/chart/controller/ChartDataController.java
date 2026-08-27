@@ -26,7 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * REST endpoints for the TradingView Advanced Charts datafeed.
+ * TradingView datafeed HTTP API (design docs 120–126). HTTP only; no SQL.
+ *
+ * <p>{@code GET /api/history} (121) reads {@code ChartCacheStore} (Redis
+ * {@code cache_set_*} / warehouse {@code t_chart_*}). Live last bars are written
+ * only by {@code TickIngestWorker}; this controller does not compute OHLC.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -38,11 +42,12 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>OpenAPI operation docs</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @RestController
 @RequestMapping("/api")
@@ -61,7 +66,7 @@ public class ChartDataController {
 	}
 
 	/**
-	 * Liveness check.
+	 * Liveness check. Extra vs design docs 120–139.
 	 *
 	 * @return health payload
 	 */
@@ -70,11 +75,13 @@ public class ChartDataController {
 	@Operation(summary = "Health check (no token)")
 	@ApiResponse(responseCode = "200", description = "Service is up")
 	public HealthResponse health() {
+
+		// Extra vs design docs 120–139.
 		return new HealthResponse("ok", "chart-backend");
 	}
 
 	/**
-	 * Datafeed configuration for {@code onReady}.
+	 * Design doc 120 — datafeed configuration for {@code onReady}.
 	 *
 	 * @return supported resolutions and flags
 	 */
@@ -85,11 +92,13 @@ public class ChartDataController {
 			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
 	})
 	public DatafeedConfigResponse config() {
+
+		// Design doc 120.
 		return chartDataService.config();
 	}
 
 	/**
-	 * Current server time.
+	 * Design doc 122 — current server time.
 	 *
 	 * @return unix time in seconds
 	 */
@@ -100,11 +109,13 @@ public class ChartDataController {
 			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
 	})
 	public ServerTimeResponse time() {
+
+		// Design doc 122.
 		return new ServerTimeResponse(chartDataService.serverTimeSeconds());
 	}
 
 	/**
-	 * Symbol search over {@code m_ccypairs} (design doc 124).
+	 * Design doc 124 — symbol search over {@code m_ccypairs}.
 	 *
 	 * @param query optional search text (max length 10)
 	 * @param exchange optional exchange filter (widget)
@@ -124,11 +135,13 @@ public class ChartDataController {
 			@Parameter(description = "Widget filter; CTFX or empty") @RequestParam(required = false) String exchange,
 			@Parameter(description = "Widget filter; FOREX or empty") @RequestParam(required = false) String type,
 			@Parameter(description = "1–100, default 100") @RequestParam(required = false) Integer limit) {
+
+		// Design doc 124.
 		return chartDataService.search(query, exchange, type, limit);
 	}
 
 	/**
-	 * Resolves one ticker to TradingView symbol info.
+	 * Design doc 123 — resolves one ticker to TradingView symbol info.
 	 *
 	 * @param symbol currency pair CD ({@code USDJPY}) or widget display name ({@code USD/JPY})
 	 * @return symbol metadata
@@ -144,11 +157,13 @@ public class ChartDataController {
 	public SymbolInfoDto symbols(
 			@Parameter(description = "USDJPY or USD/JPY", example = "USDJPY")
 			@RequestParam(required = false) String symbol) {
+
+		// Design doc 123.
 		return chartDataService.resolve(symbol);
 	}
 
 	/**
-	 * Chart marks for the visible range (design doc 125).
+	 * Design doc 125 — chart marks for the visible range.
 	 *
 	 * @param symbol currency pair CD or display name
 	 * @param resolution TradingView resolution
@@ -168,11 +183,13 @@ public class ChartDataController {
 			@Parameter(example = "1D") @RequestParam(required = false) String resolution,
 			@Parameter(example = "1787011200") @RequestParam(required = false) Long from,
 			@Parameter(example = "1787270400") @RequestParam(required = false) Long to) {
+
+		// Design doc 125.
 		return chartDataService.marks(symbol, resolution, from, to);
 	}
 
 	/**
-	 * Timescale marks for the visible range (design doc 126).
+	 * Design doc 126 — timescale marks for the visible range.
 	 *
 	 * @param symbol currency pair CD or display name
 	 * @param resolution TradingView resolution
@@ -192,11 +209,14 @@ public class ChartDataController {
 			@Parameter(example = "1D") @RequestParam(required = false) String resolution,
 			@Parameter(example = "1787011200") @RequestParam(required = false) Long from,
 			@Parameter(example = "1787270400") @RequestParam(required = false) Long to) {
+
+		// Design doc 126.
 		return chartDataService.timescaleMarks(symbol, resolution, from, to);
 	}
 
 	/**
-	 * Historical OHLCV bars.
+	 * Design doc 121 — historical OHLCV bars from {@code ChartCacheStore}
+	 * (Redis {@code cache_set_*} / {@code t_chart_*}). Does not write bars.
 	 *
 	 * @param symbol ticker
 	 * @param resolution TradingView resolution
@@ -223,6 +243,8 @@ public class ChartDataController {
 			@Parameter(description = "Widget alias: bid/ask/mid") @RequestParam(required = false) String price,
 			@Parameter(description = "BID, MID, or ASK", example = "MID") @RequestParam(required = false)
 					String bid_ask) {
+
+		// Design doc 121: HTTP only; ChartDataService reads ChartCacheStore (Redis / t_chart_*).
 		return chartDataService.history(symbol, resolution, from, to, countBack, price, bid_ask);
 	}
 

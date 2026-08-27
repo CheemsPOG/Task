@@ -28,11 +28,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/26</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/26</td><td>Task</td><td>Assert peach:forming snapshot</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @SpringBootTest
 class TickIngestWorkerTest {
@@ -73,6 +74,27 @@ class TickIngestWorkerTest {
 		assertThat(bars).isNotEmpty();
 		CachedChartBar last = bars.get(bars.size() - 1);
 		assertThat(last.bidClose()).isLessThan(last.askClose());
+
+		String forming = redis.opsForValue().get(QuoteBus.formingKey("1S", "USDJPY"));
+		assertThat(forming).isNotBlank();
+		JsonNode formingRoot = objectMapper.readTree(forming);
+		assertThat(formingRoot.get("curpairCd").asText()).isEqualTo("1");
+		assertThat(formingRoot.get("resolution").asText()).isEqualTo("1S");
+		assertThat(formingRoot.get("periodMs").asLong()).isEqualTo(1_000L);
+		assertThat(formingRoot.get("time").asLong()).isGreaterThan(1_000_000_000_000L);
+		assertThat(formingRoot.get("volume").asDouble()).isPositive();
+		assertThat(formingRoot.get("bidClose").asDouble())
+				.isLessThan(formingRoot.get("askClose").asDouble());
+	}
+
+	@Test
+	void bootSnapshotWritesFormingBarForDaily() throws Exception {
+		String forming = redis.opsForValue().get(QuoteBus.formingKey("1D", "USDJPY"));
+		assertThat(forming).as("peach:forming:1D:USDJPY").isNotBlank();
+		JsonNode root = objectMapper.readTree(forming);
+		assertThat(root.get("resolution").asText()).isEqualTo("1D");
+		assertThat(root.get("periodMs").asLong()).isEqualTo(86_400_000L);
+		assertThat(root.get("bidClose").asDouble()).isPositive();
 	}
 
 	@Test

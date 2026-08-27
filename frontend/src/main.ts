@@ -2,6 +2,25 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Browser entry: login gate, then one TradingView Advanced Charts widget.
+ *
+ * Boot order:
+ * 1. If a JWT is already in sessionStorage, or the HttpOnly refresh cookie
+ *    can mint a new one, hide the overlay and create the widget.
+ * 2. Otherwise show login (see login.ts). Demo users: demo/demo, demo2/demo2.
+ *
+ * The widget talks to Java REST through datafeed/datafeed.ts (docs 120–126).
+ * Live candles go through datafeed/streaming.ts → Python /ws/stream.
+ * Live BID/ASK/MID ticker is fx/quoteToolbar.ts → Python /ws/fx-quotes.
+ *
+ * Save/Load is not wired: save-load-adapter.ts exists but is not passed here.
+ * Chart layouts (docs 127–131) are REST-only until this constructor gets
+ * save_load_adapter pointing at those APIs.
+ *
+ * Vite proxies /api and /curpairs to Java :8080, /ws to Python :8081.
+ */
+
 import type { ChartingLibraryFeatureset, ResolutionString } from 'charting_library';
 import { setUnauthorizedHandler } from './api.ts';
 import { getToken, logout, refreshAccessToken } from './auth.ts';
@@ -17,6 +36,10 @@ import { installLogoutButton, installThemeToolbar } from './toolbar.ts';
 
 let chartStarted = false;
 
+/**
+ * Creates the chart once. TradingView's constructor reads window.TradingView
+ * from charting_library.standalone.js loaded in index.html.
+ */
 function initChart(): void {
 	if (chartStarted) {
 		return;
@@ -48,6 +71,8 @@ function initChart(): void {
 		disabled_features: [
 			'use_localstorage_for_settings',
 			'save_chart_properties_to_local_storage',
+			// Keep volume in its own pane so a low-volume forming bar cannot
+			// stretch the price Y-axis down to zero.
 			'volume_force_overlay',
 		],
 		overrides: getChartOverrides(theme),
@@ -63,6 +88,10 @@ function initChart(): void {
 	});
 }
 
+/**
+ * Auth first, chart second. A 401 from any later /api call triggers logout
+ * via setUnauthorizedHandler in api.ts.
+ */
 async function boot(): Promise<void> {
 	setUnauthorizedHandler(() => {
 		void logout().finally(() => {

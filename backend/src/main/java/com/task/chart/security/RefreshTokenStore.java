@@ -14,6 +14,11 @@ import org.springframework.stereotype.Component;
 /**
  * Redis-backed opaque refresh tokens ({@code peach:auth:refresh:*}).
  *
+ * <p>Key {@code peach:auth:refresh:{uuid}} stores {@code username|customerNo} with TTL from
+ * {@code app.jwt.refresh-expiration-ms} (1 day). {@link com.task.chart.service.impl.AuthServiceImpl}
+ * issues on login, rotates on refresh, and deletes on logout. This is NOT a JWT, NOT Peach S-01, and
+ * NOT the bar cache {@code peach:{cache_set_*}:*} used by doc 121.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -23,11 +28,12 @@ import org.springframework.stereotype.Component;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/25</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Component
 public class RefreshTokenStore {
@@ -73,14 +79,17 @@ public class RefreshTokenStore {
 		if (tokenId == null || tokenId.isBlank()) {
 			return Optional.empty();
 		}
+
 		String value = redis.opsForValue().get(key(tokenId));
 		if (value == null || value.isBlank()) {
 			return Optional.empty();
 		}
+
 		int separator = value.indexOf(VALUE_SEPARATOR);
 		if (separator <= 0 || separator >= value.length() - 1) {
 			return Optional.empty();
 		}
+
 		String username = value.substring(0, separator);
 		long customerNo = Long.parseLong(value.substring(separator + 1));
 		return Optional.of(new RefreshTokenSession(username, customerNo));
@@ -109,6 +118,8 @@ public class RefreshTokenStore {
 		if (session.isEmpty()) {
 			return Optional.empty();
 		}
+
+		// Steal-resistant: old UUID dies before the new one is issued.
 		revoke(oldTokenId);
 		RefreshTokenSession found = session.get();
 		return Optional.of(issue(found.username(), found.customerNo()));

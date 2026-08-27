@@ -15,6 +15,11 @@ import org.springframework.data.repository.query.Param;
 /**
  * Currency pair master access.
  *
+ * <p>Spring Data JPA for {@code m_ccypairs}. {@code ChartDataServiceImpl} uses it for docs 123 /
+ * 124; {@code CurrencyPairServiceImpl} for {@code GET /curpairs}; {@code ChartLayoutServiceImpl}
+ * to validate layout symbols. It is not the JDBC {@code t_chart_*} warehouse
+ * ({@code ChartBarRepository} in {@code cache}).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -26,14 +31,22 @@ import org.springframework.data.repository.query.Param;
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Add active search for doc 124</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Add list for GET /curpairs</td></tr>
+ *   <tr><td>1.2.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.2.1
  */
 public interface CcypairRepository extends JpaRepository<Ccypair, String> {
 
+	/**
+	 * Active pair by 6-char CD (design docs 123 / 127 symbol check).
+	 *
+	 * @param ccypairCd 6-char pair code
+	 * @param isDeleted deleted flag ({@link Ccypair#ACTIVE})
+	 * @return matching row, if any
+	 */
 	Optional<Ccypair> findByCcypairCdAndIsDeleted(String ccypairCd, int isDeleted);
 
 	/**

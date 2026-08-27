@@ -18,6 +18,10 @@ import org.springframework.context.annotation.Configuration;
 /**
  * OpenAPI / Swagger UI for local demo API review (JWT Authorize button).
  *
+ * <p>Documents REST for design docs 120–139 plus {@code /api/auth/*} and {@code GET /curpairs}.
+ * Springdoc serves {@code /swagger-ui.html} without a token; Try it out uses Bearer access JWT only
+ * (no refresh cookie). This is NOT Peach API Gateway docs, NOT the Python WS, and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -30,11 +34,12 @@ import org.springframework.context.annotation.Configuration;
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Tag order + JWT scheme for mentor review</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Add chart templates 136–139 tag</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/24</td><td>Task</td><td>Relative server URL for Swagger Try it out</td></tr>
+ *   <tr><td>1.3.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.3.0
+ * @version 1.3.1
  */
 @Configuration
 public class OpenApiConfig {

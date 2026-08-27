@@ -2,6 +2,15 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Extra TradingView header buttons that are not part of the datafeed.
+ *
+ * - Theme switch: widget.changeTheme + pane overrides from theme.ts
+ * - Logout: calls the callback from main.ts (POST /api/auth/logout + reload)
+ *
+ * FX quote ticker / BID-ASK-MID dropdown live in fx/quoteToolbar.ts, not here.
+ */
+
 import type { IChartingLibraryWidget, ThemeName } from 'charting_library';
 import { getChartOverrides, theme as initialTheme } from './theme.ts';
 

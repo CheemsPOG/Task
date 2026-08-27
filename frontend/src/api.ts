@@ -2,6 +2,23 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Single HTTP client for the Java chart backend.
+ *
+ * Browser calls stay same-origin (`/api/...`, `/curpairs`). Vite (vite.config.ts)
+ * proxies those to Spring Boot :8080. Every request sends:
+ * - Bearer access JWT from sessionStorage (auth.ts)
+ * - cookies (`credentials: 'include'`) so the HttpOnly refresh cookie is sent
+ * - Accept-Language ja/en so error bodies match messages_ja.properties
+ *
+ * On HTTP 401 this module tries POST /api/auth/refresh once (shared in-flight
+ * promise so parallel 401s do not stampede). If refresh fails it clears the
+ * token and calls the handler registered in main.ts (logout + reload).
+ *
+ * Use apiGet/apiPost for `/api/*`. Use fetchAuthenticatedJson for `/curpairs`
+ * (that path is not under /api).
+ */
+
 import { clearToken, getAcceptLanguage, getToken, refreshAccessToken } from './auth.ts';
 
 const API_BASE = '/api';
@@ -99,6 +116,7 @@ async function fetchWithAuth(url: URL, options: FetchOptions = {}): Promise<Resp
 	});
 
 	if (response.status === 401 && retryOnUnauthorized) {
+		// One shared refresh; parallel 401s wait on the same promise.
 		const refreshed = await tryRefreshOnce();
 		if (refreshed) {
 			const retryResponse = await fetch(url, {

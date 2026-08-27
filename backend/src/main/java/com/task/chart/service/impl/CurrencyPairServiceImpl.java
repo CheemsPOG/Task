@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>{@code GET /curpairs} is mapped from design-doc {@code m_ccypairs} (123 / 124):
  * {@code curpairCd} = {@code priority}, {@code curpairName} = {@code ccypair_cd},
  * {@code curpairDisplay} = slash form ({@code USDJPY} → {@code USD/JPY}).
+ * {@link com.task.chart.controller.CurrencyPairController} and {@code TickIngestWorker} call
+ * {@link #list()}. This is NOT doc 123 {@code GET /api/symbols}, NOT Peach S-01, and NOT the Python WS.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -29,11 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Read catalog from m_ccypairs</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @Service
 public class CurrencyPairServiceImpl implements CurrencyPairService {

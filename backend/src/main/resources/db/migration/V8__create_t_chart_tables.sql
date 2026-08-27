@@ -1,5 +1,7 @@
--- Design doc 121: Peach bar warehouse tables (plum_info → public in this demo).
--- Columns support BID/ASK/MID mapping (bid_* / ask_* OHLC).
+-- Design doc 121: Peach bar warehouse (plum_info → public in this demo).
+-- One table per resolution. GET /api/history reads Redis cache_set_* first,
+-- then these tables. BID/ASK columns; MID is (ask+bid)/2 in Java, not stored.
+-- TickIngestWorker upserts the open bar here on every tick.
 
 CREATE TABLE t_chart_1 (
 	curpair_cd VARCHAR(6) NOT NULL,

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Indicator template REST endpoints (design docs 132–135).
+ * Indicator template HTTP API (design docs 132–135). HTTP only; no SQL.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -38,11 +38,12 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Add 133 upsert, 134 get, 135 delete</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @RestController
 @RequestMapping("/api/indicator-templates")
@@ -61,7 +62,7 @@ public class IndicatorTemplateController {
 	}
 
 	/**
-	 * Lists indicator templates for the current customer (design doc 132).
+	 * Design doc 132 — lists indicator templates for the current customer.
 	 *
 	 * @return indicator template list DTO (name only, sorted by name)
 	 */
@@ -72,11 +73,13 @@ public class IndicatorTemplateController {
 			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
 	})
 	public List<IndicatorTemplateListItemDto> list() {
+
+		// Design doc 132.
 		return indicatorTemplateService.list();
 	}
 
 	/**
-	 * Registers or updates an indicator template (design doc 133).
+	 * Design doc 133 — registers or updates an indicator template.
 	 *
 	 * @param request name and content
 	 * @return row update datetime (unix seconds)
@@ -94,11 +97,13 @@ public class IndicatorTemplateController {
 					examples = @ExampleObject(
 							value = "{\"name\":\"My RSI\",\"content\":\"{\\\"studies\\\":[]}\"}")))
 	public SystemDatetimeResponse upsert(@RequestBody(required = false) UpsertIndicatorTemplateRequest request) {
+
+		// Design doc 133.
 		return indicatorTemplateService.upsert(request);
 	}
 
 	/**
-	 * Loads one indicator template (design doc 134).
+	 * Design doc 134 — loads one indicator template.
 	 *
 	 * @param name path template name (max 64)
 	 * @return name and content
@@ -113,11 +118,13 @@ public class IndicatorTemplateController {
 	})
 	public IndicatorTemplateDto get(
 			@Parameter(description = "Template name (max 64)") @PathVariable("name") String name) {
+
+		// Design doc 134.
 		return indicatorTemplateService.get(name);
 	}
 
 	/**
-	 * Deletes one indicator template (design doc 135).
+	 * Design doc 135 — deletes one indicator template.
 	 *
 	 * @param name path template name (max 64)
 	 * @return system datetime (unix seconds)
@@ -132,6 +139,8 @@ public class IndicatorTemplateController {
 	})
 	public SystemDatetimeResponse delete(
 			@Parameter(description = "Template name (max 64)") @PathVariable("name") String name) {
+
+		// Design doc 135.
 		return indicatorTemplateService.delete(name);
 	}
 }

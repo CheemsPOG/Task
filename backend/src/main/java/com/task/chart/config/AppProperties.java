@@ -10,7 +10,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * Application configuration bound from the app prefix.
+ * Application configuration bound from the {@code app} prefix in {@code application.yml}.
+ *
+ * <p>Holds CORS origins, JWT secret/TTLs (S-01 stand-in), and TradingView datafeed flags for doc 120
+ * {@code GET /api/config}. {@link com.task.chart.security.JwtService},
+ * {@link com.task.chart.security.RefreshTokenStore}, {@link WebConfig}, and
+ * {@link com.task.chart.service.impl.ChartDataServiceImpl} read these beans. This is NOT Peach production
+ * config, NOT the Python WS env, and NOT the widget {@code datafeed.ts} constants.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -22,11 +28,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/25</td><td>Task</td><td>Split access and refresh TTL</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
@@ -63,6 +70,8 @@ public class AppProperties {
 
 	/**
 	 * Local JWT stand-in for S-01 (demo only).
+	 *
+	 * <p>Secret and TTLs for the 1h access JWT and 1d refresh Redis key. Not Peach SSO settings.
 	 */
 	public static class Jwt {
 
@@ -97,6 +106,9 @@ public class AppProperties {
 
 	/**
 	 * External configuration for datafeed {@code onReady} (design doc 120).
+	 *
+	 * <p>{@link com.task.chart.service.impl.ChartDataServiceImpl#config()} copies these flags into
+	 * JSON. Session strings {@code timeSummer}/{@code timeWinter} are chosen from {@code m_season}.
 	 */
 	public static class TradingView {
 

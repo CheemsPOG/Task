@@ -14,6 +14,11 @@ import org.springframework.stereotype.Component;
 /**
  * HttpOnly refresh cookie helpers for the local S-01 stand-in.
  *
+ * <p>Writes, reads, and clears cookie {@code chart_refresh_token} ({@code Path=/}, {@code SameSite=Lax}).
+ * The cookie value is an opaque UUID, never a JWT; Redis key {@code peach:auth:refresh:{uuid}} holds the
+ * session. {@link com.task.chart.service.impl.AuthServiceImpl} calls this on login, refresh, and logout.
+ * This is NOT Peach S-01, NOT the access token in browser sessionStorage, and NOT the Python WS.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -23,11 +28,12 @@ import org.springframework.stereotype.Component;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/25</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Component
 public class AuthCookieSupport {
@@ -72,14 +78,18 @@ public class AuthCookieSupport {
 		if (cookies == null) {
 			return Optional.empty();
 		}
+
 		for (Cookie cookie : cookies) {
 			if (REFRESH_COOKIE_NAME.equals(cookie.getName())) {
 				String value = cookie.getValue();
+
+				// Blank cookie after logout must not count as a session.
 				if (value != null && !value.isBlank()) {
 					return Optional.of(value);
 				}
 			}
 		}
+
 		return Optional.empty();
 	}
 }

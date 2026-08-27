@@ -12,6 +12,11 @@ import jakarta.persistence.Table;
 /**
  * Currency pair master row ({@code m_ccypairs}).
  *
+ * <p>This JPA row is the FX pair catalog for design docs 123 / 124 and extra {@code GET /curpairs}.
+ * {@code ccypair_cd} is the 6-char PK ({@code USDJPY}). {@code priority} is the quote-stream id
+ * exposed as {@code curpairCd}. {@code ChartDataServiceImpl}, {@code CurrencyPairServiceImpl}, and
+ * {@code ChartLayoutServiceImpl} read it. It is never HTTP JSON and is not a bar warehouse row.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -21,16 +26,18 @@ import jakarta.persistence.Table;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Entity
 @Table(name = "m_ccypairs")
 public class Ccypair {
 
+	/** Soft-delete flag for live rows ({@code is_deleted = 0}). */
 	public static final int ACTIVE = 0;
 
 	@Id

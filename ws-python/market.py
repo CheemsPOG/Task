@@ -1,4 +1,12 @@
-"""FX pair catalog and WS helpers. Live prices come from Java ingest via Redis."""
+"""FX pair catalog and WS helpers. Live ticks and forming bars come from Java via Redis.
+
+Keep PAIRS in lockstep with GET /curpairs (m_ccypairs.priority, ccypair_cd, slash display).
+Redis channel/key names must match Java QuoteBus (peach:quotes, peach:forming:, ...).
+
+widget_bar() only picks BID/ASK/MID columns from a Java forming payload. It does
+not compute a new candle. Building OHLC here used to replace the last history bar
+with a doji and plunge the TradingView Y-axis.
+"""
 
 from __future__ import annotations
 
@@ -18,6 +26,8 @@ PAIRS: tuple[tuple[int, str, str], ...] = (
 
 QUOTE_CHANNEL = "peach:quotes"
 QUOTE_KEY_PREFIX = "peach:quote:"
+BAR_CHANNEL = "peach:bars"
+FORMING_KEY_PREFIX = "peach:forming:"
 
 SECOND = 1_000
 MINUTE = 60 * SECOND
@@ -49,6 +59,7 @@ PERIOD_MS: dict[str, int] = {
 
 
 def parse_price(raw: str | None) -> PriceName:
+    """Map widget/query price to bid|ask|mid. Blank or unknown becomes mid."""
     if raw is None or not str(raw).strip():
         return "mid"
     match str(raw).strip().lower():
@@ -77,6 +88,7 @@ PAIRS_BY_CD: dict[int, Pair] = {
 
 
 def find_symbol(symbol_name: str | None) -> Pair | None:
+    """Resolve USD/JPY, USDJPY, FX:USD/JPY, or numeric curpairCd. Else None."""
     if symbol_name is None or not symbol_name.strip():
         return None
     needle = symbol_name.strip().lower()
@@ -93,6 +105,41 @@ def find_symbol(symbol_name: str | None) -> Pair | None:
 
 
 def period_millis(resolution: str | None) -> int | None:
+    """TradingView resolution string to bar length in milliseconds, or None if unknown."""
     if resolution is None:
         return None
     return PERIOD_MS.get(resolution)
+
+
+def widget_bar(message: dict | None, price: PriceName) -> dict | None:
+    """Project a Java forming-bar payload to TradingView OHLCV. No aggregation."""
+    if not message:
+        return None
+    try:
+        time_ms = int(message["time"])
+        volume = float(message["volume"])
+        if price == "bid":
+            open_ = float(message["bidOpen"])
+            high = float(message["bidHigh"])
+            low = float(message["bidLow"])
+            close = float(message["bidClose"])
+        elif price == "ask":
+            open_ = float(message["askOpen"])
+            high = float(message["askHigh"])
+            low = float(message["askLow"])
+            close = float(message["askClose"])
+        else:
+            open_ = (float(message["bidOpen"]) + float(message["askOpen"])) / 2.0
+            high = (float(message["bidHigh"]) + float(message["askHigh"])) / 2.0
+            low = (float(message["bidLow"]) + float(message["askLow"])) / 2.0
+            close = (float(message["bidClose"]) + float(message["askClose"])) / 2.0
+    except (KeyError, TypeError, ValueError):
+        return None
+    return {
+        "time": time_ms,
+        "open": open_,
+        "high": high,
+        "low": low,
+        "close": close,
+        "volume": volume,
+    }

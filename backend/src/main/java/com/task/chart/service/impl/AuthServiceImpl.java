@@ -28,6 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Implementation of {@link AuthService}.
  *
+ * <p>Local S-01 stand-in: BCrypt check against {@code m_app_user}, then 1h access JWT plus Redis
+ * {@code peach:auth:refresh:{uuid}} and cookie {@code chart_refresh_token}.
+ * {@link com.task.chart.controller.AuthController} calls login / refresh / logout. This is NOT Peach
+ * SSO, NOT the Python WS, and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -38,11 +43,12 @@ import org.springframework.transaction.annotation.Transactional;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/25</td><td>Task</td><td>Refresh cookie + logout</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -84,6 +90,8 @@ public class AuthServiceImpl implements AuthService {
 	public LoginResponse login(LoginRequest request, HttpServletResponse response) {
 		AppUser user = authenticate(request);
 		String accessToken = jwtService.createToken(user.getUsername(), user.getCustomerNo());
+
+		// Refresh UUID is only in Redis + HttpOnly cookie, never in the JSON body.
 		String refreshTokenId = refreshTokenStore.issue(user.getUsername(), user.getCustomerNo());
 		authCookieSupport.setRefreshCookie(response, refreshTokenId, refreshExpirationSeconds);
 		return buildLoginResponse(accessToken);
@@ -93,6 +101,8 @@ public class AuthServiceImpl implements AuthService {
 	public RefreshResponse refresh(HttpServletRequest request, HttpServletResponse response) {
 		String refreshTokenId = authCookieSupport.readRefreshToken(request)
 				.orElseThrow(UnauthorizedAppException::new);
+
+		// Rotation: old Redis key dies; cookie value changes.
 		String rotatedTokenId = refreshTokenStore.rotate(refreshTokenId)
 				.orElseThrow(UnauthorizedAppException::new);
 		RefreshTokenSession session = refreshTokenStore.find(rotatedTokenId)
@@ -120,6 +130,8 @@ public class AuthServiceImpl implements AuthService {
 		String username = request.username().trim();
 		Optional<AppUser> found = appUserRepository.findByUsername(username);
 		AppUser user = found.orElse(null);
+
+		// Same 401 for unknown user, disabled user, and wrong password.
 		if (user == null || !user.isEnabled()) {
 			throw new BadCredentialsAppException();
 		}

@@ -2,6 +2,15 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Chart header: live BID/ASK/MID ticker + price-mode dropdown.
+ *
+ * On header ready: GET /curpairs, then open /ws/fx-quotes. Changing BID/ASK/MID
+ * resets history and resubscribes /ws/stream so candles use the same side.
+ *
+ * Selected pair follows the widget symbol (USD/JPY ↔ curpairCd 1).
+ */
+
 import type { DropdownItem, IChartingLibraryWidget, IDropdownApi } from 'charting_library';
 import { resubscribeAllWithCurrentPrice } from '../datafeed/streaming.ts';
 import { fetchCurpairs } from './currencyPairs.ts';

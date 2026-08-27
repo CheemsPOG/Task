@@ -2,6 +2,16 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * In-memory FX state: catalog, latest tick per pair, selected pair, BID/ASK/MID.
+ *
+ * quoteToolbar.ts renders from this store. datafeed.ts reads `mode` when
+ * requesting history. streaming.ts reads `mode` when subscribing to bars.
+ *
+ * Quotes keyed by string curpairCd ("1" for USDJPY). Malformed or unknown
+ * codes are ignored so a bad tick cannot blank the ticker.
+ */
+
 import type { CurrencyPair, PriceMode, RealtimeQuote } from './types.ts';
 
 export type QuoteStoreListener = () => void;

@@ -15,6 +15,11 @@ import java.time.Instant;
 /**
  * Season master row ({@code m_season}).
  *
+ * <p>This JPA row is a DST vs standard time window so design doc 123 can pick the widget
+ * {@code session} string ({@code timeSummer} / {@code timeWinter} from yml).
+ * {@code ChartDataServiceImpl.currentSession} reads the row covering now. It is not a holiday
+ * calendar and is never HTTP JSON.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -24,17 +29,21 @@ import java.time.Instant;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Entity
 @Table(name = "m_season")
 public class Season {
 
+	/** Peach season code that selects the daylight-saving session string (design doc 123). */
 	public static final int DAYLIGHT_SAVING = 1;
+
+	/** Peach season code that selects the standard session string (design doc 123). */
 	public static final int STANDARD = 2;
 
 	@Id

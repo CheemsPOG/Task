@@ -21,6 +21,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Reads {@code Authorization: Bearer} and sets SecurityContext + {@link CustomerContext}.
  *
+ * <p>Parses the 1h HS256 access JWT via {@link JwtService}; on success the principal is a
+ * {@link ChartPrincipal} and {@code customer_no} is stored for tenant CRUD. {@link SecurityConfig}
+ * inserts this filter before {@code UsernamePasswordAuthenticationFilter}. A bad token is dropped so
+ * {@link JsonUnauthorizedEntryPoint} can return JSON 401 on protected paths. This is NOT Peach S-01,
+ * NOT refresh-cookie handling, and NOT the Python WS.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -30,11 +36,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -52,6 +59,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		this.jwtService = jwtService;
 	}
 
+	/**
+	 * Parses Bearer when present, then always clears tenant ThreadLocal after the request.
+	 *
+	 * @param request HTTP request
+	 * @param response HTTP response
+	 * @param filterChain remaining filters
+	 */
 	@Override
 	protected void doFilterInternal(
 			HttpServletRequest request,
@@ -68,6 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			filterChain.doFilter(request, response);
 		} finally {
+
+			// ThreadLocals must not leak across Tomcat worker reuse.
 			CustomerContext.clear();
 			SecurityContextHolder.clearContext();
 		}
@@ -78,6 +94,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			ChartPrincipal principal = jwtService.parseToken(token);
 			setAuthentication(principal);
 		} catch (JwtException | IllegalArgumentException ex) {
+
+			// Leave the request anonymous; SecurityConfig then 401s protected matchers.
 			SecurityContextHolder.clearContext();
 			CustomerContext.clear();
 		}

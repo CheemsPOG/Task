@@ -15,6 +15,11 @@ import java.time.Instant;
 /**
  * Local application user for JWT stand-in auth ({@code m_app_user}).
  *
+ * <p>This JPA row stores demo logins ({@code demo} / {@code demo2}) so the chart can issue a local
+ * JWT. Extra versus design docs 120–139 (those assume Peach SSO). {@code AuthServiceImpl} and
+ * {@code AppUserSeedRunner} use it. {@code customer_no} is the tenant key for layouts and
+ * templates. It is not a Peach S-01 account and is never returned as HTTP JSON.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -24,11 +29,12 @@ import java.time.Instant;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Entity
 @Table(name = "m_app_user")

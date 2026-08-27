@@ -2,6 +2,14 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Wires the login overlay in index.html (#login-overlay).
+ *
+ * Markup lives in HTML, not here. Demo button fills demo/demo. Submit calls
+ * auth.login → POST /api/auth/login. main.ts then hides the overlay and
+ * constructs the chart.
+ */
+
 import { login } from './auth.ts';
 
 export type LoginOverlayCallbacks = {

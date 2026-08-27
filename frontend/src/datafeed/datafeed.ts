@@ -2,6 +2,25 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * TradingView IBasicDataFeed → Java REST (design docs 120–126).
+ *
+ * Widget callback → HTTP:
+ * - onReady            GET /api/config              (120)
+ * - getBars            GET /api/history             (121)
+ * - getServerTime      GET /api/time                (122)
+ * - resolveSymbol      GET /api/symbols             (123)
+ * - searchSymbols      GET /api/search              (124)
+ * - getMarks           GET /api/marks               (125)
+ * - getTimescaleMarks  GET /api/timescale_marks     (126)
+ *
+ * Live updates are not REST. subscribeBars hands off to streaming.ts, which
+ * opens Python /ws/stream. History uses `bars[]` (time in ms). Columnar t[]
+ * from the same JSON is unix seconds and is ignored here.
+ *
+ * bid_ask on history follows quoteStore.mode (BID/ASK/MID toolbar).
+ */
+
 import type {
 	Bar,
 	DatafeedConfiguration,

@@ -45,6 +45,13 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of {@link ChartDataService}.
  *
+ * <p>Docs 120–126: config from {@code app.tradingview}; history from Redis
+ * {@code peach:{cache_set_*}:{CD}} (last bar matches ingest); resolve/search from {@code m_ccypairs}
+ * and {@code m_season}; marks from {@code m_tv_mark} / {@code m_tv_timescale_mark} (no tenant).
+ * {@link com.task.chart.controller.ChartDataController} is the HTTP caller. This is NOT
+ * {@link MockBarGeneratorImpl} (boot seed), NOT {@code TickIngestWorker} (writes the last bar), NOT
+ * the Python WS, and NOT the widget {@code datafeed.ts}.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -54,11 +61,12 @@ import org.springframework.stereotype.Service;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Service
 public class ChartDataServiceImpl implements ChartDataService {
@@ -134,6 +142,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 			return List.of();
 		}
 
+		// Empty query lists pairs; otherwise match display or CD without the slash.
 		boolean queryEmpty = needle.isEmpty();
 		String needleCd = needle.replace("/", "");
 		List<Ccypair> pairs = ccypairRepository.searchActive(
@@ -271,6 +280,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 
 	private static String normalizeCcypairCd(String symbolName) {
 		String upper = symbolName.trim().toUpperCase(Locale.ROOT);
+
+		// Widget may send FX:USD/JPY; masters use USDJPY.
 		if (upper.startsWith("FX:")) {
 			upper = upper.substring(3);
 		}
@@ -293,6 +304,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 		Season season = seasons.get(0);
 		int seasonCd = season.getSeasonCd();
 		AppProperties.TradingView tradingView = appProperties.getTradingView();
+
+		// Doc 123 session string: summer vs winter from m_season, not the widget clock.
 		if (seasonCd == Season.DAYLIGHT_SAVING) {
 			return tradingView.getTimeSummer();
 		}
@@ -377,6 +390,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 		if ((effectiveBidAsk == null || effectiveBidAsk.isBlank())
 				&& price != null
 				&& !price.isBlank()) {
+
+			// Widget may send price=mid instead of bid_ask=MID.
 			effectiveBidAsk = PriceComponent.from(price).name();
 		}
 		validateHistoryRequest(symbolName, resolution, from, to, effectiveBidAsk);
@@ -420,6 +435,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 			queryTo = Math.min(queryTo, nowSec);
 		}
 
+		// Redis ZSET first (doc 121); last bar is the forming candle ingest just wrote.
 		List<CachedChartBar> cached = chartCacheStore.query(
 				namespace,
 				symbol.providerSymbol(),
@@ -472,6 +488,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 		} catch (IllegalArgumentException ex) {
 			throw new ValidationException();
 		}
+
+		// from and to are both required or both omitted (UDF countBack path).
 		if ((from == null) != (to == null)) {
 			throw new ValidationException();
 		}

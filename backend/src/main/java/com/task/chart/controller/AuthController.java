@@ -23,7 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Local auth endpoints (JWT stand-in for S-01).
+ * Local auth HTTP API (JWT stand-in for S-01). Extra vs design docs 120–139.
+ * HTTP only; no SQL.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -36,11 +37,12 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>OpenAPI operation docs</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/25</td><td>Task</td><td>Refresh + logout endpoints</td></tr>
+ *   <tr><td>1.3.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.3.0
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -61,7 +63,7 @@ public class AuthController {
 	}
 
 	/**
-	 * Logs in with username/password and returns a Bearer token.
+	 * Logs in with username/password and returns a Bearer token. Extra vs 120–139.
 	 *
 	 * @param request credentials
 	 * @param response HTTP response for Set-Cookie
@@ -82,11 +84,13 @@ public class AuthController {
 	public LoginResponse login(
 			@RequestBody(required = false) LoginRequest request,
 			HttpServletResponse response) {
+
+		// Extra vs design docs 120–139 (local S-01 stand-in).
 		return authService.login(request, response);
 	}
 
 	/**
-	 * Exchanges a valid refresh cookie for a new access token.
+	 * Exchanges a valid refresh cookie for a new access token. Extra vs 120–139.
 	 *
 	 * @param request HTTP request (refresh cookie)
 	 * @param response HTTP response for rotated Set-Cookie
@@ -100,11 +104,13 @@ public class AuthController {
 			@ApiResponse(responseCode = "401", description = "Missing or invalid refresh cookie")
 	})
 	public RefreshResponse refresh(HttpServletRequest request, HttpServletResponse response) {
+
+		// Extra vs design docs 120–139.
 		return authService.refresh(request, response);
 	}
 
 	/**
-	 * Revokes the refresh token and clears the cookie.
+	 * Revokes the refresh token and clears the cookie. Extra vs 120–139.
 	 *
 	 * @param request HTTP request (optional refresh cookie)
 	 * @param response HTTP response for Clear-Cookie
@@ -116,6 +122,8 @@ public class AuthController {
 			@ApiResponse(responseCode = "200", description = "Logged out")
 	})
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
+
+		// Extra vs design docs 120–139.
 		authService.logout(request, response);
 	}
 }

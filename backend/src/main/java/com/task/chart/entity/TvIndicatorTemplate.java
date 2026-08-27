@@ -16,6 +16,11 @@ import java.time.Instant;
 /**
  * TV indicator template master row ({@code m_tv_indicator_template}).
  *
+ * <p>This JPA row is a TradingView study (indicator) template for design docs 132–135.
+ * Unique on {@code (customer_no, name)}. {@code IndicatorTemplateServiceImpl} upserts, lists, gets,
+ * and deletes it. It is never HTTP JSON, not a chart layout (docs 127–131), and not a chart
+ * template (docs 136–139).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -25,11 +30,12 @@ import java.time.Instant;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Entity
 @Table(

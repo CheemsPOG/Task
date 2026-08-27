@@ -22,6 +22,13 @@ import org.springframework.web.servlet.LocaleResolver;
 /**
  * Returns JSON 401 for missing/invalid Bearer tokens.
  *
+ * <p>Spring Security {@code AuthenticationEntryPoint} wired in {@link SecurityConfig}. Writes
+ * {@code E_UNAUTHORIZED} via {@code messages.properties} / {@code messages_ja.properties} when a
+ * protected matcher has no valid access JWT. Filter-chain 401 is this class;
+ * {@link com.task.chart.exception.GlobalExceptionHandler} handles thrown
+ * {@link com.task.chart.exception.UnauthorizedAppException} from refresh. This is NOT Peach S-01
+ * and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -31,11 +38,12 @@ import org.springframework.web.servlet.LocaleResolver;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Component
 public class JsonUnauthorizedEntryPoint implements AuthenticationEntryPoint {
@@ -55,6 +63,13 @@ public class JsonUnauthorizedEntryPoint implements AuthenticationEntryPoint {
 		this.localeResolver = localeResolver;
 	}
 
+	/**
+	 * Writes {@code E_UNAUTHORIZED} JSON when a protected matcher has no valid access JWT.
+	 *
+	 * @param request HTTP request
+	 * @param response HTTP response
+	 * @param authException Spring Security rejection
+	 */
 	@Override
 	public void commence(
 			HttpServletRequest request,

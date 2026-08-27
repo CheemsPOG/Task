@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of {@link MockBarGenerator}.
  *
+ * <p>Deterministic sine/hash OHLC for boot seed only. {@link com.task.chart.cache.ChartCacheWriter}
+ * calls {@link #peachBarAt} to fill {@code t_chart_*} and Redis {@code cache_set_*}. Runtime prices
+ * are {@link com.task.chart.cache.TickIngestWorker}, not this class. This is NOT a live Peach LP,
+ * NOT the Python WS, and NOT {@code GET /api/history} (that reads Redis).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -27,11 +32,12 @@ import org.springframework.stereotype.Service;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>peachBarAt for cache writer</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @Service
 public class MockBarGeneratorImpl implements MockBarGenerator {
@@ -55,6 +61,7 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 			if (time < 0) {
 				continue;
 			}
+
 			BarDto bar = barAt(symbol, periodMs, time, price);
 			if (bar.time() < toMs) {
 				bars.add(bar);
@@ -82,6 +89,8 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 		long mix = mix64(symbol.ticker().hashCode() + (long) component.ordinal() * 97L, time / periodMs);
 		double inner = DemoMarket.barAmplitude(name) * (0.15 + 0.20 * ((mix & 1023) / 1023.0));
 		double outer = DemoMarket.outerWick(name);
+
+		// ASK wicks high; BID wicks low so MID sits between the two series.
 		if (component == PriceComponent.ASK) {
 			high = round(high + outer, scale);
 			low = round(low - inner, scale);

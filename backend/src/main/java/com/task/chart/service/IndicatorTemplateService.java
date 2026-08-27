@@ -13,6 +13,12 @@ import java.util.List;
 /**
  * Indicator templates (design docs 132–135).
  *
+ * <p>Tenant CRUD on {@code m_tv_indicator_template} keyed by {@code (customer_no, name)} (name max 64).
+ * {@link com.task.chart.controller.IndicatorTemplateController} calls these methods. Implemented by
+ * {@link com.task.chart.service.impl.IndicatorTemplateServiceImpl}. This is NOT chart templates
+ * (docs 136–139 / {@link ChartTemplateService}), NOT layouts (127–131), and NOT the widget's
+ * localStorage studies.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -23,11 +29,12 @@ import java.util.List;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Add upsert/get/delete for 133–135</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 public interface IndicatorTemplateService {
 

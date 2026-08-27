@@ -15,6 +15,11 @@ import java.time.Instant;
 /**
  * TV chart layout master row ({@code m_tv_chart_layout}).
  *
+ * <p>This JPA row is one saved widget layout for design docs 127–131. {@code ChartLayoutServiceImpl}
+ * inserts, updates, lists, and deletes it filtered by JWT {@code customer_no}. {@code content} is
+ * the widget JSON blob; {@code chart_type} is the resolution. It is never returned as a JPA entity
+ * over HTTP (controllers map to DTOs) and is not a chart template (docs 136–139).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -24,11 +29,12 @@ import java.time.Instant;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Entity
 @Table(name = "m_tv_chart_layout")

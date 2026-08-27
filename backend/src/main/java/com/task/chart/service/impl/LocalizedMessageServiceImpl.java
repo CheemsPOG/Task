@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 /**
  * MessageSource-backed {@link LocalizedMessageService}.
  *
+ * <p>Reads {@code messages.properties} / {@code messages_ja.properties} for the request locale.
+ * {@link com.task.chart.exception.GlobalExceptionHandler} is the main caller. This is NOT Peach
+ * translation services, NOT the Python WS, and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -21,11 +25,12 @@ import org.springframework.stereotype.Service;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Service
 public class LocalizedMessageServiceImpl implements LocalizedMessageService {

@@ -19,6 +19,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 /**
  * Maps exceptions to HTTP status and localized JSON error bodies.
  *
+ * <p>REST {@code @RestControllerAdvice}: {@code CODE:30020} (422), {@code CODE:30404} (404),
+ * {@code E_BAD_CREDENTIALS} / {@code E_UNAUTHORIZED} (401), {@code E_SERVER} (500). Messages come from
+ * {@code messages.properties} via {@link com.task.chart.service.LocalizedMessageService}. Controllers
+ * do not catch. Filter-chain 401 for missing Bearer is
+ * {@link com.task.chart.security.JsonUnauthorizedEntryPoint}, not this class. This is NOT Peach
+ * S-01 and NOT the Python WS.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -30,11 +37,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>MessageSource + auth errors</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>@ResponseStatus for OpenAPI docs</td></tr>
+ *   <tr><td>1.2.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.2.1
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -66,6 +74,8 @@ public class GlobalExceptionHandler {
 	})
 	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
 	public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex) {
+
+		// Malformed JSON / types use the same 422 code as business ValidationException.
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
 				.body(ErrorResponse.of(
 						ErrorCodes.VALIDATION,

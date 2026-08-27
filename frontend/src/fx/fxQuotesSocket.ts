@@ -2,6 +2,14 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Live tick socket for the header ticker: WebSocket /ws/fx-quotes.
+ *
+ * Python relays Java peach:quotes JSON as-is. This is not the candle stream
+ * (that is datafeed/streaming.ts → /ws/stream). One connection, reconnect
+ * with backoff. quoteToolbar.ts calls connectFxQuotes() after /curpairs loads.
+ */
+
 import { quoteStore } from './quoteStore.ts';
 
 const INITIAL_RECONNECT_MS = 1_000;

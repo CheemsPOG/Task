@@ -1,3 +1,6 @@
+-- Chart event pins for GET /api/marks (doc 125).
+-- Column is resolution (not chart_type). Seed window: 1787011200–1787270400 UTC.
+
 CREATE TABLE m_tv_mark (
 	id VARCHAR(32) PRIMARY KEY,
 	ccypair_cd VARCHAR(6) NOT NULL,

@@ -2,6 +2,16 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Chart pane colors and the CSS blob for the header theme switch.
+ *
+ * Initial theme: ?theme=dark|light, else prefers-color-scheme. Toolbar
+ * (toolbar.ts) can change it later via widget.changeTheme.
+ *
+ * custom_css_url in main.ts points at cssBlobUrl so the switcher styles
+ * apply inside the widget iframe/header.
+ */
+
 import type { Overrides, ThemeName } from 'charting_library';
 
 function getRequestedTheme(): ThemeName | null {

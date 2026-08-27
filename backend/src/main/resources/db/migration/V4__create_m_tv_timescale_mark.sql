@@ -1,3 +1,5 @@
+-- X-axis badges for GET /api/timescale_marks (doc 126). Same seed window as V3.
+
 CREATE TABLE m_tv_timescale_mark (
 	id VARCHAR(32) PRIMARY KEY,
 	ccypair_cd VARCHAR(6) NOT NULL,

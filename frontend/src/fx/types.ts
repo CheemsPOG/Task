@@ -2,6 +2,14 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Shared FX types for the header ticker and datafeed bid_ask.
+ *
+ * CurrencyPair matches GET /curpairs (Java CurrencyPairDto).
+ * RealtimeQuote matches Redis/WS ticks from Java QuoteBus
+ * (field name rateMiliSecondUTC is the spec typo — keep it).
+ */
+
 export type PriceMode = 'bid' | 'ask' | 'mid';
 
 export interface CurrencyPair {

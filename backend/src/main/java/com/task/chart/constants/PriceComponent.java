@@ -9,6 +9,12 @@ import java.util.Locale;
 /**
  * BID, ASK, or MID price side for history and live bars.
  *
+ * <p>Doc 121 {@code bid_ask} query: warehouse rows store bid and ask OHLC; MID is averaged at read
+ * in {@code CachedChartBar.toBarDto}. {@link com.task.chart.service.impl.ChartDataServiceImpl} and
+ * {@link com.task.chart.service.impl.MockBarGeneratorImpl} call {@link #fromBidAsk(String)} (strict)
+ * or {@link #from(String)} (lenient). This is NOT the Python WS payload, NOT Peach LP sides, and NOT
+ * the widget's study inputs.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -18,11 +24,12 @@ import java.util.Locale;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 public enum PriceComponent {
 	BID,
@@ -39,6 +46,8 @@ public enum PriceComponent {
 		if (raw == null || raw.isBlank()) {
 			return MID;
 		}
+
+		// Unknown values become MID so history still paints.
 		return switch (raw.trim().toLowerCase(Locale.ROOT)) {
 			case "bid" -> BID;
 			case "ask" -> ASK;
@@ -57,6 +66,7 @@ public enum PriceComponent {
 		if (raw == null || raw.isBlank()) {
 			throw new IllegalArgumentException("bid_ask is required");
 		}
+
 		return switch (raw.trim().toUpperCase(Locale.ROOT)) {
 			case "BID" -> BID;
 			case "ASK" -> ASK;

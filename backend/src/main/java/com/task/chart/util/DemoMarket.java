@@ -7,6 +7,11 @@ package com.task.chart.util;
 /**
  * Shared demo FX parameters for bars and quotes.
  *
+ * <p>Seed BID, spread, and price scale for mock OHLC ({@link com.task.chart.service.impl.MockBarGeneratorImpl})
+ * and the mock LP walk ({@link com.task.chart.cache.DemoTickEngine}). JPY pairs use scale 1000 and
+ * wider ticks; others use 100000. This is NOT a live Peach feed, NOT the Python WS, and NOT
+ * {@code m_ccypairs} rates.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -16,11 +21,12 @@ package com.task.chart.util;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 public final class DemoMarket {
 

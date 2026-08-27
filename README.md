@@ -30,7 +30,7 @@ That starts:
 | Service | Port | Use |
 |---|---|---|
 | Postgres | `5432` | Flyway / JPA |
-| Redis | `6379` | Doc 121 `cache_set_*`, live quotes (`peach:quote:*` / `peach:quotes`), refresh tokens |
+| Redis | `6379` | Doc 121 `cache_set_*`, quotes (`peach:quote:*` / `peach:quotes`), forming bars (`peach:forming:*` / `peach:bars`), refresh tokens |
 
 DBeaver: host `127.0.0.1`, port `5432`, database `chart`, user `chart`, password `chart`.
 
@@ -40,6 +40,7 @@ Redis CLI peek (after Java has seeded):
 docker compose exec redis redis-cli ZCARD peach:cache_set_day:USDJPY
 docker compose exec redis redis-cli ZRANGE peach:cache_set_day:USDJPY 0 2 WITHSCORES
 docker compose exec redis redis-cli GET peach:quote:1
+docker compose exec redis redis-cli GET peach:forming:1D:USDJPY
 ```
 
 Flyway creates `m_ccypairs` and `m_season` the first time Java starts.
@@ -147,7 +148,7 @@ Do **not** expose 8080 to the public internet — the JWT secret and `demo`/`dem
 
 ### 2. Python WebSocket gateway
 
-Python does **not** invent prices. It snapshots `peach:quote:*` and `SUBSCRIBE`s `peach:quotes` published by Java `TickIngestWorker`. Start Java first.
+Python does **not** invent prices. It snapshots `peach:quote:*` and `peach:forming:*`, then `SUBSCRIBE`s `peach:quotes` (header ticks) and `peach:bars` (Java forming candles). Start Java first.
 
 ```bash
 cd ws-python
@@ -155,7 +156,7 @@ python -m pip install -r requirements.txt
 python server.py
 ```
 
-Live sockets listen on **ws://127.0.0.1:8081** (`/ws/fx-quotes` and `/ws/stream`). Redis: `REDIS_HOST` / `REDIS_PORT` default `127.0.0.1:6379`. Stop Java and new ticks stop (the gateway is not a second walk).
+Live sockets listen on **ws://127.0.0.1:8081** (`/ws/fx-quotes` and `/ws/stream`). Redis: `REDIS_HOST` / `REDIS_PORT` default `127.0.0.1:6379`. Stop Java and new ticks **and** candle updates stop (the gateway is not a second walk or a second OHLC engine).
 
 ### 3. Frontend
 
@@ -224,7 +225,7 @@ Then open `http://127.0.0.1:5174`.
 
 ## Demo data
 
-Chart history, live candles, `GET /curpairs`, and `ws://.../ws/fx-quotes` are **local mocks**. Java `DemoTickEngine` walks **BID**, sets **ASK = BID + spread**, and **MID = (BID + ASK) / 2** (~3 ticks per second via `app.chart-cache.tick-ms: 333`). Python only relays those ticks. The forming candle close follows the selected BID/ASK/MID. A real FX feed can replace `TickIngestWorker` later without changing Redis keys, Python WS, or the chart.
+Chart history, live candles, `GET /curpairs`, and the two WebSockets are **local mocks**. Java `DemoTickEngine` walks **BID**, sets **ASK = BID + spread**, and **MID = (BID + ASK) / 2** (~3 ticks per second via `app.chart-cache.tick-ms: 333`). `TickIngestWorker` is the only OHLC writer. Python relays ticks (`/ws/fx-quotes`) and the **same forming bar** history already stored (`/ws/stream`). The forming candle close follows the selected BID/ASK/MID. A real FX feed can replace `DemoTickEngine` later without changing Redis keys, Python WS, or the chart.
 
 Details: [structure.md](./structure.md).
 

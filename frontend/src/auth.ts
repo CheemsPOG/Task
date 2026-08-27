@@ -2,6 +2,19 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Local JWT stand-in for Peach S-01 (not the real Peach token service).
+ *
+ * Access token: JWT string in sessionStorage (`chart_access_token`). Tab-scoped
+ * so closing the tab logs the user out of the access token.
+ *
+ * Refresh token: HttpOnly cookie `chart_refresh_token` set by Java on login.
+ * This file never reads that cookie in JS — it only POSTs /api/auth/refresh
+ * with credentials: 'include' and stores the new accessToken.
+ *
+ * Default demo accounts (seeded by AppUserSeedRunner): demo/demo, demo2/demo2.
+ */
+
 const TOKEN_KEY = 'chart_access_token';
 
 export type LoginResponse = {

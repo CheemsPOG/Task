@@ -14,6 +14,11 @@ import java.util.List;
 /**
  * Chart layout register / update / get / list / delete (design docs 127–131).
  *
+ * <p>Tenant CRUD on {@code m_tv_chart_layout} filtered by JWT {@code customer_no}. Symbol must exist
+ * in {@code m_ccypairs}. {@link com.task.chart.controller.ChartLayoutController} is the HTTP caller.
+ * Implemented by {@link com.task.chart.service.impl.ChartLayoutServiceImpl}. This is NOT chart
+ * templates (136–139), NOT indicator templates (132–135), and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -26,11 +31,12 @@ import java.util.List;
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Add get for doc 129</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/21</td><td>Task</td><td>Add list for doc 130</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/21</td><td>Task</td><td>Add delete for doc 131</td></tr>
+ *   <tr><td>1.3.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.3.0
+ * @version 1.3.1
  */
 public interface ChartLayoutService {
 

@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of {@link SymbolCatalog}.
  *
+ * <p>Builds an in-memory list of TradingView tickers from {@code GET /curpairs} ({@code m_ccypairs})
+ * plus {@code app.tradingview} exchange/type. Doc 121 history and {@link ChartDataServiceImpl} resolve
+ * {@code USDJPY} / {@code USD/JPY} / {@code FX:USD/JPY} here. This is NOT {@code GET /api/symbols}
+ * HTTP itself, NOT the Python WS, and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -26,11 +31,12 @@ import org.springframework.stereotype.Service;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/20</td><td>Task</td><td>Align exchange/type with app.tradingview</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @Service
 public class SymbolCatalogImpl implements SymbolCatalog {
@@ -62,6 +68,7 @@ public class SymbolCatalogImpl implements SymbolCatalog {
 		if (symbolName == null || symbolName.isBlank()) {
 			return null;
 		}
+
 		String needle = symbolName.trim().toLowerCase(Locale.ROOT);
 		return symbols.stream()
 				.filter(symbol -> matches(symbol, needle))

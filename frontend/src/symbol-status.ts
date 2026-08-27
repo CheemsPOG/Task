@@ -2,6 +2,14 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Optional "Real-time / Delayed" badge on the symbol status API.
+ *
+ * Not installed from main.ts today. If wired, installSymbolStatus(widget)
+ * then setSymbolStatus from resolveSymbol. Demo feed has delay 0 so it
+ * always shows Real-time.
+ */
+
 import type {
 	CustomStatusDropDownContent,
 	IChartingLibraryWidget,

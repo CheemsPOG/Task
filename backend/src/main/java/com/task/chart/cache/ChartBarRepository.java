@@ -17,6 +17,9 @@ import org.springframework.stereotype.Repository;
  * JDBC access to design-doc 121 {@code t_chart_*} warehouse tables.
  *
  * <p>Table names come only from {@link CacheNamespace} (never from request input).
+ * Controllers never call this class. Live upserts come from {@link TickIngestWorker};
+ * boot replace comes from {@link ChartCacheWriter}. {@code GET /api/history} reads
+ * {@link ChartCacheStore}, which falls back here on a cold Redis key.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -27,11 +30,12 @@ import org.springframework.stereotype.Repository;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @Repository
 public class ChartBarRepository {
@@ -57,16 +61,22 @@ public class ChartBarRepository {
 	 * @param bars bars to store
 	 */
 	public void replacePair(CacheNamespace namespace, String curpairCd, Collection<CachedChartBar> bars) {
+
 		String table = namespace.tableName();
 		jdbcTemplate.update("DELETE FROM " + table + " WHERE curpair_cd = ?", curpairCd);
+
 		if (bars == null || bars.isEmpty()) {
 			return;
 		}
+
 		java.util.LinkedHashMap<Long, CachedChartBar> unique = new java.util.LinkedHashMap<>();
+
 		for (CachedChartBar bar : bars) {
 			unique.put(bar.chartDatetimeSec(), bar);
 		}
+
 		String sql = insertSql(table);
+
 		for (CachedChartBar bar : unique.values()) {
 			jdbcTemplate.update(sql, ps -> bindBar(ps, bar));
 		}
@@ -79,6 +89,7 @@ public class ChartBarRepository {
 	 * @param bar bar to store
 	 */
 	public void upsert(CacheNamespace namespace, CachedChartBar bar) {
+
 		String table = namespace.tableName();
 		jdbcTemplate.update(
 				"DELETE FROM " + table + " WHERE curpair_cd = ? AND chart_datetime = ?",
@@ -87,6 +98,12 @@ public class ChartBarRepository {
 		jdbcTemplate.update(insertSql(table), ps -> bindBar(ps, bar));
 	}
 
+	/**
+	 * INSERT statement for a warehouse table (name from enum only).
+	 *
+	 * @param table {@code t_chart_*} name
+	 * @return SQL
+	 */
 	private static String insertSql(String table) {
 		return "INSERT INTO " + table
 				+ " (curpair_cd, chart_datetime, bid_open, bid_high, bid_low, bid_close,"
@@ -107,17 +124,22 @@ public class ChartBarRepository {
 			String curpairCd,
 			Long fromSec,
 			Long toSec) {
+
 		String table = namespace.tableName();
+
 		if (fromSec == null && toSec == null) {
 			return jdbcTemplate.query(
 					"SELECT * FROM " + table + " WHERE curpair_cd = ? ORDER BY chart_datetime ASC",
 					ROW_MAPPER,
 					curpairCd);
 		}
+
 		if (fromSec != null && toSec != null) {
+
 			if (fromSec > toSec) {
 				return List.of();
 			}
+
 			return jdbcTemplate.query(
 					"SELECT * FROM " + table
 							+ " WHERE curpair_cd = ? AND chart_datetime >= ? AND chart_datetime <= ?"
@@ -127,6 +149,7 @@ public class ChartBarRepository {
 					fromSec,
 					toSec);
 		}
+
 		if (fromSec != null) {
 			return jdbcTemplate.query(
 					"SELECT * FROM " + table
@@ -135,6 +158,7 @@ public class ChartBarRepository {
 					curpairCd,
 					fromSec);
 		}
+
 		return jdbcTemplate.query(
 				"SELECT * FROM " + table
 						+ " WHERE curpair_cd = ? AND chart_datetime <= ? ORDER BY chart_datetime ASC",
@@ -152,6 +176,7 @@ public class ChartBarRepository {
 	 * @return prior unix seconds, or {@code null}
 	 */
 	public Long nextTimeBefore(CacheNamespace namespace, String curpairCd, long fromSec) {
+
 		String table = namespace.tableName();
 		List<Long> rows = jdbcTemplate.query(
 				"SELECT chart_datetime FROM " + table
@@ -159,6 +184,7 @@ public class ChartBarRepository {
 				(rs, rowNum) -> rs.getLong(1),
 				curpairCd,
 				fromSec);
+
 		return rows.isEmpty() ? null : rows.get(0);
 	}
 
@@ -170,15 +196,25 @@ public class ChartBarRepository {
 	 * @return count
 	 */
 	public int size(CacheNamespace namespace, String curpairCd) {
+
 		String table = namespace.tableName();
 		Integer count = jdbcTemplate.queryForObject(
 				"SELECT COUNT(*) FROM " + table + " WHERE curpair_cd = ?",
 				Integer.class,
 				curpairCd);
+
 		return count == null ? 0 : count;
 	}
 
+	/**
+	 * Binds one cache row to the INSERT statement.
+	 *
+	 * @param ps statement
+	 * @param bar cache row
+	 * @throws SQLException if a bind fails
+	 */
 	private static void bindBar(PreparedStatement ps, CachedChartBar bar) throws SQLException {
+
 		ps.setString(1, bar.curpairCd());
 		ps.setLong(2, bar.chartDatetimeSec());
 		ps.setDouble(3, bar.bidOpen());
@@ -192,6 +228,14 @@ public class ChartBarRepository {
 		ps.setDouble(11, bar.volume());
 	}
 
+	/**
+	 * Maps one warehouse row to a cache bar.
+	 *
+	 * @param rs result set
+	 * @param rowNum unused row index
+	 * @return cache row
+	 * @throws SQLException if a column is missing
+	 */
 	private static CachedChartBar mapRow(ResultSet rs, int rowNum) throws SQLException {
 		return new CachedChartBar(
 				rs.getString("curpair_cd"),

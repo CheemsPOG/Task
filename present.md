@@ -63,7 +63,7 @@ Every numbered slice below uses the same four lines:
 | Persistence | **Spring Data JPA** + **Flyway** | `ddl-auto: none`. Schema only from `V*.sql`. Masters via JPA; `t_chart_*` via **JdbcTemplate** (table name from enum, not the request). |
 | Database | **PostgreSQL 16** (Docker) | Tests: **H2** `MODE=PostgreSQL`. |
 | Cache | **Redis 7** (Docker) | Doc 121 `cache_set_*`, quote bus, refresh tokens. No Redis volume. |
-| Live quotes | **Python 3.10+**, `websockets` + `redis` | Gateway `:8081`. Listens to Java ingest; **no local price formula**. |
+| Live quotes | **Python 3.10+**, `websockets` + `redis` | Gateway `:8081`. Relays Java ticks **and** forming bars; **no local price or OHLC formula**. |
 | Auth | **Spring Security** + **JJWT 0.12.6** + **BCrypt** | S-01 **stand-in**, not Peach SSO. |
 | API docs | **springdoc-openapi 3.0.2** | Matches Boot 4. |
 | Frontend | **Vite 7** + **TypeScript 5** | **No React.** Vendored Advanced Charts under `frontend/charting_library/`. |
@@ -102,8 +102,8 @@ Task/
     src/                    our TS (datafeed, login, quotes)
     charting_library/       TradingView (do not edit)
   ws-python/
-    server.py               Redis subscriber → WS
-    market.py               pair catalog only
+    server.py               Redis subscriber → WS (quotes + forming bars)
+    market.py               pair catalog + BID/ASK/MID column pick
     tests/
 ```
 
@@ -118,8 +118,9 @@ Task/
 | **`customer_no`** | Tenant id in the JWT. `demo` → 1, `demo2` → 2. Layouts/templates are scoped to it. |
 | **Warehouse** | Postgres `t_chart_*` (13 tables, doc 121). |
 | **`cache_set_*`** | Redis sorted sets; history reads here first. |
-| **SSOT** | Single source of truth for **live** prices: Java ingest only. |
-| **Quote bus** | `SET peach:quote:{cd}` + `PUBLISH peach:quotes`. |
+| **SSOT** | Single source of truth for **live** prices **and** live candles: Java ingest only. |
+| **Quote bus** | `SET peach:quote:{cd}` + `PUBLISH peach:quotes` (header ticks). |
+| **Forming-bar bus** | `SET peach:forming:{resolution}:{CD}` + `PUBLISH peach:bars` (chart candles). |
 
 ## 0.6 Runtime picture (draw this)
 
@@ -129,25 +130,36 @@ Browser  :5173  Vite
    /ws/**                  →  Python :8081
 
 Java boot:  MockBarGenerator  →  t_chart_* + Redis cache_set_*
-Java live:  TickIngestWorker ~333ms
-              → SET peach:quote:* + PUBLISH peach:quotes
-              → upsert current open bar (DB + Redis)
+            (short fake history; wipe-on-restart)
 
-Python:     SCAN peach:quote:*  then  SUBSCRIBE peach:quotes
-            → /ws/fx-quotes (header)  and  /ws/stream (forming candles)
+Java live:  TickIngestWorker ~333ms
+              DemoTickEngine: BID random walk, ASK = BID + spread, MID = (BID+ASK)/2
+              → upsert current open bar (Postgres + cache_set_*)
+              → SET peach:forming:* + PUBLISH peach:bars     ← same OHLC as history last bar
+              → SET peach:quote:*   + PUBLISH peach:quotes   ← header ticks
+
+Python:     SCAN peach:quote:* and peach:forming:*
+            SUBSCRIBE peach:quotes → /ws/fx-quotes (header)
+            SUBSCRIBE peach:bars   → /ws/stream    (relay Java candle; do not rebuild OHLC)
 
 Docker:     Postgres :5432    Redis :6379
 ```
 
-**Say:** If we plug in a real Peach feed later, we replace **only** the mock step inside `TickIngestWorker`. Redis keys, Python, and the chart stay.
+**Say (mock pipeline, for the mentor):**
+
+> Two mock writers, both in Java. **Boot:** `MockBarGenerator` fills a short history so `/api/history` has candles on first load. **Runtime:** `DemoTickEngine` is the fake LP. `TickIngestWorker` is the only place that turns a tick into an OHLC bar (`openFromTick` / `applyTick`). Python is a dumb WebSocket: it forwards ticks to the header and forwards **that already-built bar** to TradingView. If the first live candle did not match the last history candle, we used to rebuild OHLC in Python — that is gone.
+>
+> A real Peach feed later replaces only `DemoTickEngine`. Redis keys, history API, and Python stay.
 
 **Show (SSOT proof, 30 seconds):** with Java running:
 
 ```powershell
 docker compose exec redis redis-cli SUBSCRIBE peach:quotes
+docker compose exec redis redis-cli SUBSCRIBE peach:bars
+docker compose exec redis redis-cli GET peach:forming:1D:USDJPY
 ```
 
-Ticks appear. **Stop Java** → ticks stop. Python can stay up; it does not invent prices.
+Ticks and forming bars appear. **Stop Java** → both stop. Python can stay up; it does not invent prices or candles.
 
 ## 0.7 Start order (if the room is cold)
 
@@ -306,7 +318,7 @@ This is the **longest** datafeed section. Split it: (1) what the spec asks, (2) 
 
 > **Boot:** `ChartCacheWriter` (`@Order(100)`) uses `MockBarGenerator` to fill a **short** history into all 13 tables and Redis. Every restart **replaces** those rows. That is not years of ticks.
 >
-> **Runtime:** `TickIngestWorker` (`@Order(200)`, every `app.chart-cache.tick-ms` = 333) is the **only live price engine**. It steps a mock BID walk (`DemoTickEngine`: ASK = BID + spread, MID = (BID+ASK)/2), publishes Redis quotes, and upserts the **current open bar** on every namespace.
+> **Runtime:** `TickIngestWorker` (`@Order(200)`, every `app.chart-cache.tick-ms` = 333) is the **only live price and candle engine**. It steps a mock BID walk (`DemoTickEngine`: ASK = BID + spread, MID = (BID+ASK)/2), upserts the **current open bar** on every namespace, publishes that bar on `peach:bars`, then publishes the tick on `peach:quotes`.
 
 **Code:**
 
@@ -315,20 +327,23 @@ This is the **longest** datafeed section. Split it: (1) what the spec asks, (2) 
 | `CacheNamespace` | TV resolution → table + Redis prefix |
 | `ChartCacheWriter` | Boot seed only |
 | `DemoTickEngine` | Mock LP |
-| `QuoteBus` | `peach:quote:*` + `peach:quotes` |
-| `TickIngestWorker` | `tick()` → publish + `upsertOpenBar` |
+| `QuoteBus` | `peach:quote:*` + `peach:quotes`; `peach:forming:*` + `peach:bars` |
+| `TickIngestWorker` | `tick()` → upsert + forming bus + quote bus |
+| `FormingBarMessage` | WS/history handoff payload (`time` in ms) |
 | `ChartBarRepository` | JDBC upsert |
 
 **Show:**
 
 ```powershell
 docker compose exec redis redis-cli GET peach:quote:1
+docker compose exec redis redis-cli GET peach:forming:1D:USDJPY
 docker compose exec redis redis-cli SUBSCRIBE peach:quotes
+docker compose exec redis redis-cli SUBSCRIBE peach:bars
 ```
 
 **Test:** `TickIngestWorkerTest` (Redis required). Scheduling is **off** in tests; the test calls `tick()` directly.
 
-**Honest:** Not a Peach LP. Wipe-on-boot still applies to historical warehouse rows. Python does **not** write `t_chart_*`.
+**Honest:** Not a Peach LP. Wipe-on-boot still applies to historical warehouse rows. Python does **not** write `t_chart_*` and does **not** rebuild the forming candle.
 
 Namespace cheat sheet (say “thirteen types, one enum”):
 
@@ -515,18 +530,18 @@ Do **not** skip these. Mentors will see them in the UI and Swagger.
 
 ## F.2 Python WebSocket gateway
 
-**Say:** Python is **not** a second market. It snapshots `peach:quote:*`, subscribes `peach:quotes`, and forwards.
+**Say:** Python is **not** a second market. It snapshots Redis, subscribes, and forwards. Ticks go to the header. Forming bars go to the chart. It does **not** fold ticks into OHLC (that used to cause a freeze/plunge when the first live candle replaced Java’s last history bar).
 
-| Path | Who consumes it |
-|------|-----------------|
-| `/ws/fx-quotes` | Header BID/ASK/MID (`fxQuotesSocket.ts`) |
-| `/ws/stream` | Widget `subscribeBars` (`streaming.ts`) — forming OHLC from **incoming ticks**, not `bar_at()` |
+| Path | Who consumes it | Redis |
+|------|-----------------|-------|
+| `/ws/fx-quotes` | Header BID/ASK/MID (`fxQuotesSocket.ts`) | `peach:quote:*` / `peach:quotes` |
+| `/ws/stream` | Widget `subscribeBars` (`streaming.ts`) | `peach:forming:*` / `peach:bars` — same candle as `GET /api/history` last bar |
 
-**Code:** `ws-python/server.py` (`RedisQuoteSource`, `Hub.run_ingest`, `KlineStreamer`). Catalog only in `market.py` (hardcoded five pairs — must match `m_ccypairs.priority`).
+**Code:** `ws-python/server.py` (`RedisMarketSource`, `Hub.run_ingest`, `BarRelay`). `market.py`: five-pair catalog + `widget_bar()` (BID/ASK/MID column pick only). Catalog must match `m_ccypairs.priority`.
 
-**Show:** Java up → header numbers move. Stop Java → header **freezes** (Python still running).
+**Show:** Java up → header numbers move and the last candle updates without jumping to a new open. Stop Java → header **and** candle **freeze** (Python still running).
 
-**Test:** `cd ws-python` → `pytest` (`test_fx_quotes_idle_without_ingest` proves no self-generation).
+**Test:** `cd ws-python` → `pytest` (`test_stream_relays_java_forming_bar_not_tick_ohlc` proves a tick alone does not change the candle; `test_fx_quotes_idle_without_ingest` proves no self-generation).
 
 **Honest:** WS is public (no JWT). Catalog not loaded from Java. Out of scope: moving WS into Java.
 
@@ -612,7 +627,7 @@ When those change, update `structure.md`, `present.md`, `test.md`, and `checklis
 | 0–3 | Pitch + **tech stack** (0.3) + **repo tree** (0.4) + topology (0.6) | Scope + “why Java/Redis/Python” |
 | 2–4 | Login `demo`/`demo`; show cookie + sessionStorage | Auth stand-in |
 | 4–6 | Chart loads; Network `/api/config`, `/symbols`, `/history` | 120, 123, 121 read |
-| 6–8 | Redis `SUBSCRIBE peach:quotes`; stop Java briefly | SSOT / Python gateway |
+| 6–8 | Redis `SUBSCRIBE peach:quotes` **and** `peach:bars`; stop Java briefly | SSOT / Python gateway |
 | 8–10 | Restart Java; BID/ASK/MID switch; live header | Quotes + history side |
 | 10–12 | Swagger 130 list / 132 list (empty or seeded) | 127–139 exist |
 | 12–14 | Say layouts **not** in widget; open `save-load-adapter.ts` | Honest gap |
@@ -658,12 +673,13 @@ Config flags for 120 are **yml**, not a table: `backend/src/main/resources/appli
 |----------|------|----------------|
 | “Who invents BID/ASK?” | `cache/DemoTickEngine.java` | `stepAll()` / `SimulatedQuote.step()` |
 | “Who is the SSOT / ingest?” | `cache/TickIngestWorker.java` | `tick()` (~333ms), `upsertOpenBar(...)` |
-| “Who writes Redis quotes?” | `cache/QuoteBus.java` | `publish(...)` → `SET` + `PUBLISH` |
+| “Who writes Redis quotes?” | `cache/QuoteBus.java` | `publish(...)` → `SET peach:quote:*` + `PUBLISH peach:quotes` |
+| “Who writes the live candle?” | `cache/QuoteBus.java` | `publishForming(...)` → `SET peach:forming:*` + `PUBLISH peach:bars` |
 | “Who seeds old candles?” | `cache/ChartCacheWriter.java` + `MockBarGeneratorImpl` | `seedAll()` on boot only |
 | “Who reads bars for 121?” | `cache/ChartCacheStore.java` | `query(...)` |
-| “Python prices?” | **There are none.** | `ws-python/server.py` `RedisQuoteSource.listen()` |
+| “Python prices / OHLC?” | **There are none.** | `ws-python/server.py` `RedisMarketSource.listen()` relays quotes **and** bars |
 | “Header quote?” | `frontend/src/fx/fxQuotesSocket.ts` | `/ws/fx-quotes` |
-| “Live candle on the chart?” | `frontend/src/datafeed/streaming.ts` | `/ws/stream` |
+| “Live candle on the chart?” | `frontend/src/datafeed/streaming.ts` | `/ws/stream` (Java forming bar) |
 
 ## J.4 Auth, errors, extras
 
@@ -686,7 +702,7 @@ Config flags for 120 are **yml**, not a table: `backend/src/main/resources/appli
 |------|----------------|
 | `frontend/src/main.ts` | Boot: login or silent refresh, then create the TradingView widget |
 | `frontend/src/datafeed/datafeed.ts` | **Datafeed adapter** — all 120–126 HTTP |
-| `frontend/src/datafeed/streaming.ts` | `subscribeBars` → Python forming bars |
+| `frontend/src/datafeed/streaming.ts` | `subscribeBars` → Python relays Java forming bars |
 | `frontend/src/api.ts` | `fetch` + Bearer + one silent refresh on 401 |
 | `frontend/src/auth.ts` | login/refresh/logout, sessionStorage |
 | `frontend/src/login.ts` | Overlay UI |
@@ -702,8 +718,9 @@ Config flags for 120 are **yml**, not a table: `backend/src/main/resources/appli
 |----------|--------|
 | Who creates live prices? | `TickIngestWorker` + `DemoTickEngine` |
 | Who writes Redis quotes? | `QuoteBus.publish` |
+| Who writes the live candle? | `QuoteBus.publishForming` (same OHLC as history last bar) |
 | Who reads history? | `ChartCacheStore` via `ChartDataServiceImpl.history` (no stitch) |
 | Who seeds old candles? | `ChartCacheWriter` + `MockBarGenerator` |
-| Who is Python? | `ws-python/server.py` subscriber |
+| Who is Python? | `ws-python/server.py` relay (`peach:quotes` + `peach:bars`) |
 | Who is tenant? | JWT `customer_no` → `CustomerContext` |
 | Who maps 120 flags? | `app.tradingview` → `ChartDataServiceImpl.config()` |

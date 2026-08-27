@@ -1,3 +1,7 @@
+-- Currency-pair master (docs 123, 124, 127).
+-- ccypair_cd is 6 letters (USDJPY). priority is also GET /curpairs.curpairCd.
+-- is_deleted=0 means tradable. rate_unit → pricescale = 10^rate_unit.
+
 CREATE TABLE m_ccypairs (
 	ccypair_cd VARCHAR(6) PRIMARY KEY,
 	ccypair_jp VARCHAR(64) NOT NULL,

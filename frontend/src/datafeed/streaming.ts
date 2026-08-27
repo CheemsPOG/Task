@@ -2,6 +2,21 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Realtime candles for the widget: WebSocket /ws/stream (Python gateway).
+ *
+ * Java TickIngestWorker is the only OHLC writer. Python relays forming bars
+ * already stored in Redis (peach:forming:* / peach:bars). This file must not
+ * invent open/high/low from ticks — that caused the chart Y-axis plunge.
+ *
+ * Vite proxies /ws to Python :8081. Messages:
+ *   client → { action: subscribe|unsubscribe, uid, symbol, resolution, price }
+ *   server → { type: bar, uid, bar: { time, open, high, low, close, volume } }
+ *
+ * Incoming bars are buffered and flushed every 250ms so the library is not
+ * flooded. Bars older than the last history bar are dropped (TV time order).
+ */
+
 import type {
 	Bar,
 	LibrarySymbolInfo,
@@ -134,6 +149,10 @@ setInterval(() => {
 	});
 }, UPDATE_FREQUENCY);
 
+/**
+ * Widget subscribeBars: keep last history bar time, then ask Python for
+ * forming bars of this symbol / resolution / BID-ASK-MID.
+ */
 export function subscribeOnStream(
 	symbolInfo: LibrarySymbolInfo,
 	resolution: ResolutionString,
@@ -165,6 +184,10 @@ export function subscribeOnStream(
 	}
 }
 
+/**
+ * BID/ASK/MID changed: drop pending bars and subscribe again on the same uid
+ * so the widget does not keep the old side's candle.
+ */
 export function resubscribeAllWithCurrentPrice(): void {
 	subscriberToHandler.forEach((handler, uid) => {
 		handler.price = quoteStore.mode;

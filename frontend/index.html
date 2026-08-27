@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="en">
 	<head>
+		<!--
+			Shell for the chart demo. No framework.
+
+			#login-overlay is shown by login.ts until JWT is valid.
+			#tv_chart_container is filled by TradingView after main.ts initChart().
+
+			charting_library.standalone.js must load before /src/main.ts so
+			window.TradingView exists. REST/WS still go through Vite proxies.
+		-->
 		<meta charset="UTF-8" />
 		<meta
 			name="viewport"

@@ -17,7 +17,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Stateless JWT security for {@code /api/**}.
+ * Stateless JWT filter chain for {@code /api/**} and {@code GET /curpairs}.
+ *
+ * <p>Spring Security entry for this demo: no HTTP session, CSRF off, CORS from
+ * {@link com.task.chart.config.WebConfig}. Public matchers are health, login, refresh, logout, and
+ * Swagger; every other {@code /api/**} path and {@code GET /curpairs} need a Bearer access JWT.
+ * Spring Boot loads this at startup; {@link JwtAuthenticationFilter} runs before the username/password
+ * filter. This is NOT Peach S-01 SSO, NOT the Python WebSocket on :8081, and NOT the TradingView widget.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -32,11 +38,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <tr><td>1.2.0</td><td>2026/08/24</td><td>Task</td><td>Move to security package</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/24</td><td>Task</td><td>Require JWT on GET /curpairs</td></tr>
  *   <tr><td>1.4.0</td><td>2026/08/25</td><td>Task</td><td>Permit refresh + logout</td></tr>
+ *   <tr><td>1.4.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.4.0
+ * @version 1.4.1
  */
 @Configuration
 @EnableWebSecurity
@@ -85,6 +92,8 @@ public class SecurityConfig {
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jsonUnauthorizedEntryPoint))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+						// Login, refresh, and logout stay public so the widget can mint/rotate tokens.
 						.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
@@ -95,6 +104,8 @@ public class SecurityConfig {
 								"/v3/api-docs",
 								"/v3/api-docs/**")
 						.permitAll()
+
+						// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.
 						.requestMatchers("/api/**").authenticated()
 						.requestMatchers(HttpMethod.GET, "/curpairs").authenticated()
 						.anyRequest().permitAll())

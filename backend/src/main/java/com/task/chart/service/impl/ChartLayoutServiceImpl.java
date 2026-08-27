@@ -29,6 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Implementation of {@link ChartLayoutService}.
  *
+ * <p>Docs 127–131 on table {@code m_tv_chart_layout}, scoped by JWT {@code customer_no}. Symbol
+ * must be an active {@code m_ccypairs} CD. {@link com.task.chart.controller.ChartLayoutController}
+ * is the HTTP caller. Another tenant's id looks like 404, not 403. This is NOT chart templates,
+ * NOT indicator templates, NOT Peach S-01, and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -41,11 +46,12 @@ import org.springframework.transaction.annotation.Transactional;
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Add get for doc 129</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/21</td><td>Task</td><td>Add list for doc 130</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/21</td><td>Task</td><td>Add delete for doc 131</td></tr>
+ *   <tr><td>1.3.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.3.0
+ * @version 1.3.1
  */
 @Service
 public class ChartLayoutServiceImpl implements ChartLayoutService {
@@ -153,6 +159,8 @@ public class ChartLayoutServiceImpl implements ChartLayoutService {
 		long layoutId = parseLayoutId(idPath);
 		long customerNo = requireCustomerNo();
 		TvChartLayout layout = tvChartLayoutRepository.findById(layoutId).orElse(null);
+
+		// Other tenants' layouts look missing so we do not leak ids.
 		if (layout == null || layout.getCustomerNo() != customerNo) {
 			throw new ResourceNotFoundException();
 		}
@@ -162,6 +170,8 @@ public class ChartLayoutServiceImpl implements ChartLayoutService {
 
 	private long requireCustomerNo() {
 		Long customerNo = CustomerContext.get();
+
+		// Filter should have set tenant; missing context is a server bug, not 401.
 		if (customerNo == null) {
 			throw new ServerErrorException();
 		}
@@ -212,6 +222,8 @@ public class ChartLayoutServiceImpl implements ChartLayoutService {
 
 	private static String normalizeCcypairCd(String symbolName) {
 		String upper = symbolName.trim().toUpperCase(Locale.ROOT);
+
+		// Widget may send FX:USD/JPY; warehouse keys use USDJPY.
 		if (upper.startsWith("FX:")) {
 			upper = upper.substring(3);
 		}

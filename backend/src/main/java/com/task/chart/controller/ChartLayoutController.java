@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Chart layout REST endpoints (design docs 127+).
+ * Chart layout HTTP API (design docs 127–131). HTTP only; no SQL.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -41,11 +41,12 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @RestController
 @RequestMapping("/api/layouts")
@@ -64,7 +65,7 @@ public class ChartLayoutController {
 	}
 
 	/**
-	 * Registers a chart layout (design doc 127).
+	 * Design doc 127 — registers a chart layout.
 	 *
 	 * @param request name, content, symbol, resolution
 	 * @return created layout id
@@ -85,11 +86,13 @@ public class ChartLayoutController {
 							value = "{\"name\":\"My layout\",\"content\":\"{\\\"pane\\\":1}\","
 									+ "\"symbol\":\"USDJPY\",\"resolution\":\"1D\"}")))
 	public ChartLayoutIdResponse register(@RequestBody(required = false) RegisterChartLayoutRequest request) {
+
+		// Design doc 127.
 		return chartLayoutService.register(request);
 	}
 
 	/**
-	 * Updates a chart layout (design doc 128).
+	 * Design doc 128 — updates a chart layout.
 	 *
 	 * @param id path chart layout id (must be numeric)
 	 * @param request name, content, symbol, resolution
@@ -106,11 +109,13 @@ public class ChartLayoutController {
 	public ChartLayoutIdResponse update(
 			@Parameter(description = "Numeric layout id") @PathVariable("id") String id,
 			@RequestBody(required = false) RegisterChartLayoutRequest request) {
+
+		// Design doc 128.
 		return chartLayoutService.update(id, request);
 	}
 
 	/**
-	 * Lists chart layouts for the current customer (design doc 130).
+	 * Design doc 130 — lists chart layouts for the current customer.
 	 *
 	 * @return layout list DTO (newest {@code updated_at} first)
 	 */
@@ -121,11 +126,13 @@ public class ChartLayoutController {
 			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
 	})
 	public List<ChartLayoutListItemDto> list() {
+
+		// Design doc 130.
 		return chartLayoutService.list();
 	}
 
 	/**
-	 * Loads a chart layout (design doc 129).
+	 * Design doc 129 — loads a chart layout.
 	 *
 	 * @param id path chart layout id (must be numeric)
 	 * @return layout DTO
@@ -139,11 +146,13 @@ public class ChartLayoutController {
 			@ApiResponse(responseCode = "422", description = "Non-numeric id")
 	})
 	public ChartLayoutDto get(@Parameter(description = "Numeric layout id") @PathVariable("id") String id) {
+
+		// Design doc 129.
 		return chartLayoutService.get(id);
 	}
 
 	/**
-	 * Deletes a chart layout (design doc 131).
+	 * Design doc 131 — deletes a chart layout.
 	 *
 	 * @param id path chart layout id (must be numeric)
 	 * @return system datetime (unix seconds)
@@ -158,6 +167,8 @@ public class ChartLayoutController {
 	})
 	public SystemDatetimeResponse delete(
 			@Parameter(description = "Numeric layout id") @PathVariable("id") String id) {
+
+		// Design doc 131.
 		return chartLayoutService.delete(id);
 	}
 }

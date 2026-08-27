@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Chart template REST endpoints (design docs 136–139).
+ * Chart template HTTP API (design docs 136–139). HTTP only; no SQL.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -37,11 +37,12 @@ import org.springframework.web.bind.annotation.RestController;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/24</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @RestController
 @RequestMapping("/api/chart-templates")
@@ -60,7 +61,7 @@ public class ChartTemplateController {
 	}
 
 	/**
-	 * Lists chart templates for the current customer (design doc 136).
+	 * Design doc 136 — lists chart templates for the current customer.
 	 *
 	 * @return chart template list DTO (name only, sorted by name)
 	 */
@@ -71,11 +72,13 @@ public class ChartTemplateController {
 			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT")
 	})
 	public List<ChartTemplateListItemDto> list() {
+
+		// Design doc 136.
 		return chartTemplateService.list();
 	}
 
 	/**
-	 * Registers or updates a chart template (design doc 137).
+	 * Design doc 137 — registers or updates a chart template.
 	 *
 	 * @param request name and content
 	 * @return row update datetime (unix seconds)
@@ -93,11 +96,13 @@ public class ChartTemplateController {
 					examples = @ExampleObject(
 							value = "{\"name\":\"My Dark\",\"content\":\"{\\\"theme\\\":\\\"dark\\\"}\"}")))
 	public SystemDatetimeResponse upsert(@RequestBody(required = false) UpsertChartTemplateRequest request) {
+
+		// Design doc 137.
 		return chartTemplateService.upsert(request);
 	}
 
 	/**
-	 * Loads one chart template (design doc 138).
+	 * Design doc 138 — loads one chart template.
 	 *
 	 * @param name path template name (max 64)
 	 * @return name and content
@@ -112,11 +117,13 @@ public class ChartTemplateController {
 	})
 	public ChartTemplateDto get(
 			@Parameter(description = "Template name (max 64)") @PathVariable("name") String name) {
+
+		// Design doc 138.
 		return chartTemplateService.get(name);
 	}
 
 	/**
-	 * Deletes one chart template (design doc 139).
+	 * Design doc 139 — deletes one chart template.
 	 *
 	 * @param name path template name (max 64)
 	 * @return system datetime (unix seconds)
@@ -131,6 +138,8 @@ public class ChartTemplateController {
 	})
 	public SystemDatetimeResponse delete(
 			@Parameter(description = "Template name (max 64)") @PathVariable("name") String name) {
+
+		// Design doc 139.
 		return chartTemplateService.delete(name);
 	}
 }

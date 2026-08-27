@@ -2,6 +2,19 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * Vite dev server for the chart UI (http://127.0.0.1:5173).
+ *
+ * Same-origin for the browser:
+ * - /api and /curpairs → Java Spring Boot :8080 (REST + JWT cookies)
+ * - /ws → Python gateway :8081 (fx-quotes ticks, stream forming bars)
+ *
+ * TradingView's library is served from /charting_library/ (not npm). Do not
+ * proxy that path; the plugin copies the folder into dist on build.
+ *
+ * npm start → frontend/server.ts which calls createServer() with this config.
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

@@ -1,3 +1,9 @@
+# Chart REST backend (Spring Boot :8080).
+# Postgres + Redis via docker-compose. Flyway owns schema (ddl-auto: none).
+# app.jwt is a local stand-in for Peach S-01 — not a production secret.
+# app.tradingview feeds GET /api/config and GET /api/symbols (docs 120, 123).
+# app.chart-cache.tick-ms is DemoTickEngine cadence (replace that class for a real LP).
+
 spring:
   application:
     name: chart-backend

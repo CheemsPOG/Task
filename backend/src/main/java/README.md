@@ -88,7 +88,7 @@ Root of Java sources: `backend/src/main/java/com/task/chart/`
 | `service` / `impl` | Interfaces named like the work (`history`, `listLayouts`). Impl holds rules. `MockBarGenerator` = **boot seed only** (past candles). Live prices are **not** here. |
 | `repository` | Spring Data JPA. Layouts/templates filter by `customer_no` from the JWT. Marks have **no** customer column (global demo seed). |
 | `entity` | One class per `m_*` table. Never JSON. |
-| `dto` | Wire JSON. `FxQuoteMessage` is the Redis/WS tick shape (`curpairCd` as **string**). |
+| `dto` | Wire JSON. `FxQuoteMessage` is the Redis/WS tick. `FormingBarMessage` is the forming candle (`time` in ms). `curpairCd` on both buses is a **string**. |
 | `security` | Local S-01 stand-in: 1h access JWT + 1d opaque refresh in Redis + HttpOnly cookie. Not Peach SSO. |
 | `config` | CORS, BCrypt, OpenAPI tags, `AppProperties`, seed users `demo` / `demo2`. |
 | `cache` | Doc **121** warehouse + Redis ZSETs **and** runtime SSOT: `TickIngestWorker` → `QuoteBus`. |
@@ -116,10 +116,11 @@ Do not confuse **boot seed** with **runtime prices**:
 | `ChartCacheStore` | Redis ZSET hot cache. `GET /api/history` reads here first. |
 | `ChartCacheWriter` | `@Order(100)` boot: `MockBarGenerator` fills warehouse + Redis. **No** scheduled `peachBarAt` refresh. |
 | `DemoTickEngine` | Mock LP: Gaussian BID walk, ASK = BID + spread, MID = (BID+ASK)/2. |
-| `QuoteBus` | `SET peach:quote:{cd}` + `PUBLISH peach:quotes`. |
-| `TickIngestWorker` | `@Order(200)` + `@Scheduled` ~333ms. **Runtime SSOT:** tick → quote bus → upsert current open bar on every namespace. |
+| `QuoteBus` | `SET peach:quote:{cd}` + `PUBLISH peach:quotes`; `SET peach:forming:{resolution}:{CD}` + `PUBLISH peach:bars`. |
+| `TickIngestWorker` | `@Order(200)` + `@Scheduled` ~333ms. **Runtime SSOT:** tick → upsert current open bar → forming bus → quote bus. |
+| `FormingBarMessage` | `dto.response` handoff payload (`time` in ms) so `/ws/stream` matches `GET /api/history` last bar. |
 
-Python (`ws-python/`) only `SUBSCRIBE peach:quotes`. It does not generate prices. A real Peach feed would replace `DemoTickEngine.stepAll()` inside `TickIngestWorker` — Redis keys and WS stay.
+Python (`ws-python/`) `SUBSCRIBE`s `peach:quotes` and `peach:bars`. It does not generate prices or OHLC. A real Peach feed would replace `DemoTickEngine.stepAll()` inside `TickIngestWorker` — Redis keys and WS stay.
 
 ---
 
@@ -197,6 +198,7 @@ com/task/chart/
 │       ├── DatafeedConfigResponse.java
 │       ├── ErrorResponse.java
 │       ├── FxQuoteMessage.java         Redis + WS tick JSON
+│       ├── FormingBarMessage.java      Redis + WS forming candle (ms time)
 │       ├── HealthResponse.java
 │       ├── HistoryResponse.java
 │       ├── IndicatorTemplateDto.java
@@ -235,8 +237,8 @@ com/task/chart/
 │   ├── ChartCacheStore.java          Redis ZSET hot cache
 │   ├── ChartCacheWriter.java         boot seed only (MockBarGenerator)
 │   ├── DemoTickEngine.java           mock Peach-feed stand-in (BID walk)
-│   ├── QuoteBus.java                 SET peach:quote:* + PUBLISH peach:quotes
-│   └── TickIngestWorker.java         live SSOT: ticks → quotes + open bars
+│   ├── QuoteBus.java                 quotes + forming-bar bus
+│   └── TickIngestWorker.java         live SSOT: ticks → bars → Redis buses
 │
 ├── exception/
 │   ├── BadCredentialsAppException.java

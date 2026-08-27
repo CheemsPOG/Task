@@ -17,6 +17,11 @@ import org.springframework.stereotype.Component;
 /**
  * Seeds demo local users if missing (Step 1 auth foundation).
  *
+ * <p>Boot {@code ApplicationRunner}: inserts {@code demo}/{@code demo} ({@code customer_no=1}) and
+ * {@code demo2}/{@code demo2} ({@code customer_no=2}) into {@code m_app_user} (Flyway V7) when those
+ * usernames are absent. Passwords are BCrypt via {@link PasswordConfig}. This is NOT
+ * {@link com.task.chart.cache.ChartCacheWriter} (bar seed), NOT Peach SSO accounts, and NOT the widget.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -26,11 +31,12 @@ import org.springframework.stereotype.Component;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Component
 public class AppUserSeedRunner implements ApplicationRunner {
@@ -51,6 +57,11 @@ public class AppUserSeedRunner implements ApplicationRunner {
 		this.passwordEncoder = passwordEncoder;
 	}
 
+	/**
+	 * Inserts {@code demo} and {@code demo2} when those usernames are absent.
+	 *
+	 * @param args unused boot args
+	 */
 	@Override
 	public void run(ApplicationArguments args) {
 		seedIfMissing("demo", "demo", 1L);
@@ -58,6 +69,8 @@ public class AppUserSeedRunner implements ApplicationRunner {
 	}
 
 	private void seedIfMissing(String username, String rawPassword, long customerNo) {
+
+		// Idempotent: mentors re-run Java without wiping m_app_user.
 		if (appUserRepository.existsByUsername(username)) {
 			return;
 		}

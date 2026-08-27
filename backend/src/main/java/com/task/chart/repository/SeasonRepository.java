@@ -13,6 +13,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Season master access.
  *
+ * <p>Spring Data JPA for {@code m_season}. {@code ChartDataServiceImpl.currentSession} calls it
+ * so design doc 123 can pick summer vs winter session text. Callers pass now for both window
+ * bounds. It is not a holiday calendar and not the bar warehouse.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -22,14 +26,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 public interface SeasonRepository extends JpaRepository<Season, Long> {
 
+	/**
+	 * Seasons whose code is in {@code seasonCds} and whose window covers both instants.
+	 *
+	 * @param seasonCds daylight-saving and/or standard codes
+	 * @param startAt inclusive window start (typically now)
+	 * @param endAt inclusive window end (typically now)
+	 * @return matching rows, newest {@code start_at} first
+	 */
 	List<Season> findBySeasonCdInAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByStartAtDesc(
 			Collection<Integer> seasonCds,
 			Instant startAt,

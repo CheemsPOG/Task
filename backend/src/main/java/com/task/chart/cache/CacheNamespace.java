@@ -11,7 +11,10 @@ import java.time.ZoneOffset;
 import java.util.Locale;
 
 /**
- * Peach cache mapping from design doc 121 (chart_type → table → {@code cache_set_*}).
+ * Peach cache mapping from design doc 121 (chart_type → {@code t_chart_*} → {@code cache_set_*}).
+ *
+ * <p>Used by ingest, warehouse JDBC, and Redis keys. Never pass a request string
+ * as a table name — resolve TradingView resolution through this enum only.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -23,11 +26,12 @@ import java.util.Locale;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/26</td><td>Task</td><td>skipWeekend helper</td></tr>
+ *   <tr><td>1.3.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.3.0
  */
 public enum CacheNamespace {
 
@@ -57,6 +61,11 @@ public enum CacheNamespace {
 		this.tvResolution = tvResolution;
 	}
 
+	/**
+	 * Peach chart_type for this namespace.
+	 *
+	 * @return chart type such as {@code DAY}
+	 */
 	public String chartType() {
 		return chartType;
 	}
@@ -70,14 +79,29 @@ public enum CacheNamespace {
 		return tableName;
 	}
 
+	/**
+	 * Redis {@code cache_set_*} name used in {@link ChartCacheStore} keys.
+	 *
+	 * @return cache name such as {@code cache_set_day}
+	 */
 	public String cacheName() {
 		return cacheName;
 	}
 
+	/**
+	 * TradingView resolution string the widget sends on {@code GET /api/history}.
+	 *
+	 * @return resolution such as {@code 1D}
+	 */
 	public String tvResolution() {
 		return tvResolution;
 	}
 
+	/**
+	 * Bar period in milliseconds.
+	 *
+	 * @return period
+	 */
 	public long periodMillis() {
 		return ResolutionMapper.periodMillis(tvResolution);
 	}
@@ -89,12 +113,15 @@ public enum CacheNamespace {
 	 * @return true when this namespace should not write that open
 	 */
 	public boolean skipWeekend(long openMs) {
+
 		if (this != CACHE_SET_DAY && this != CACHE_SET_WEEK && this != CACHE_SET_MONTH) {
 			return false;
 		}
+
 		DayOfWeek day = Instant.ofEpochMilli(openMs)
 				.atZone(ZoneOffset.UTC)
 				.getDayOfWeek();
+
 		return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
 	}
 
@@ -105,15 +132,20 @@ public enum CacheNamespace {
 	 * @return namespace, or {@code null} if unsupported
 	 */
 	public static CacheNamespace fromTvResolution(String resolution) {
+
 		String chartType = ResolutionMapper.toPeachChartType(resolution);
+
 		if (chartType == null) {
 			return null;
 		}
+
 		for (CacheNamespace namespace : values()) {
+
 			if (namespace.chartType.equals(chartType)) {
 				return namespace;
 			}
 		}
+
 		return null;
 	}
 
@@ -124,15 +156,20 @@ public enum CacheNamespace {
 	 * @return namespace, or {@code null}
 	 */
 	public static CacheNamespace fromChartType(String chartType) {
+
 		if (chartType == null || chartType.isBlank()) {
 			return null;
 		}
+
 		String needle = chartType.trim().toUpperCase(Locale.ROOT);
+
 		for (CacheNamespace namespace : values()) {
+
 			if (namespace.chartType.equals(needle)) {
 				return namespace;
 			}
 		}
+
 		return null;
 	}
 }

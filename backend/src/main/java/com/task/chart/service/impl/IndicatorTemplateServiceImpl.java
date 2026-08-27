@@ -24,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Implementation of {@link IndicatorTemplateService}.
  *
+ * <p>Docs 132–135 on table {@code m_tv_indicator_template}, scoped by JWT {@code customer_no}.
+ * {@link com.task.chart.controller.IndicatorTemplateController} is the HTTP caller. Unique key is
+ * {@code (customer_no, name)}. This is NOT chart templates (136–139), NOT layouts, NOT Peach S-01,
+ * and NOT the widget localStorage studies.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -34,11 +39,12 @@ import org.springframework.transaction.annotation.Transactional;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Add upsert/get/delete for 133–135</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @Service
 public class IndicatorTemplateServiceImpl implements IndicatorTemplateService {
@@ -83,6 +89,8 @@ public class IndicatorTemplateServiceImpl implements IndicatorTemplateService {
 		Optional<TvIndicatorTemplate> found =
 				tvIndicatorTemplateRepository.findByCustomerNoAndName(customerNo, name);
 		TvIndicatorTemplate saved;
+
+		// Same name for this tenant updates content; otherwise insert.
 		if (found.isPresent()) {
 			TvIndicatorTemplate row = found.get();
 			row.applyContent(content, now);
@@ -140,6 +148,8 @@ public class IndicatorTemplateServiceImpl implements IndicatorTemplateService {
 
 	private long requireCustomerNo() {
 		Long customerNo = CustomerContext.get();
+
+		// Filter should have set tenant; missing context is a server bug, not 401.
 		if (customerNo == null) {
 			throw new ServerErrorException();
 		}

@@ -18,7 +18,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.stereotype.Component;
 
 /**
- * Demo Peach-feed stand-in: Gaussian BID walk, ASK = BID + spread, MID = (BID + ASK) / 2.
+ * Mock liquidity-provider (LP) tick generator.
+ *
+ * <p>Gaussian BID walk; ASK = BID + spread; MID = (BID + ASK) / 2. This is the
+ * <strong>only</strong> class to replace for a real Peach feed.
+ * {@link TickIngestWorker} still writes OHLC; {@link QuoteBus} still publishes
+ * {@code peach:quotes} and {@code peach:bars}; Python still only relays.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -29,11 +34,12 @@ import org.springframework.stereotype.Component;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/26</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.1.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.1.0
  */
 @Component
 public class DemoTickEngine {
@@ -57,7 +63,9 @@ public class DemoTickEngine {
 	 * Seeds in-memory quotes from the last 1S warehouse bar (or {@link DemoMarket} if empty).
 	 */
 	public void loadFromWarehouse() {
+
 		quotes.clear();
+
 		for (CurrencyPairDto pair : currencyPairService.list()) {
 			quotes.put(pair.curpairCd(), SimulatedQuote.fromPair(pair, lastOneSecondBar(pair)));
 		}
@@ -69,12 +77,15 @@ public class DemoTickEngine {
 	 * @return one message per catalog pair
 	 */
 	public List<FxQuoteMessage> stepAll() {
+
 		ensureLoaded();
 		List<FxQuoteMessage> messages = new ArrayList<>(quotes.size());
+
 		for (SimulatedQuote quote : quotes.values()) {
 			quote.step();
 			messages.add(quote.toMessage());
 		}
+
 		return messages;
 	}
 
@@ -84,32 +95,52 @@ public class DemoTickEngine {
 	 * @return one message per catalog pair
 	 */
 	public List<FxQuoteMessage> snapshot() {
+
 		ensureLoaded();
 		List<FxQuoteMessage> messages = new ArrayList<>(quotes.size());
+
 		for (SimulatedQuote quote : quotes.values()) {
 			messages.add(quote.toMessage());
 		}
+
 		return messages;
 	}
 
+	/**
+	 * Loads quotes if {@link #loadFromWarehouse()} has not run yet.
+	 */
 	private void ensureLoaded() {
+
 		if (quotes.isEmpty()) {
 			loadFromWarehouse();
 		}
 	}
 
+	/**
+	 * Last 1-second bar for a pair, or {@code null} when Redis/warehouse is empty.
+	 *
+	 * @param pair catalog row
+	 * @return last 1S bar, or {@code null}
+	 */
 	private CachedChartBar lastOneSecondBar(CurrencyPairDto pair) {
+
 		List<CachedChartBar> bars = chartCacheStore.query(
 				CacheNamespace.CACHE_SET_1S,
 				pair.curpairName(),
 				null,
 				null);
+
 		if (bars.isEmpty()) {
 			return null;
 		}
+
 		return bars.get(bars.size() - 1);
 	}
 
+	/**
+	 * In-memory BID walk for one catalog pair. Not a Peach LP; replace
+	 * {@link DemoTickEngine} rather than this nested type.
+	 */
 	static final class SimulatedQuote {
 
 		private final int curpairCd;
@@ -138,24 +169,52 @@ public class DemoTickEngine {
 			this.low = bid;
 		}
 
+		/**
+		 * Builds a quote from the catalog row and optional last 1S close.
+		 *
+		 * @param pair catalog row
+		 * @param lastBar last 1S bar, or {@code null}
+		 * @return new simulated quote
+		 */
 		static SimulatedQuote fromPair(CurrencyPairDto pair, CachedChartBar lastBar) {
+
 			boolean yenQuote = pair.curpairName().endsWith("JPY");
 			int scale = yenQuote ? 3 : 5;
 			BigDecimal spread = BigDecimal.valueOf(DemoMarket.fullSpread(pair.curpairName()))
 					.setScale(scale, RoundingMode.HALF_UP);
 			BigDecimal bid = startingBid(pair, lastBar, scale);
+
 			return new SimulatedQuote(pair.curpairCd(), scale, spread, maxStep(pair, yenQuote, scale), bid);
 		}
 
+		/**
+		 * Prefers the last 1S BID close so ingest continues the seeded series.
+		 *
+		 * @param pair catalog row
+		 * @param lastBar last 1S bar, or {@code null}
+		 * @param scale decimal places
+		 * @return starting BID
+		 */
 		private static BigDecimal startingBid(CurrencyPairDto pair, CachedChartBar lastBar, int scale) {
+
 			if (lastBar != null) {
 				return BigDecimal.valueOf(lastBar.bidClose()).setScale(scale, RoundingMode.HALF_UP);
 			}
+
 			return BigDecimal.valueOf(DemoMarket.seedBid(pair.curpairName()))
 					.setScale(scale, RoundingMode.HALF_UP);
 		}
 
+		/**
+		 * Per-pair max Gaussian step (yen pairs vs dollar pairs).
+		 *
+		 * @param pair catalog row
+		 * @param yenQuote true when the quote currency is JPY
+		 * @param scale decimal places
+		 * @return max step
+		 */
 		private static BigDecimal maxStep(CurrencyPairDto pair, boolean yenQuote, int scale) {
+
 			return switch (pair.curpairName()) {
 				case "USDJPY" -> bd("0.012", scale);
 				case "EURJPY" -> bd("0.014", scale);
@@ -166,22 +225,35 @@ public class DemoTickEngine {
 			};
 		}
 
+		/**
+		 * One Gaussian step on BID; ASK and MID follow; session high/low track extremes.
+		 */
 		void step() {
+
 			double gaussian = ThreadLocalRandom.current().nextGaussian();
 			BigDecimal delta = maxStep.multiply(BigDecimal.valueOf(gaussian / 3.0));
 			bid = bid.add(delta).setScale(scale, RoundingMode.HALF_UP);
+
 			if (bid.compareTo(BigDecimal.ZERO) <= 0) {
 				bid = maxStep;
 			}
+
 			applyAskFromBid();
+
 			if (ask.compareTo(high) > 0) {
 				high = ask;
 			}
+
 			if (bid.compareTo(low) < 0) {
 				low = bid;
 			}
 		}
 
+		/**
+		 * Builds the Redis/WS tick payload.
+		 *
+		 * @return quote message ({@code curpairCd} is a string)
+		 */
 		FxQuoteMessage toMessage() {
 			return new FxQuoteMessage(
 					String.valueOf(curpairCd),
@@ -193,14 +265,27 @@ public class DemoTickEngine {
 					low.doubleValue());
 		}
 
+		/**
+		 * ASK = BID + spread (one pip minimum); MID is the average.
+		 */
 		private void applyAskFromBid() {
+
 			ask = bid.add(spread).setScale(scale, RoundingMode.HALF_UP);
+
 			if (bid.compareTo(ask) >= 0) {
 				ask = bid.add(BigDecimal.ONE.movePointLeft(scale));
 			}
+
 			mid = bid.add(ask).divide(BigDecimal.TWO, scale, RoundingMode.HALF_UP);
 		}
 
+		/**
+		 * Parses a decimal string at the pair scale.
+		 *
+		 * @param value decimal text
+		 * @param scale decimal places
+		 * @return scaled value
+		 */
 		private static BigDecimal bd(String value, int scale) {
 			return new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP);
 		}

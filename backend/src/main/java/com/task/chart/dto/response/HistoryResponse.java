@@ -12,9 +12,11 @@ import java.util.List;
 /**
  * Historical bar payload for GET /api/history (design doc 121 + TradingView widget).
  *
- * <p>{@code bars} is the widget contract. {@code t}/{@code o}/{@code h}/{@code l}/{@code c} are
- * Peach-shaped parallel arrays (epoch <strong>seconds</strong> in {@code t}). {@code nextTime} is
- * set on {@code no_data} when a prior bar exists (unix seconds, Peach / UDF style).
+ * <p>{@code ChartDataServiceImpl} fills this from Redis {@code ChartCacheStore}. {@code bars} is
+ * the widget contract ({@code time} in milliseconds). {@code t}/{@code o}/{@code h}/{@code l}/{@code c}
+ * are Peach-shaped parallel arrays (epoch seconds in {@code t}). {@code nextTime} is set on
+ * {@code no_data} when a prior bar exists. It is not the live forming-bar bus
+ * ({@link FormingBarMessage}) and not a warehouse row.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -26,11 +28,12 @@ import java.util.List;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>nextTime + Peach columnar arrays</td></tr>
+ *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.1.1
  */
 @JsonInclude(Include.NON_NULL)
 public record HistoryResponse(
@@ -129,6 +132,8 @@ public record HistoryResponse(
 			List<Double> lows = new ArrayList<>(bars.size());
 			List<Double> closes = new ArrayList<>(bars.size());
 			for (BarDto bar : bars) {
+
+				// Widget bars use milliseconds; Peach columnar t is unix seconds.
 				times.add(bar.time() / 1000L);
 				opens.add(bar.open());
 				highs.add(bar.high());

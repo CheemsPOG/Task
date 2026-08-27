@@ -2,6 +2,18 @@
  * Copyright (c) 2023 Central Tanshi FX Co.,Ltd
  */
 
+/**
+ * TradingView IExternalSaveLoadAdapter backed by localStorage.
+ *
+ * NOT WIRED. main.ts does not pass save_load_adapter, so chart Save/Load
+ * never hits this class or the Java APIs for docs 127–139
+ * (/api/layouts, /api/indicator-templates, /api/chart-templates).
+ *
+ * When wiring: implement getAllCharts/saveChart/removeChart against those
+ * REST endpoints and pass `new ServerSaveLoadAdapter()` into the widget.
+ * Do not keep using localStorage if the requirement is Peach layouts.
+ */
+
 import type {
 	ChartData,
 	ChartMetaInfo,

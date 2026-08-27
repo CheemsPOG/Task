@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 /**
  * Creates and parses local demo JWTs (S-01 stand-in).
  *
+ * <p>HS256 access tokens: {@code sub} is username, claim {@code customer_no} is the tenant, lifetime
+ * 1h from {@code app.jwt}. {@link com.task.chart.service.impl.AuthServiceImpl} issues tokens;
+ * {@link JwtAuthenticationFilter} parses them. This is NOT Peach S-01 SSO, NOT the opaque refresh
+ * UUID in Redis, and NOT the Python WS.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -26,11 +31,12 @@ import org.springframework.stereotype.Service;
  *   <tr><th colspan="4">History</th></tr>
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
+ *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Service
 public class JwtService {
@@ -92,6 +98,8 @@ public class JwtService {
 				.getPayload();
 		String username = claims.getSubject();
 		Number customerNo = claims.get(CLAIM_CUSTOMER_NO, Number.class);
+
+		// Layouts/templates need both identity and tenant; a token with only sub is rejected.
 		if (username == null || username.isBlank() || customerNo == null) {
 			throw new JwtException("missing claims");
 		}
