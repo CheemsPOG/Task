@@ -505,11 +505,11 @@ Namespace cheat sheet (say “thirteen types, one enum”):
 | **138** | `GET /api/chart-templates/{name}` | `{ name, content }` |
 | **139** | `DELETE /api/chart-templates/{name}` | `{ "t": Instant.now() }` |
 
-**Show:** Swagger; encode spaces (`My%20Dark`).
+**Show:** Chart settings (gear) → **Template** — save/apply names from Postgres. Swagger fallback; encode spaces (`My%20Dark`).
 
 **Test:** `SystemOverviewDesign136Test` … `139Test`.
 
-**FE:** `ServerSaveLoadAdapter` chart-template methods (`JSON.stringify` / parse).
+**FE:** `ServerSaveLoadAdapter` + `chart_template_storage` in `main.ts` (`JSON.stringify` / parse).
 
 ---
 

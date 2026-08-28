@@ -5,9 +5,10 @@
 /**
  * TradingView IExternalSaveLoadAdapter backed by Java REST (docs 127–139).
  *
- * Widget Save/Load (header_saveload + study_templates) calls this class.
- * Layouts → /api/layouts. Study templates → /api/indicator-templates.
- * Chart style templates → /api/chart-templates. JWT customer_no is applied
+ * Widget Save/Load (header_saveload + study_templates +
+ * chart_template_storage) calls this class. Layouts → /api/layouts.
+ * Study templates → /api/indicator-templates. Chart style templates →
+ * /api/chart-templates. JWT customer_no is applied
  * on the server. Drawings live inside layout content; drawing-template and
  * line-tool APIs have no Peach tables so those methods stay empty stubs.
  */
@@ -25,7 +26,7 @@ import type {
 	StudyTemplateData,
 	StudyTemplateMetaInfo,
 } from 'charting_library';
-import { apiDelete, apiGet, apiPost, apiPut } from './api.ts';
+import { ApiHttpError, apiDelete, apiGet, apiPost, apiPut } from './api.ts';
 
 interface LayoutListItem {
 	id: number;
@@ -61,6 +62,10 @@ function templatePath(base: string, name: string): string {
 
 function drawingTemplateUnsupported(): Promise<never> {
 	return Promise.reject(new Error('Drawing templates are not stored on the server'));
+}
+
+function isNotFound(error: unknown): boolean {
+	return error instanceof ApiHttpError && error.status === 404;
 }
 
 export class ServerSaveLoadAdapter implements IExternalSaveLoadAdapter {
@@ -137,13 +142,22 @@ export class ServerSaveLoadAdapter implements IExternalSaveLoadAdapter {
 	}
 
 	async getChartTemplateContent(templateName: string): Promise<ChartTemplate> {
-		const template = await apiGet<NamedTemplateDetail>(
-			templatePath('/chart-templates', templateName)
-		);
 		try {
-			return { content: JSON.parse(template.content) as ChartTemplateContent };
-		} catch {
-			throw new Error('Chart template content is not valid JSON');
+			const template = await apiGet<NamedTemplateDetail>(
+				templatePath('/chart-templates', templateName)
+			);
+			try {
+				return { content: JSON.parse(template.content) as ChartTemplateContent };
+			} catch {
+				throw new Error('Chart template content is not valid JSON');
+			}
+		} catch (error) {
+			// Save-as calls this first; 404 means the name is new. Returning
+			// {} (no content) makes isThemeExist false so saveChartTemplate runs.
+			if (isNotFound(error)) {
+				return {};
+			}
+			throw error;
 		}
 	}
 

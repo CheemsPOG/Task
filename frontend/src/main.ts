@@ -15,7 +15,8 @@
  * Live BID/ASK/MID ticker is fx/quoteToolbar.ts → Python /ws/fx-quotes.
  *
  * Save/Load uses ServerSaveLoadAdapter (docs 127–139): layouts, study
- * templates, and chart templates persist in Postgres for the JWT customer.
+ * templates (`study_templates`), and chart style templates
+ * (`chart_template_storage`) persist in Postgres for the JWT customer.
  *
  * Vite proxies /api and /curpairs to Java :8080, /ws to Python :8081.
  */
@@ -68,6 +69,7 @@ function initChart(): void {
 			'custom_resolutions',
 			'allow_arbitrary_symbol_search_input',
 			'study_templates',
+			'chart_template_storage',
 		] as unknown as ChartingLibraryFeatureset[],
 		disabled_features: [
 			'use_localstorage_for_settings',

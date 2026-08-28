@@ -605,9 +605,9 @@ ORDER BY priority;
 | 134 | `GET /api/indicator-templates/{name}` | **Done** | 134Test | Apply named template |
 | 135 | `DELETE /api/indicator-templates/{name}` | **Done** | 135Test | Adapter wired |
 | 136 | `GET /api/chart-templates` | **Done** | 136Test | Chart settings Template |
-| 137 | `POST /api/chart-templates` | **Done** | 137Test | Adapter wired (`JSON.stringify`) |
-| 138 | `GET /api/chart-templates/{name}` | **Done** | 138Test | Adapter wired (`JSON.parse`) |
-| 139 | `DELETE /api/chart-templates/{name}` | **Done** | 139Test | Adapter wired |
+| 137 | `POST /api/chart-templates` | **Done** | 137Test | Chart settings Template save |
+| 138 | `GET /api/chart-templates/{name}` | **Done** | 138Test | Chart settings Template apply |
+| 139 | `DELETE /api/chart-templates/{name}` | **Done** | 139Test | Chart settings Template remove |
 | — | `GET /curpairs` + WS quotes | **Done (extra)** | CurrencyPairControllerTest | Not in MD; WS catalog still hardcoded |
 
 **Shared across 120–139:** local JWT (not Peach S-01); Flyway V1–V9; 422/404/500 error shapes; Postgres + Redis for bars.

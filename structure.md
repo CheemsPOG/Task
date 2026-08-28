@@ -171,11 +171,11 @@ Package: [`frontend/package.json`](frontend/package.json) — scripts `start`/`d
 | [`frontend/src/fx/fxQuotesSocket.ts`](frontend/src/fx/fxQuotesSocket.ts) | Python `/ws/fx-quotes` (~3 ticks/s from Java ingest) |
 | [`frontend/src/fx/quoteStore.ts`](frontend/src/fx/quoteStore.ts) | In-memory quotes keyed by numeric `curpairCd` |
 | [`frontend/src/fx/quoteToolbar.ts`](frontend/src/fx/quoteToolbar.ts) | Loads `GET /curpairs`, maps WS `curpairCd`, shows live BID/ASK/MID on the header |
-| [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) | **Done** — `ServerSaveLoadAdapter` → `/api/layouts`, `/api/indicator-templates`, `/api/chart-templates` (Postgres, JWT `customer_no`) |
+| [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) | **Done** — `ServerSaveLoadAdapter` → `/api/layouts`, `/api/indicator-templates`, `/api/chart-templates` (Postgres, JWT `customer_no`; `study_templates` + `chart_template_storage`) |
 | [`frontend/src/theme.ts`](frontend/src/theme.ts) | Light/dark overrides |
 | [`frontend/src/toolbar.ts`](frontend/src/toolbar.ts) | Theme + logout |
 
-Widget disabled features include `use_localstorage_for_settings` and `save_chart_properties_to_local_storage`. Chart **Save/Load** uses `ServerSaveLoadAdapter` (`main.ts` `save_load_adapter`) against docs 127–139 REST. Drawings persist inside layout `content`.
+Widget disabled features include `use_localstorage_for_settings` and `save_chart_properties_to_local_storage`. Chart **Save/Load** uses `ServerSaveLoadAdapter` (`main.ts` `save_load_adapter`) against docs 127–139 REST. Enable `study_templates` (Indicator Templates) and `chart_template_storage` (Chart settings → Template). Drawings persist inside layout `content`.
 
 Two pair encodings (easy to confuse):
 
@@ -817,7 +817,7 @@ TradingView **chart** templates (theme/layout preset), **not** the same as 127 l
 - Service [`ChartTemplateServiceImpl`](backend/src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java)
 - HTTP [`ChartTemplateController`](backend/src/main/java/com/task/chart/controller/ChartTemplateController.java)
 
-**FE:** `ServerSaveLoadAdapter` chart-template methods (`JSON.stringify` on save, parse on load). **Tests:** `SystemOverviewDesign136Test`–`139Test`.
+**FE:** `ServerSaveLoadAdapter` chart-template methods (`JSON.stringify` on save, parse on load); enable `chart_template_storage` in `main.ts` (Chart settings → Template). **Tests:** `SystemOverviewDesign136Test`–`139Test`.
 
 Spaces in `{name}`: URL-encode (`My%20Dark`).
 

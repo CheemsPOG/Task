@@ -2006,12 +2006,12 @@ Deleted name for customer `1` must be absent. If step “other customer” ran, 
 | 133 | `POST /api/indicator-templates` | Yes | 133Test | `{t}` wrapper; adapter open |
 | 134 | `GET /api/indicator-templates/{name}` | Yes | 134Test | Tenant 404 extra; adapter open |
 | 135 | `DELETE /api/indicator-templates/{name}` | Yes | 135Test | `{t}` wrapper; adapter open |
-| 136 | `GET /api/chart-templates` | Yes | 136Test | Sort name ASC; adapter open |
-| 137 | `POST /api/chart-templates` | Yes | 137Test | `{t}` wrapper; adapter open |
-| 138 | `GET /api/chart-templates/{name}` | Yes | 138Test | Tenant 404 extra; adapter open |
-| 139 | `DELETE /api/chart-templates/{name}` | Yes | 139Test | `{t}` wrapper; adapter open |
+| 136 | `GET /api/chart-templates` | Yes | 136Test | Sort name ASC; Chart settings Template |
+| 137 | `POST /api/chart-templates` | Yes | 137Test | `{t}` wrapper; save named style |
+| 138 | `GET /api/chart-templates/{name}` | Yes | 138Test | Tenant 404 extra; apply template |
+| 139 | `DELETE /api/chart-templates/{name}` | Yes | 139Test | `{t}` wrapper; remove from Template menu |
 
-**Frontend Save/Load:** [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) `ServerSaveLoadAdapter` calls `/api/layouts`, `/api/indicator-templates`, and `/api/chart-templates`. Widget header Save/Load is wired. Drawing-tool templates have no Peach table (stubs).
+**Frontend Save/Load:** [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) `ServerSaveLoadAdapter` calls `/api/layouts`, `/api/indicator-templates`, and `/api/chart-templates`. Widget header Save/Load, Indicator Templates (`study_templates`), and Chart settings → Template (`chart_template_storage`) are wired. Drawing-tool templates have no Peach table (stubs).
 
 ---
 
