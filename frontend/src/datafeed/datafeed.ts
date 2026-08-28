@@ -15,8 +15,9 @@
  * - getTimescaleMarks  GET /api/timescale_marks     (126)
  *
  * Live updates are not REST. subscribeBars hands off to streaming.ts, which
- * opens Python /ws/stream. History uses `bars[]` (time in ms). Columnar t[]
- * from the same JSON is unix seconds and is ignored here.
+ * opens Python /ws/stream. History JSON is doc 121 columnar (`s`, `t`, `o`,
+ * `h`, `l`, `c`, `nextTime`); this file zips those arrays into widget `Bar[]`
+ * (`time` in milliseconds).
  *
  * bid_ask on history follows quoteStore.mode (BID/ASK/MID toolbar).
  */
@@ -50,16 +51,13 @@ interface ServerTimeResponse {
 }
 
 interface HistoryResponse {
-	s?: string;
-	noData?: boolean;
-	bars?: Bar[];
-	nextTime?: number;
-	errmsg?: string;
+	s?: 'ok' | 'no_data';
 	t?: number[];
 	o?: number[];
 	h?: number[];
 	l?: number[];
 	c?: number[];
+	nextTime?: number;
 }
 
 
@@ -151,25 +149,35 @@ const Datafeed: IBasicDataFeed = {
 				bid_ask: bidAsk,
 			});
 
-			if (data.s !== 'ok' || data.noData || !data.bars?.length) {
-				// Doc 121 / UDF: nextTime is unix seconds; library bar times are ms.
-				const meta: { noData: true; nextTime?: number } = { noData: true };
-				if (typeof data.nextTime === 'number' && Number.isFinite(data.nextTime)) {
-					meta.nextTime = data.nextTime * 1000;
+			const times = data.t;
+			const opens = data.o;
+			const highs = data.h;
+			const lows = data.l;
+			const closes = data.c;
+			if (data.s === 'ok' && times && times.length > 0 && opens && highs && lows && closes) {
+				const bars: Bar[] = times.map((timestamp, index) => ({
+					time: timestamp * 1000,
+					open: opens[index],
+					high: highs[index],
+					low: lows[index],
+					close: closes[index],
+				}));
+				if (periodParams.firstDataRequest) {
+					lastBarsCache.set(
+						`${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`,
+						bars[bars.length - 1]
+					);
 				}
-				onHistoryCallback([], meta);
+				onHistoryCallback(bars, { noData: false });
 				return;
 			}
 
-			const bars = data.bars;
-			if (periodParams.firstDataRequest) {
-				lastBarsCache.set(
-					`${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`,
-					bars[bars.length - 1]
-				);
+			// Doc 121: nextTime is unix seconds; library bar times are ms.
+			const meta: { noData: true; nextTime?: number } = { noData: true };
+			if (typeof data.nextTime === 'number' && Number.isFinite(data.nextTime)) {
+				meta.nextTime = data.nextTime * 1000;
 			}
-
-			onHistoryCallback(bars, { noData: false });
+			onHistoryCallback([], meta);
 		} catch (error) {
 			console.error('[getBars]', error);
 			onErrorCallback(error instanceof Error ? error.message : String(error));

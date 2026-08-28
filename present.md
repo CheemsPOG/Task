@@ -9,7 +9,8 @@
 | [`structure.md`](structure.md) | Topology, JWT §6.1, warehouse map |
 | [`backend/src/main/java/README.md`](backend/src/main/java/README.md) | Class tree + layering |
 | [`checklist.md`](checklist.md) | Done vs Open vs intentional gap |
-| [`test.md`](test.md) | Postman/DBeaver per API |
+| [`test.md`](test.md) | Postman/DBeaver per API (same facts as **Part K**, more SQL) |
+| This file **Part K** (bottom) | Swagger Try it out for **120–139**: steps, expected JSON, MD match, DBeaver |
 | [`README.md`](README.md) | How to start the four processes |
 | [`System_Overview_Design/`](System_Overview_Design/) | English specs 120–139 (source of “what Peach asked”) |
 
@@ -572,7 +573,7 @@ Two encodings (say this once): chart uses `USDJPY`; quotes use `curpairCd` `"1"`
 
 **Test:** `OpenApiDocsTest`.
 
-**Honest:** Swagger does not exercise refresh cookies.
+**Honest:** Swagger does not exercise refresh cookies. Full Try-it-out script for **120–139** (expected JSON, MD gaps, DBeaver) is **Part K** at the bottom of this file.
 
 ## F.5 Health
 
@@ -724,3 +725,618 @@ Config flags for 120 are **yml**, not a table: `backend/src/main/resources/appli
 | Who is Python? | `ws-python/server.py` relay (`peach:quotes` + `peach:bars`) |
 | Who is tenant? | JWT `customer_no` → `CustomerContext` |
 | Who maps 120 flags? | `app.tradingview` → `ChartDataServiceImpl.config()` |
+
+---
+
+# Part K — Swagger lab: test docs 120–139
+
+**What this section is:** how a mentor (or you) proves **120–139** from the browser with **Try it out**, what JSON to expect, whether that JSON **matches the design MD**, and which **DBeaver** query to run when a table is involved.
+
+**Same facts as** [`test.md`](test.md). Use this file when you are already in Swagger; use `test.md` when you want Postman copy-paste.
+
+**Swagger cannot prove:** TradingView widget Save/Load (127–139 UI is still localStorage), Python `/ws/*`, or the HttpOnly refresh cookie (Authorize is access JWT only).
+
+---
+
+## K.0 Before Execute
+
+### K.0.1 Java must be up
+
+Docker Postgres + Redis, then:
+
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+Wait for `Started ChartBackendApplication`. Swagger is **on 8080**, not Vite 5173.
+
+### K.0.2 Open Swagger
+
+`http://127.0.0.1:8080/swagger-ui.html`
+
+Tags (top to bottom): **Auth** → **Datafeed (120–126)** → **Chart layouts (127–131)** → **Indicator templates (132–135)** → **Chart templates (136–139)** → **Currency pairs** (extra, not a 120–139 doc).
+
+### K.0.3 Get a token (do this first)
+
+1. Tag **Auth** → `POST /api/auth/login` → Try it out.
+2. Body:
+
+```json
+{ "username": "demo", "password": "demo" }
+```
+
+3. Execute. **Expect 200:**
+
+```json
+{
+  "accessToken": "eyJ...",
+  "tokenType": "Bearer",
+  "expiresIn": 3600,
+  "refreshExpiresIn": 86400
+}
+```
+
+4. Copy **`accessToken` only** (not `Bearer `).
+
+| User | Password | `customer_no` in JWT / DB |
+|------|----------|---------------------------|
+| `demo` | `demo` | `1` |
+| `demo2` | `demo2` | `2` (use for tenant 404) |
+
+**MD match:** login is **not** in 120–139. It is a **Stub** for Peach S-01.
+
+### K.0.4 Authorize
+
+Green **Authorize** (lock) at the top → paste the token → Authorize → Close.
+
+Every 120–139 Execute now sends `Authorization: Bearer <token>`.
+
+**Prove it:** Execute `GET /api/config` **before** Authorize → **401** `{ "errorCode": "E_UNAUTHORIZED", "message": "..." }`. After Authorize → **200**.
+
+### K.0.5 Legend (MD vs this demo)
+
+| Word | Meaning |
+|------|---------|
+| **Complete** | Required MD fields/status/table are implemented |
+| **Extra** | Extra JSON fields or behaviour the widget/demo needs; MD table does not list them |
+| **Partial** | Intentional difference from a strict MD line |
+| **Open** | REST works in Swagger; the **chart UI** does not call it |
+| **Stub** | Local JWT, not Peach S-01 |
+
+**Global (every 120–139 call):** auth is **Stub**. Japanese error *copy* does **not** match the Peach envelopes (`パラメータが不正です。` vs app `リクエストが不正です。`, etc.). Codes **do** match: `CODE:30020`, `CODE:30404`, `E_UNAUTHORIZED`, `E_SERVER`. 500 body has **no** `"status": 500` field.
+
+### K.0.6 DBeaver (when a table exists)
+
+| Field | Value |
+|-------|-------|
+| Host | `127.0.0.1` |
+| Port | `5432` |
+| Database | `chart` |
+| User | `chart` |
+| Password | `chart` |
+
+120 and 122 have **no** table.
+
+---
+
+## K.120 — `GET /api/config`
+
+**Swagger:** Datafeed → **120 Get datafeed configuration**. No params.
+
+**Execute.** **Expect 200:**
+
+```json
+{
+  "supports_search": true,
+  "supports_group_request": false,
+  "supports_marks": true,
+  "supports_timescale_marks": true,
+  "supports_time": true,
+  "supported_resolutions": ["1S", "1", "5", "15", "30", "60", "120", "240", "480", "1D", "1W", "1M"],
+  "exchanges": [{ "value": "CTFX", "name": "CTFX", "desc": "CTFX" }],
+  "symbols_types": [{ "name": "FOREX", "value": "FOREX" }]
+}
+```
+
+Check: four `supports_*` (except group) are `true`; resolutions length **12**; no `10` in the list.
+
+**MD match:** **Complete** on the required flags/exchanges/types/12 resolutions. **Extra:** `supports_group_request: false` (widget must use `/search`). **Stub:** JWT.
+
+**DBeaver:** none (yml `app.tradingview`).
+
+---
+
+## K.121 — `GET /api/history`
+
+**Swagger:** **121 Get bars**.
+
+| Param | Value to paste |
+|-------|----------------|
+| `symbol` | `USDJPY` |
+| `resolution` | `1D` |
+| `from` | unix seconds ~20 days ago (e.g. now minus `1728000`) |
+| `to` | unix seconds now |
+| `bid_ask` | `MID` |
+| `countBack` | leave empty or `300` (**Extra**) |
+
+**Execute.** **Expect 200** `"s": "ok"`; arrays `t`, `o`, `h`, `l`, `c` same length; `t[]` is **seconds** (10 digits). Also **Extra** `bars[]` with `time` in **milliseconds**.
+
+**No data in range:** set `from`/`to` far in the future empty window, or a Saturday-only window with no bars → `"s": "no_data"`, empty arrays, `nextTime` = prior bar unix seconds.
+
+**Bad `bid_ask`:** omit it or `FOO` → **422** `CODE:30020`.
+
+**Unknown symbol** `ETHUSD` → **200** `{ "s": "error", "errmsg": "unknown_symbol" }` (UDF, **not** 404).
+
+**MD match:** **Complete** on BID/ASK/MID columns, paired `from`/`to`, 13 warehouse tables, `no_data`+`nextTime`, columnar arrays. **Extra:** `bars[]`, `countBack`, `noData`/`errmsg`. **Partial:** unknown symbol is UDF error, not REST 404; data is **mock** (`MockBarGenerator` + ingest), not Peach LP. Slash `USD/JPY` is accepted.
+
+**DBeaver:**
+
+```sql
+SELECT COUNT(*) AS bar_count
+FROM t_chart_day
+WHERE curpair_cd = 'USDJPY';
+```
+
+Expect `bar_count > 0` after Java boot.
+
+```sql
+SELECT curpair_cd, chart_datetime, bid_close, ask_close, volume
+FROM t_chart_day
+WHERE curpair_cd = 'USDJPY'
+ORDER BY chart_datetime DESC
+LIMIT 5;
+```
+
+`chart_datetime` should match API `t[]` (seconds). MID close in JSON ≈ `(bid_close + ask_close) / 2`.
+
+---
+
+## K.122 — `GET /api/time`
+
+**Swagger:** **122 Get server time**. No params.
+
+**Execute.** **Expect 200:**
+
+```json
+{ "t": 172..., "serverTime": 172... }
+```
+
+`t === serverTime`; both unix **seconds** (less than `10000000000`); within a few seconds of wall clock.
+
+**MD match:** **Complete** on `t` as seconds. **Extra:** `serverTime` (frontend reads this). Original MD does not require auth; app still needs JWT (**Stub**).
+
+**DBeaver:** none.
+
+---
+
+## K.123 — `GET /api/symbols`
+
+**Swagger:** **123 Get symbol information**. `symbol=USDJPY`.
+
+**Execute.** **Expect 200:** `name=USDJPY`, `description=米ドル/円`, `pricescale=1000`, `timezone=Asia/Tokyo`, `exchange=CTFX`, `type=FOREX`, `minmov=1`, `has_intraday=true`, `has_seconds=true`, 12 `supported_resolutions`. Session is the **winter** string while seed `m_season.season_cd=2` covers 2020–2099: `0700-3100:2|0700-3100:345|0700-3040:6`.
+
+Also **Extra** library fields: `ticker=USD/JPY`, `listed_exchange`, multipliers, `data_status`, `provider_symbol`.
+
+`symbol=ETH` (too short) → **422**. `symbol=ETHUSD` (unknown) → **404** `CODE:30404`.
+
+**MD match:** **Complete** on master lookup, `pricescale=10^rate_unit`, session from season, required UDF fields. **Extra:** ticker/slash and library extras. **Partial:** table name `m_season` / `start_at` (not `M_SEASON` / `start_date`).
+
+**DBeaver:**
+
+```sql
+SELECT ccypair_cd, ccypair_jp, rate_unit, is_deleted
+FROM m_ccypairs
+WHERE ccypair_cd = 'USDJPY';
+```
+
+Expect `rate_unit=3`, `is_deleted=0`.
+
+```sql
+SELECT season_cd, start_at, end_at
+FROM m_season
+WHERE start_at <= NOW() AND end_at >= NOW();
+```
+
+Expect at least one row (`season_cd=2` on default seed).
+
+---
+
+## K.124 — `GET /api/search`
+
+**Swagger:** **124 Get symbol list**. Leave `query` empty (or `USD`); `limit` empty (default 100).
+
+**Execute.** **Expect 200** array of **5**, order by `priority`:
+
+| `symbol` | `description` |
+|----------|----------------|
+| USDJPY | 米ドル/円 |
+| EURJPY | ユーロ/円 |
+| EURUSD | ユーロ/米ドル |
+| GBPUSD | 英ポンド/米ドル |
+| AUDUSD | 豪ドル/米ドル |
+
+Each item also has `type=FOREX`, `exchange=CTFX`, plus **Extra** `ticker` / `full_name` (`USD/JPY`, …).
+
+`query=ABCDEFGHIJK` (11 chars) → **422**. `limit=0` → **422**.
+
+**MD match:** **Complete** on LIKE CD/JP, `is_deleted=0`, priority sort, query max 10, limit 1–100. **Extra:** `ticker`, `full_name`, optional `exchange`/`type` filters.
+
+**DBeaver:**
+
+```sql
+SELECT ccypair_cd, ccypair_jp, is_deleted, priority
+FROM m_ccypairs
+WHERE is_deleted = 0
+ORDER BY priority ASC;
+```
+
+Expect 5 rows in the same order as Swagger.
+
+---
+
+## K.125 — `GET /api/marks`
+
+**Swagger:** **125 Get marks list**.
+
+| Param | Value |
+|-------|--------|
+| `symbol` | `USDJPY` |
+| `resolution` | `1D` |
+| `from` | `1787011200` |
+| `to` | `1787270400` |
+
+**Execute.** **Expect 200**, length **3**:
+
+| id | time | color | label | text |
+|----|------|-------|-------|------|
+| m1 | 1787011200 | green | B | Buy signal |
+| m2 | 1787097600 | red | S | Sell signal |
+| m3 | 1787184000 | green | B | Buy signal follow-up |
+
+**Extra** on each: `labelFontColor`, `minSize`. `resolution=10` → **422**. Blank symbol → **422**. Unknown CD → **200** `[]` (**Partial** vs “length 6 always 422”).
+
+**MD match:** **Complete** on query (CD + resolution + time range) and required fields. **Extra:** font/size, seed row m3. **Partial:** invalid length only enforced when blank; column is `resolution` not `chart_type`.
+
+**DBeaver:**
+
+```sql
+SELECT id, ccypair_cd, resolution, mark_at, color, label, mark_text
+FROM m_tv_mark
+WHERE ccypair_cd = 'USDJPY' AND resolution = '1D'
+  AND mark_at BETWEEN 1787011200 AND 1787270400
+ORDER BY mark_at ASC;
+```
+
+Expect 3 rows.
+
+---
+
+## K.126 — `GET /api/timescale_marks`
+
+**Swagger:** **126 Get timescale marks list**. Same params as 125.
+
+**Execute.** **Expect 200**, length **3**: `tm1` / `tm2` / `tm3`. `tooltip` is an **array** e.g. `["Buy event"]` (MD allows string or array). **Extra:** `labelFontColor`.
+
+**MD match:** **Complete** on query and required fields. Tooltip-as-array is allowed for Advanced Charts.
+
+**DBeaver:**
+
+```sql
+SELECT id, ccypair_cd, resolution, timescale_mark_at, color, label, tooltip
+FROM m_tv_timescale_mark
+WHERE ccypair_cd = 'USDJPY' AND resolution = '1D'
+  AND timescale_mark_at BETWEEN 1787011200 AND 1787270400
+ORDER BY timescale_mark_at ASC;
+```
+
+Expect 3 rows.
+
+---
+
+## K.127 — `POST /api/layouts`
+
+**Swagger:** Chart layouts → **127 Register chart layout**. Body:
+
+```json
+{
+  "name": "My Daily Strategy",
+  "content": "{\"panes\":[{\"sources\":[]}]}",
+  "symbol": "USDJPY",
+  "resolution": "1D"
+}
+```
+
+**Execute.** **Expect 201** `{ "id": n }`. Note `n`. `ETHUSD` → **404**. `resolution=10` → **422**. Name 65 chars → **422**.
+
+**MD match:** **Complete** on body rules, pair check, insert `customer_no`/`ccypair_cd`/`chart_type`, return id. Status **201** is allowed (MD says 200/201). **Partial:** slash symbols accepted. **Open:** chart Save does **not** call this.
+
+**DBeaver** (use your `id`):
+
+```sql
+SELECT id, customer_no, name, content, ccypair_cd, chart_type, updated_at
+FROM m_tv_chart_layout
+WHERE id = :id;
+```
+
+Expect `customer_no=1`, `ccypair_cd=USDJPY`, `chart_type=1D`.
+
+---
+
+## K.128 — `PUT /api/layouts/{id}`
+
+**Swagger:** **128 Update chart layout**. Path `id` = id from 127. Body:
+
+```json
+{
+  "name": "Renamed",
+  "content": "{\"pane\":2}",
+  "symbol": "EURUSD",
+  "resolution": "60"
+}
+```
+
+**Execute.** **Expect 200** `{ "id": same }`. Path `abc` → **422**. `999999` → **404**. Authorize as `demo2` on demo’s id → **404**.
+
+**MD match:** **Complete** on numeric id, body, pair check, update name/symbol/resolution/`updated_at`. **Partial:** some Peach update-conditions say keep old `content`; **this app overwrites content** (needed for TV save). **Extra:** tenant 404. **Open:** widget.
+
+**DBeaver:** same SELECT as 127; expect `name=Renamed`, `ccypair_cd=EURUSD`, `chart_type=60`, newer `updated_at`.
+
+---
+
+## K.129 — `GET /api/layouts/{id}`
+
+**Swagger:** **129 Get chart layout**. Path id from 127.
+
+**Execute.** **Expect 200:**
+
+```json
+{
+  "id": 1,
+  "name": "Renamed",
+  "timestamp": 172...,
+  "content": "{\"pane\":2}"
+}
+```
+
+Must **not** include `symbol`, `resolution`, or `customer_no`. Non-numeric id → **422**. Missing/other tenant → **404**.
+
+**MD match:** **Complete** on DTO filter and 404. **Extra:** tenant check. **Open:** widget `getChartContent`.
+
+**DBeaver:**
+
+```sql
+SELECT id, name, content,
+       EXTRACT(EPOCH FROM updated_at)::bigint AS timestamp_unix
+FROM m_tv_chart_layout
+WHERE id = :id;
+```
+
+API `timestamp` ≈ `timestamp_unix`.
+
+---
+
+## K.130 — `GET /api/layouts`
+
+**Swagger:** **130 Get chart layout list**. No path id.
+
+**Execute.** **Expect 200** array, `updated_at DESC`, each item `{ id, name, resolution, symbol, timestamp }`, **no** `content`. Empty user → `[]`.
+
+**MD match:** **Complete**. **Open:** widget `getAllCharts`.
+
+**DBeaver:**
+
+```sql
+SELECT id, customer_no, name, ccypair_cd AS symbol, chart_type AS resolution,
+       EXTRACT(EPOCH FROM updated_at)::bigint AS timestamp
+FROM m_tv_chart_layout
+WHERE customer_no = 1
+ORDER BY updated_at DESC;
+```
+
+Same order as Swagger.
+
+---
+
+## K.131 — `DELETE /api/layouts/{id}`
+
+**Swagger:** **131 Delete chart layout**. Use an id you created in 127 (or POST another “ToDelete” first).
+
+**Execute.** **Expect 200** `{ "t": <unix seconds now> }`. Then GET same id → **404**. Path `abc` → **422**. demo2 deleting demo’s row → **404** and the row **stays**.
+
+**MD match:** **Complete** on hard delete and `{ t }`. **Open:** widget. **Extra:** JSON wrapper `{ t }` (not a bare number).
+
+**DBeaver:**
+
+```sql
+SELECT COUNT(*) FROM m_tv_chart_layout WHERE id = :id;
+```
+
+Expect `1` before delete, `0` after.
+
+---
+
+## K.132 — `GET /api/indicator-templates`
+
+**Swagger:** Indicator templates → **132 Get indicator template list**.
+
+**Execute** as `demo` on a fresh DB → **200** `[]`. After 133 below → names only, **name ASC**, no `content`.
+
+**MD match:** **Complete** on tenant + names only + empty `[].` Sort is **name ASC** (MD did not specify). **Open:** widget study templates.
+
+**DBeaver:**
+
+```sql
+SELECT customer_no, name, content, updated_at
+FROM m_tv_indicator_template
+WHERE customer_no = 1
+ORDER BY name ASC;
+```
+
+`content` is in DB only.
+
+---
+
+## K.133 — `POST /api/indicator-templates`
+
+**Swagger:** **133 Register or update indicator template**. Body:
+
+```json
+{
+  "name": "Triple EMA Crossover",
+  "content": "{\"studies\":[{\"name\":\"EMA\"}]}"
+}
+```
+
+**Execute twice** (wait 1s). **Expect 200** both times `{ "t": unix }` from row `updated_at`. Second call updates content only; list still has **one** name. Blank name / 65-char name / empty content → **422**.
+
+**MD match:** **Complete** on upsert by `(customer_no, name)` and `{ t }`. **Extra:** always **200** (MD allows 201 on first insert). **Open:** widget.
+
+**DBeaver:**
+
+```sql
+SELECT id, customer_no, name, content,
+       EXTRACT(EPOCH FROM updated_at)::bigint AS t
+FROM m_tv_indicator_template
+WHERE customer_no = 1 AND name = 'Triple EMA Crossover';
+```
+
+One row; `t` ≈ API `t`.
+
+---
+
+## K.134 — `GET /api/indicator-templates/{name}`
+
+**Swagger:** **134 Get indicator template**. Path `name` = `Triple EMA Crossover` (Swagger encodes spaces).
+
+**Execute.** **Expect 200:**
+
+```json
+{
+  "name": "Triple EMA Crossover",
+  "content": "{\"studies\":[{\"name\":\"EMA\"}]}"
+}
+```
+
+Unknown name → **404**. Name longer than 64 → **422**.
+
+**MD match:** **Complete**. **Open:** widget.
+
+**DBeaver:** same SELECT as 133; API `content` = DB `content`.
+
+---
+
+## K.135 — `DELETE /api/indicator-templates/{name}`
+
+**Swagger:** **135 Delete indicator template**. Same path name.
+
+**Execute.** **Expect 200** `{ "t": now }`. GET again → **404**. Missing name → **404**.
+
+**MD match:** **Complete** hard delete + `{ t }`. **Open:** widget.
+
+**DBeaver:** `COUNT(*)` for that name: `1` then `0`.
+
+---
+
+## K.136 — `GET /api/chart-templates`
+
+**Swagger:** Chart templates → **136 Get chart template list**.
+
+Same shape as 132: `[{ "name": "..." }]` or `[]`, **name ASC**, tenant `customer_no`. Table is **plural** `m_tv_chart_templates` (as spec).
+
+**MD match:** **Complete**. **Open:** widget chart-template Save/Load.
+
+**DBeaver:**
+
+```sql
+SELECT customer_no, name, content, updated_at
+FROM m_tv_chart_templates
+WHERE customer_no = 1
+ORDER BY name ASC;
+```
+
+---
+
+## K.137 — `POST /api/chart-templates`
+
+**Swagger:** **137 Register or update chart template**. Body:
+
+```json
+{
+  "name": "Dark Neon Theme",
+  "content": "{\"chartproperties\":{\"paneProperties\":{\"background\":\"#131722\"}}}"
+}
+```
+
+**Execute.** **Expect 200** `{ "t": unix }`. Upsert same as 133. Validation 422 same rules.
+
+**MD match:** **Complete** upsert + `{ t }`. Always **200**. **Open:** widget.
+
+**DBeaver:**
+
+```sql
+SELECT id, customer_no, name, content,
+       EXTRACT(EPOCH FROM updated_at)::bigint AS t
+FROM m_tv_chart_templates
+WHERE customer_no = 1 AND name = 'Dark Neon Theme';
+```
+
+---
+
+## K.138 — `GET /api/chart-templates/{name}`
+
+**Swagger:** **138 Get chart template**. Path `Dark Neon Theme`.
+
+**Expect 200** `{ "name", "content" }`. Missing → **404**. Name > 64 → **422**.
+
+**MD match:** **Complete**. **Open:** widget.
+
+**DBeaver:** same SELECT as 137.
+
+---
+
+## K.139 — `DELETE /api/chart-templates/{name}`
+
+**Swagger:** **139 Delete chart template**.
+
+**Expect 200** `{ "t": now }`. GET → **404**.
+
+**MD match:** **Complete**. **Open:** widget.
+
+**DBeaver:** `COUNT(*)` 1 then 0 for that name.
+
+---
+
+## K.140 Suggested Execute order in the room
+
+1. Login + Authorize (`demo`).
+2. 120 config → 122 time → 123 USDJPY → 124 search → 121 history MID.
+3. 125 / 126 with seed window `1787011200`–`1787270400`.
+4. 127 POST → note `id` → 130 list → 129 GET → 128 PUT → 129 GET again → 131 DELETE.
+5. 133 POST → 132 list → 134 GET → 135 DELETE.
+6. 137 POST → 136 list → 138 GET → 139 DELETE.
+7. Login as `demo2`, Authorize, GET a `demo` layout id → **404**.
+
+Say once: **127–139 REST is Complete; the chart Save/Load UI is Open.**
+
+---
+
+## K.141 One-page MD match (Swagger body)
+
+| Doc | REST vs MD | Why not 100% if not |
+|-----|------------|---------------------|
+| 120 | Complete + Extra | Extra `supports_group_request` |
+| 121 | Complete + Extra + Partial | Extra `bars[]` / `countBack`; UDF error not 404; mock bars |
+| 122 | Complete + Extra | Extra `serverTime`; JWT required |
+| 123 | Complete + Extra | Extra ticker / library fields |
+| 124 | Complete + Extra | Extra `ticker` / `full_name` |
+| 125 | Complete + Extra + Partial | Extra mark fields; bad CD → `[]`; extra seed m3 |
+| 126 | Complete + Extra | Tooltip array; extra font color |
+| 127 | Complete + Partial + Open | 201; slash symbol; UI not wired |
+| 128 | Complete + Partial + Open | Overwrites `content`; tenant 404 |
+| 129–131 | Complete + Open | UI not wired; 131 `{ t }` wrapper |
+| 132–135 | Complete + Open | UI not wired; 133 always 200 |
+| 136–139 | Complete + Open | UI not wired; table name plural as spec |
+
+**Never Complete:** Peach S-01 (all **Stub**). Error Japanese sentences (**Partial** copy, codes Complete).
+

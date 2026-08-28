@@ -15,7 +15,7 @@
 | 1 | §0 Glossary | Terms used everywhere (S-01, UDF, SSOT, `customer_no`, …) |
 | 2 | §1–3 | What the app is + how to start it + 5‑minute smoke test |
 | 3 | §6 + **§6.1** | Auth model and **refresh-token verification** (curl, browser, tests) |
-| 4 | §9–10 | Bar warehouse + **ingest SSOT** + Python as Redis listener |
+| 4 | §8–10 | **DB tables ↔ MD** (§8) + bar warehouse/ingest (§9) + Python WS (§10) |
 | 5 | §13 | Map each design doc to controller/service/test |
 | 6 | [`present.md`](present.md) | Spoken mentor script (same facts, deeper walkthrough) |
 | 7 | [`checklist.md`](checklist.md) | Intentional gaps vs the markdown specs |
@@ -444,27 +444,159 @@ Peach datetime fields that the docs call “update datetime” / “system datet
 
 ## 8. Database and Flyway
 
-On first Java start against empty Postgres, Flyway applies V1→current and records versions in `flyway_schema_history`. Do **not** edit an already-applied `V*` file; add `V10__…`. Hibernate will not create tables.
+On first Java start against empty Postgres, Flyway applies V1→current and records versions in `flyway_schema_history`. Do **not** edit an already-applied `V*` file; add `V10__…`. Hibernate will not create tables (`spring.jpa.hibernate.ddl-auto: none`).
 
-| Version | File | Tables / seed | Used by |
-|---------|------|---------------|---------|
-| V1 | `V1__create_m_ccypairs.sql` | `m_ccypairs` — USDJPY, EURJPY, EURUSD, GBPUSD, AUDUSD | 123, 124, symbol catalog, 121 warehouse keys |
-| V2 | `V2__create_m_season.sql` | `m_season` — one Standard season covering now (`season_cd=2`) | 123 session |
-| V3 | `V3__create_m_tv_mark.sql` | `m_tv_mark` — 3 USDJPY 1D pins | 125 |
-| V4 | `V4__create_m_tv_timescale_mark.sql` | `m_tv_timescale_mark` — 3 USDJPY 1D labels | 126 |
-| V5 | `V5__create_m_tv_chart_layout.sql` | `m_tv_chart_layout` | 127–131 |
-| V6 | `V6__create_m_tv_indicator_template.sql` | `m_tv_indicator_template` unique `(customer_no, name)` | 132–135 |
-| V7 | `V7__create_m_app_user.sql` | `m_app_user` unique `username` | login |
-| V8 | `V8__create_t_chart_tables.sql` | 13 `t_chart_*` warehouse tables | 121 |
-| V9 | `V9__create_m_tv_chart_templates.sql` | `m_tv_chart_templates` unique `(customer_no, name)` | 136–139 |
+**Where DDL lives:** [`backend/src/main/resources/db/migration/V1__…` through `V9__…`](backend/src/main/resources/db/migration/). JPA entities in [`backend/src/main/java/com/task/chart/entity/`](backend/src/main/java/com/task/chart/entity/) mirror the `m_*` masters. The 13 bar warehouse tables are accessed via **JdbcTemplate** ([`ChartBarRepository`](backend/src/main/java/com/task/chart/cache/ChartBarRepository.java)), not JPA.
 
-Mark seed window (unix UTC): `1787011200`–`1787270400` (2026-08-18 … 2026-08-21). Constant: `MarkSeedWindow`. Use that range in Postman for 125/126 or you get empty lists.
+**Schema note:** Peach specs say schema `plum_info` / `plum`; this demo uses Postgres database `chart`, default schema `public`. Table and column names follow the English design docs unless noted below.
 
-**Docker stop without `-v` does not wipe Postgres.** Redis without a volume is empty after compose down; Java reseeds Redis (and **replaces** warehouse rows for each pair) on every boot.
+### 8.1 Flyway index (file → table → design doc)
 
-DBeaver: host `127.0.0.1`, port `5432`, database `chart`, user `chart`, password `chart`.
+| Version | File | Table(s) | MD doc(s) | MD table caption (Peach) |
+|---------|------|----------|-----------|---------------------------|
+| V1 | `V1__create_m_ccypairs.sql` | `m_ccypairs` | **123**, **124**, **127** (pair check) | Currency pair master |
+| V2 | `V2__create_m_season.sql` | `m_season` | **123** | Season master (`M_SEASON` in MD) |
+| V3 | `V3__create_m_tv_mark.sql` | `m_tv_mark` | **125** | TV mark master |
+| V4 | `V4__create_m_tv_timescale_mark.sql` | `m_tv_timescale_mark` | **126** | TV timescale mark master |
+| V5 | `V5__create_m_tv_chart_layout.sql` | `m_tv_chart_layout` | **127–131** | TV chart layout master |
+| V6 | `V6__create_m_tv_indicator_template.sql` | `m_tv_indicator_template` | **132–135** | TV indicator template master |
+| V7 | `V7__create_m_app_user.sql` | `m_app_user` | *(demo only — not in 120–139)* | Local JWT login stand-in for S-01 |
+| V8 | `V8__create_t_chart_tables.sql` | 13× `t_chart_*` | **121** | 1-second … monthly bar tables |
+| V9 | `V9__create_m_tv_chart_templates.sql` | `m_tv_chart_templates` | **136–139** | TV chart template master (plural name in MD) |
 
-Tests: [`FlywayMigrationTest`](backend/src/test/java/com/task/chart/FlywayMigrationTest.java) asserts V1–V9 objects and demo BCrypt hashes.
+**Docs with no Postgres table:** **120** (datafeed flags from `application.yml`), **122** (server clock only). Everything else in 120–139 reads or writes at least one row above (121 via Redis first, then warehouse).
+
+### 8.2 Master tables — columns and MD mapping
+
+#### `m_ccypairs` (V1) — docs **123**, **124**, catalog for **121**
+
+| Column | Type | MD / API meaning |
+|--------|------|------------------|
+| `ccypair_cd` PK | `VARCHAR(6)` | Currency pair CD; query `symbol` on 123/124/125/126 |
+| `ccypair_jp` | `VARCHAR(64)` | Japanese description → symbol `description` (123) |
+| `rate_unit` | `INTEGER` | Decimal places → `pricescale` = 10^rate_unit (123) |
+| `is_deleted` | `INTEGER` | `0` = active; non-zero excluded (123/124/127) |
+| `priority` | `INTEGER` | Sort order for search (124); also `GET /curpairs` |
+
+Seed: USDJPY, EURJPY, EURUSD, GBPUSD, AUDUSD.
+
+#### `m_season` (V2) — doc **123** session strings
+
+| Column | Type | MD / API meaning |
+|--------|------|------------------|
+| `id` PK | identity | Surrogate key |
+| `season_cd` | `INTEGER` | `1` = summer session, `2` = winter (MD `M_SEASON`) |
+| `start_at` / `end_at` | `TIMESTAMPTZ` | Row valid for “now” → pick `session` on symbol info |
+
+Seed: one winter row (`season_cd=2`) covering 2020–2099. No row for current time → **500** on `/api/symbols`.
+
+#### `m_tv_mark` (V3) — doc **125**
+
+| Column | Type | MD / API meaning |
+|--------|------|------------------|
+| `id` PK | `VARCHAR(32)` | Mark ID → response `id` |
+| `ccypair_cd` | `VARCHAR(6)` | Currency pair CD → query `symbol` |
+| `resolution` | `VARCHAR(8)` | Chart type / TV resolution (`1D`, `60`, …); MD prose says “chart type”, query param is `resolution` |
+| `mark_at` | `BIGINT` | Mark datetime (unix **seconds**) → response `time` |
+| `color` | `VARCHAR(32)` | Mark color |
+| `label` | `VARCHAR(8)` | Mark label (e.g. B/S) |
+| `mark_text` | `VARCHAR(256)` | Description → response `text` |
+
+No `customer_no` — marks are **global demo seeds** (3 rows USDJPY 1D). Filter window: `1787011200`–`1787270400` UTC ([`MarkSeedWindow`](backend/src/main/java/com/task/chart/constants/MarkSeedWindow.java)).
+
+#### `m_tv_timescale_mark` (V4) — doc **126**
+
+Same pair + `resolution` filter as 125. Datetime column is `timescale_mark_at` → response `time`. `tooltip` → response `tooltip` (array in the widget).
+
+#### `m_tv_chart_layout` (V5) — docs **127–131**
+
+| Column | Type | MD register/update | REST / DTO |
+|--------|------|--------------------|------------|
+| `id` PK | identity | Chart layout ID | Response `{ "id" }` on POST; path `{id}` on GET/PUT/DELETE |
+| `customer_no` | `BIGINT` | Token customer NO | Tenant scope; `demo`→1, `demo2`→2 |
+| `name` | `VARCHAR(64)` | Body `name` | List/detail `name` |
+| `content` | `TEXT` | Body `content` | Widget layout JSON |
+| `ccypair_cd` | `VARCHAR(6)` | Body `symbol` | DTO `symbol` |
+| `chart_type` | `VARCHAR(8)` | Body **`resolution`** (TV string) | DTO **`resolution`** — DB column name is Peach `chart_type`, value is still `1D`/`60`, not `DAY`/`60M` |
+| `updated_at` | `TIMESTAMPTZ` | Auto on write | List/detail `timestamp` (unix seconds) |
+
+#### `m_tv_indicator_template` (V6) — docs **132–135**
+
+| Column | Type | MD meaning |
+|--------|------|------------|
+| `customer_no` | `BIGINT` | Token customer |
+| `name` | `VARCHAR(64)` | Template name; unique per customer |
+| `content` | `TEXT` | Study template JSON; upsert updates **content only** on duplicate name |
+| `updated_at` | `TIMESTAMPTZ` | Update datetime → `{ "t": … }` on POST |
+
+Unique: `(customer_no, name)`.
+
+#### `m_tv_chart_templates` (V9) — docs **136–139**
+
+Same shape as indicator templates: `customer_no`, `name`, `content`, `updated_at`, unique `(customer_no, name)`. TradingView **chart** theme templates (not 127 layouts, not 132 studies). MD table name is **plural** `m_tv_chart_templates`.
+
+#### `m_app_user` (V7) — **not in Peach 120–139**
+
+| Column | Purpose |
+|--------|---------|
+| `username` / `password_hash` | Demo login (`demo`/`demo`, `demo2`/`demo2`) |
+| `customer_no` | Embedded in JWT for layout/template tenancy |
+
+Rows seeded at boot by [`AppUserSeedRunner`](backend/src/main/java/com/task/chart/config/AppUserSeedRunner.java). Production Peach would use S-01 instead.
+
+### 8.3 Bar warehouse — `t_chart_*` (V8) — doc **121**
+
+Peach lists 13 bar tables (1S through month). Each has the **same column layout**:
+
+| Column | Meaning |
+|--------|---------|
+| `curpair_cd` | Currency pair CD (part of PK) |
+| `chart_datetime` | Candle open time, unix **seconds** (part of PK) |
+| `bid_open` … `bid_close` | BID OHLC |
+| `ask_open` … `ask_close` | ASK OHLC |
+| `volume` | Volume (demo mock) |
+
+MID OHLC is **not stored**; [`ChartDataServiceImpl`](backend/src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java) averages bid/ask at read time when `bid_ask=MID`.
+
+| DB table | MD caption | TV `resolution` | Peach `chart_type` | Redis cache (hot read) |
+|----------|------------|-----------------|--------------------|-------------------------|
+| `t_chart_1` | 1-second bar | `1S` | `1S` | `peach:cache_set_1s:{CD}` |
+| `t_chart_60` | 1-minute bar | `1` | `1M` | `peach:cache_set_1m:{CD}` |
+| `t_chart_300` | 5-minute bar | `5` | `5M` | `peach:cache_set_5m:{CD}` |
+| `t_chart_600` | 10-minute bar | `10` | `10M` | `peach:cache_set_10m:{CD}` |
+| `t_chart_900` | 15-minute bar | `15` | `15M` | `peach:cache_set_15m:{CD}` |
+| `t_chart_1800` | 30-minute bar | `30` | `30M` | `peach:cache_set_30m:{CD}` |
+| `t_chart_3600` | 1-hour bar | `60` | `60M` | `peach:cache_set_60m:{CD}` |
+| `t_chart_7200` | 2-hour bar | `120` | `120M` | `peach:cache_set_120m:{CD}` |
+| `t_chart_14400` | 4-hour bar | `240` | `240M` | `peach:cache_set_240m:{CD}` |
+| `t_chart_28800` | 8-hour bar | `480` | `480M` | `peach:cache_set_480m:{CD}` |
+| `t_chart_day` | Daily bar | `1D` | `DAY` | `peach:cache_set_day:{CD}` |
+| `t_chart_week` | Weekly bar | `1W` | `WEEK` | `peach:cache_set_week:{CD}` |
+| `t_chart_month` | Monthly bar | `1M` | `MONTH` | `peach:cache_set_month:{CD}` |
+
+**Runtime:** [`ChartCacheWriter`](backend/src/main/java/com/task/chart/cache/ChartCacheWriter.java) **DELETE+INSERT** demo bars for each catalog pair on every Java boot. [`TickIngestWorker`](backend/src/main/java/com/task/chart/cache/TickIngestWorker.java) upserts the **forming** open bar into warehouse + Redis. `GET /api/history` reads **Redis first** ([`ChartCacheStore`](backend/src/main/java/com/task/chart/cache/ChartCacheStore.java)); warehouse is warm storage.
+
+### 8.4 Naming quirks (MD vs this repo)
+
+| Topic | MD says | This repo |
+|-------|---------|-----------|
+| Season table | `M_SEASON` | `m_season` (Postgres lowercase) |
+| Layout interval | Body `resolution` | Column `chart_type` (stores TV strings) |
+| Mark / timescale interval | Prose “chart type” | Column **`resolution`** (no Peach `DAY`/`60M` codes) |
+| Chart templates table | `m_tv_chart_templates` (plural) | Matches V9 |
+| History response | Columnar `t,o,h,l,c` | Implemented; widget rebuilds bars in `datafeed.ts` |
+
+### 8.5 Ops and verification
+
+Mark seed window (unix UTC): `1787011200`–`1787270400` (2026-08-18 … 2026-08-21). Use that range in Postman/Swagger for **125/126** or responses are empty `[]`.
+
+**Docker stop without `-v` does not wipe Postgres.** Redis has **no** volume; cache is rebuilt on Java boot.
+
+**DBeaver:** host `127.0.0.1`, port `5432`, database `chart`, user `chart`, password `chart`.
+
+**Tests:** [`FlywayMigrationTest`](backend/src/test/java/com/task/chart/FlywayMigrationTest.java) asserts V1–V9 objects exist. Per-doc SQL examples: [`present.md`](present.md) Part K, [`test.md`](test.md).
+
+**Entity map:** `m_ccypairs`→`Ccypair`, `m_season`→`Season`, `m_tv_mark`→`TvMark`, `m_tv_timescale_mark`→`TvTimescaleMark`, `m_tv_chart_layout`→`TvChartLayout`, `m_tv_indicator_template`→`TvIndicatorTemplate`, `m_tv_chart_templates`→`TvChartTemplate`, `m_app_user`→`AppUser`.
 
 ---
 

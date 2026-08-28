@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Historical bar payload for GET /api/history (design doc 121 + TradingView widget).
+ * Historical bar payload for GET /api/history (design doc 121).
  *
- * <p>{@code ChartDataServiceImpl} fills this from Redis {@code ChartCacheStore}. {@code bars} is
- * the widget contract ({@code time} in milliseconds). {@code t}/{@code o}/{@code h}/{@code l}/{@code c}
- * are Peach-shaped parallel arrays (epoch seconds in {@code t}). {@code nextTime} is set on
- * {@code no_data} when a prior bar exists. It is not the live forming-bar bus
+ * <p>{@code ChartDataServiceImpl} fills this from Redis {@code ChartCacheStore}. The JSON body
+ * is Peach columnar arrays only: {@code s}, {@code t}, {@code o}, {@code h}, {@code l}, {@code c},
+ * and {@code nextTime} on {@code no_data}. {@code t} is unix seconds. Widget {@code Bar[]} objects
+ * are reconstructed in the frontend datafeed. It is not the live forming-bar bus
  * ({@link FormingBarMessage}) and not a warehouse row.
  *
  * <br><br>
@@ -29,44 +29,39 @@ import java.util.List;
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>nextTime + Peach columnar arrays</td></tr>
  *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/27</td><td>Task</td><td>Doc 121 fields only (drop bars/noData/errmsg)</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.1
+ * @version 1.2.0
  */
 @JsonInclude(Include.NON_NULL)
 public record HistoryResponse(
 		String s,
-		List<BarDto> bars,
-		boolean noData,
-		String errmsg,
-		Long nextTime,
 		List<Long> t,
 		List<Double> o,
 		List<Double> h,
 		List<Double> l,
-		List<Double> c) {
+		List<Double> c,
+		Long nextTime) {
 
 	/**
-	 * Success payload with widget bars and Peach columnar mirrors.
+	 * Success payload with Peach columnar arrays ({@code t} in unix seconds).
 	 *
-	 * @param bars OHLCV bars ({@code time} in milliseconds)
+	 * @param bars internal OHLCV bars ({@code time} in milliseconds)
 	 * @return response
 	 */
 	public static HistoryResponse ok(List<BarDto> bars) {
 		Columnar columnar = Columnar.fromBars(bars);
 		return new HistoryResponse(
 				"ok",
-				bars,
-				false,
-				null,
-				null,
 				columnar.t(),
 				columnar.o(),
 				columnar.h(),
 				columnar.l(),
-				columnar.c());
+				columnar.c(),
+				null);
 	}
 
 	/**
@@ -79,14 +74,11 @@ public record HistoryResponse(
 		return new HistoryResponse(
 				"no_data",
 				List.of(),
-				true,
-				null,
-				nextTimeSeconds,
 				List.of(),
 				List.of(),
 				List.of(),
 				List.of(),
-				List.of());
+				nextTimeSeconds);
 	}
 
 	/**
@@ -96,26 +88,6 @@ public record HistoryResponse(
 	 */
 	public static HistoryResponse empty() {
 		return empty(null);
-	}
-
-	/**
-	 * UDF-style error (unknown symbol / bad resolution for generator).
-	 *
-	 * @param message short reason
-	 * @return response
-	 */
-	public static HistoryResponse error(String message) {
-		return new HistoryResponse(
-				"error",
-				List.of(),
-				true,
-				message,
-				null,
-				List.of(),
-				List.of(),
-				List.of(),
-				List.of(),
-				List.of());
 	}
 
 	private record Columnar(

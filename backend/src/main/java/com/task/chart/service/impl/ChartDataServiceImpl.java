@@ -419,12 +419,12 @@ public class ChartDataServiceImpl implements ChartDataService {
 			PriceComponent price) {
 		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		if (symbol == null) {
-			return HistoryResponse.error("unknown_symbol");
+			throw new ValidationException();
 		}
 
 		CacheNamespace namespace = CacheNamespace.fromTvResolution(resolution);
 		if (namespace == null) {
-			return HistoryResponse.error("Unsupported resolution: " + resolution);
+			throw new ValidationException();
 		}
 
 		PriceComponent component = price == null ? PriceComponent.MID : price;

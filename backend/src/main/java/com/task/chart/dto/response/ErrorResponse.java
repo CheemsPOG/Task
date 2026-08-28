@@ -9,8 +9,8 @@ package com.task.chart.dto.response;
  *
  * <p>{@code GlobalExceptionHandler} returns this JSON for validation, not-found, unauthorized,
  * and server errors ({@code CODE:30020}, {@code CODE:30404}, {@code E_*}).
- * {@code LocalizedMessageService} fills {@code message} from EN/JA properties. It is not the
- * TradingView history error shape ({@link HistoryResponse} with {@code s=error}).
+ * {@code LocalizedMessageService} fills {@code message} from EN/JA properties. History validation
+ * failures (design doc 121) use this envelope with HTTP 422, not a history-shaped body.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

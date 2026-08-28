@@ -215,7 +215,7 @@ public class ChartDataController {
 	}
 
 	/**
-	 * Design doc 121 — historical OHLCV bars from {@code ChartCacheStore}
+	 * Design doc 121 — historical OHLC columnar arrays from {@code ChartCacheStore}
 	 * (Redis {@code cache_set_*} / {@code t_chart_*}). Does not write bars.
 	 *
 	 * @param symbol ticker
@@ -232,7 +232,7 @@ public class ChartDataController {
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "OHLC arrays (s=ok or no_data)"),
 			@ApiResponse(responseCode = "401", description = "Missing or invalid JWT"),
-			@ApiResponse(responseCode = "422", description = "Missing bid_ask or bad range")
+			@ApiResponse(responseCode = "422", description = "Unknown/invalid symbol, missing bid_ask, or bad range")
 	})
 	public HistoryResponse history(
 			@Parameter(example = "USDJPY") @RequestParam(required = false) String symbol,

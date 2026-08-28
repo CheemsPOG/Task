@@ -44,11 +44,12 @@ import org.springframework.test.web.servlet.MvcResult;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Phase 1 cache read path</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/27</td><td>Task</td><td>Doc 121 columnar JSON only</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -224,11 +225,11 @@ class SystemOverviewDesign121Test {
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
 			assertThat(root.path("s").asText()).isEqualTo("ok");
-			assertThat(root.path("bars").isArray()).isTrue();
-			assertThat(root.path("bars").size()).isBetween(1, 10);
-			assertBarShape(root.path("bars").get(0));
-			assertThat(root.path("bars").get(root.path("bars").size() - 1).path("time").asLong())
-					.isLessThanOrEqualTo(Instant.now().toEpochMilli());
+			assertNoExtraHistoryFields(root);
+			assertThat(root.path("t").size()).isBetween(1, 10);
+			assertColumnarShape(root);
+			assertThat(root.path("t").get(root.path("t").size() - 1).asLong())
+					.isLessThanOrEqualTo(Instant.now().getEpochSecond());
 		}
 
 		@Test
@@ -246,11 +247,11 @@ class SystemOverviewDesign121Test {
 					.andExpect(status().isOk())
 					.andReturn();
 
-			JsonNode bars = objectMapper.readTree(result.getResponse().getContentAsString()).path("bars");
-			assertThat(bars.size()).isBetween(1, 5);
-			long lastTime = bars.get(bars.size() - 1).path("time").asLong();
-			long currentOpen = Math.floorDiv(Instant.now().toEpochMilli() - 1, 86_400_000L) * 86_400_000L;
-			assertThat(lastTime).isLessThanOrEqualTo(currentOpen);
+			JsonNode times = objectMapper.readTree(result.getResponse().getContentAsString()).path("t");
+			assertThat(times.size()).isBetween(1, 5);
+			long lastTime = times.get(times.size() - 1).asLong();
+			long currentOpenSec = Math.floorDiv(Instant.now().getEpochSecond() - 1, 86_400L) * 86_400L;
+			assertThat(lastTime).isLessThanOrEqualTo(currentOpenSec);
 		}
 
 		@Test
@@ -283,7 +284,7 @@ class SystemOverviewDesign121Test {
 							.param("bid_ask", "BID"))
 					.andExpect(status().isOk())
 					.andExpect(jsonPath("$.s").value("ok"))
-					.andExpect(jsonPath("$.bars.length()").value(5));
+					.andExpect(jsonPath("$.t.length()").value(5));
 		}
 
 		@Test
@@ -300,21 +301,23 @@ class SystemOverviewDesign121Test {
 					.andExpect(status().isOk())
 					.andReturn();
 
-			JsonNode bars = objectMapper.readTree(result.getResponse().getContentAsString()).path("bars");
-			assertThat(bars.isArray()).isTrue();
-			assertThat(bars.size()).isPositive();
+			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
+			JsonNode times = root.path("t");
+			assertThat(times.isArray()).isTrue();
+			assertThat(times.size()).isPositive();
+			assertNoExtraHistoryFields(root);
 			long previous = Long.MIN_VALUE;
-			for (JsonNode bar : bars) {
-				long time = bar.path("time").asLong();
-				assertThat(time).isGreaterThanOrEqualTo(from * 1000L);
-				assertThat(time).isLessThanOrEqualTo(to * 1000L);
+			for (JsonNode timeNode : times) {
+				long time = timeNode.asLong();
+				assertThat(time).isGreaterThanOrEqualTo(from);
+				assertThat(time).isLessThanOrEqualTo(to);
 				assertThat(time).isGreaterThan(previous);
 				previous = time;
 			}
 		}
 
 		@Test
-		void unknownSymbolReturnsUdfErrorBodyNot422() throws Exception {
+		void unknownSymbolReturns422() throws Exception {
 			long to = Instant.now().getEpochSecond();
 			long from = to - 86_400L;
 
@@ -324,13 +327,12 @@ class SystemOverviewDesign121Test {
 							.param("from", String.valueOf(from))
 							.param("to", String.valueOf(to))
 							.param("bid_ask", "MID"))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath("$.s").value("error"))
-					.andExpect(jsonPath("$.errmsg").value("unknown_symbol"));
+					.andExpect(status().isUnprocessableEntity())
+					.andExpect(jsonPath("$.errorCode").value(ErrorCodes.VALIDATION));
 		}
 
 		@Test
-		void returnsWidgetBarsAndPeachColumnarArrays() throws Exception {
+		void returnsPeachColumnarArraysWithoutWidgetBars() throws Exception {
 			long to = Instant.now().getEpochSecond();
 			long from = to - 5 * 86_400L;
 
@@ -346,13 +348,10 @@ class SystemOverviewDesign121Test {
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
 			assertThat(root.path("s").asText()).isEqualTo("ok");
-			assertThat(root.path("bars").size()).isBetween(1, 3);
-			assertThat(root.path("t")).hasSize(root.path("bars").size());
-			assertThat(root.path("o")).hasSize(root.path("bars").size());
-			assertThat(root.path("t").get(0).asLong())
-					.isEqualTo(root.path("bars").get(0).path("time").asLong() / 1000L);
-			assertThat(root.path("o").get(0).asDouble())
-					.isEqualTo(root.path("bars").get(0).path("open").asDouble());
+			assertNoExtraHistoryFields(root);
+			assertThat(root.path("t").size()).isBetween(1, 3);
+			assertColumnarShape(root);
+			assertThat(root.has("nextTime")).isFalse();
 		}
 
 		@Test
@@ -376,7 +375,12 @@ class SystemOverviewDesign121Test {
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
 			assertThat(root.path("s").asText()).isEqualTo("no_data");
+			assertNoExtraHistoryFields(root);
 			assertThat(root.path("t")).isEmpty();
+			assertThat(root.path("o")).isEmpty();
+			assertThat(root.path("h")).isEmpty();
+			assertThat(root.path("l")).isEmpty();
+			assertThat(root.path("c")).isEmpty();
 			assertThat(root.has("nextTime")).isTrue();
 			long nextTime = root.path("nextTime").asLong();
 			assertThat(nextTime).isLessThan(from);
@@ -400,9 +404,12 @@ class SystemOverviewDesign121Test {
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
 			assertThat(root.path("s").asText()).isEqualTo("no_data");
-			assertThat(root.path("noData").asBoolean()).isTrue();
-			assertThat(root.path("bars")).isEmpty();
+			assertNoExtraHistoryFields(root);
 			assertThat(root.path("t")).isEmpty();
+			assertThat(root.path("o")).isEmpty();
+			assertThat(root.path("h")).isEmpty();
+			assertThat(root.path("l")).isEmpty();
+			assertThat(root.path("c")).isEmpty();
 			assertThat(root.has("nextTime")).isTrue();
 			long nextTime = root.path("nextTime").asLong();
 			assertThat(nextTime).isLessThan(from);
@@ -427,16 +434,23 @@ class SystemOverviewDesign121Test {
 		return get("/api/history").header(HttpHeaders.AUTHORIZATION, bearerDemo);
 	}
 
-	private static void assertBarShape(JsonNode bar) {
-		assertThat(bar.has("time")).isTrue();
-		assertThat(bar.has("open")).isTrue();
-		assertThat(bar.has("high")).isTrue();
-		assertThat(bar.has("low")).isTrue();
-		assertThat(bar.has("close")).isTrue();
-		assertThat(bar.has("volume")).isTrue();
-		assertThat(bar.path("high").asDouble())
-				.isGreaterThanOrEqualTo(Math.max(bar.path("open").asDouble(), bar.path("close").asDouble()));
-		assertThat(bar.path("low").asDouble())
-				.isLessThanOrEqualTo(Math.min(bar.path("open").asDouble(), bar.path("close").asDouble()));
+	private static void assertNoExtraHistoryFields(JsonNode root) {
+		assertThat(root.has("bars")).isFalse();
+		assertThat(root.has("noData")).isFalse();
+		assertThat(root.has("errmsg")).isFalse();
+	}
+
+	private static void assertColumnarShape(JsonNode root) {
+		int size = root.path("t").size();
+		assertThat(root.path("o")).hasSize(size);
+		assertThat(root.path("h")).hasSize(size);
+		assertThat(root.path("l")).hasSize(size);
+		assertThat(root.path("c")).hasSize(size);
+		double open = root.path("o").get(0).asDouble();
+		double high = root.path("h").get(0).asDouble();
+		double low = root.path("l").get(0).asDouble();
+		double close = root.path("c").get(0).asDouble();
+		assertThat(high).isGreaterThanOrEqualTo(Math.max(open, close));
+		assertThat(low).isLessThanOrEqualTo(Math.min(open, close));
 	}
 }
