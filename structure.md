@@ -171,11 +171,11 @@ Package: [`frontend/package.json`](frontend/package.json) — scripts `start`/`d
 | [`frontend/src/fx/fxQuotesSocket.ts`](frontend/src/fx/fxQuotesSocket.ts) | Python `/ws/fx-quotes` (~3 ticks/s from Java ingest) |
 | [`frontend/src/fx/quoteStore.ts`](frontend/src/fx/quoteStore.ts) | In-memory quotes keyed by numeric `curpairCd` |
 | [`frontend/src/fx/quoteToolbar.ts`](frontend/src/fx/quoteToolbar.ts) | Loads `GET /curpairs`, maps WS `curpairCd`, shows live BID/ASK/MID on the header |
-| [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) | **Still localStorage** for layouts, study templates, and chart templates |
+| [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) | **Done** — `ServerSaveLoadAdapter` → `/api/layouts`, `/api/indicator-templates`, `/api/chart-templates` (Postgres, JWT `customer_no`) |
 | [`frontend/src/theme.ts`](frontend/src/theme.ts) | Light/dark overrides |
 | [`frontend/src/toolbar.ts`](frontend/src/toolbar.ts) | Theme + logout |
 
-Widget disabled features include `use_localstorage_for_settings` and `save_chart_properties_to_local_storage`. Chart **save/load** still goes through `LocalStorageSaveLoadAdapter` until someone wires 127–139.
+Widget disabled features include `use_localstorage_for_settings` and `save_chart_properties_to_local_storage`. Chart **Save/Load** uses `ServerSaveLoadAdapter` (`main.ts` `save_load_adapter`) against docs 127–139 REST. Drawings persist inside layout `content`.
 
 Two pair encodings (easy to confuse):
 
@@ -782,7 +782,7 @@ Same pattern on `m_tv_timescale_mark` / V4. Tooltip may be an array for the libr
 | 130 | `GET /api/layouts` | List for token customer |
 | 131 | `DELETE /api/layouts/{id}` | Hard delete; `{ "t": now }` |
 
-**Code:** `ChartLayoutController` → `ChartLayoutServiceImpl` → `TvChartLayout` / `TvChartLayoutRepository`. **FE:** not wired (`save-load-adapter.ts` localStorage). **Tests:** `SystemOverviewDesign127Test`–`131Test`.
+**Code:** `ChartLayoutController` → `ChartLayoutServiceImpl` → `TvChartLayout` / `TvChartLayoutRepository`. **FE:** `ServerSaveLoadAdapter` (`getAllCharts` / `saveChart` / `getChartContent` / `removeChart`) → these APIs. Widget header Save/Load. **Tests:** `SystemOverviewDesign127Test`–`131Test`.
 
 ### 132–135 — Indicator templates (`m_tv_indicator_template`)
 
@@ -795,7 +795,7 @@ TradingView **study** templates. Unique `(customer_no, name)`, name max 64.
 | 134 | `GET /api/indicator-templates/{name}` | `{ name, content }`; 422 if name > 64; 404 other customer |
 | 135 | `DELETE /api/indicator-templates/{name}` | Hard delete; `{ "t": now }`; other customer 404 and **row kept** |
 
-**Code:** `IndicatorTemplateController` → `IndicatorTemplateServiceImpl` → `TvIndicatorTemplate.applyContent`. **FE:** `getAllStudyTemplates` etc. still localStorage. **Tests:** `132`–`135`.
+**Code:** `IndicatorTemplateController` → `IndicatorTemplateServiceImpl` → `TvIndicatorTemplate.applyContent`. **FE:** `ServerSaveLoadAdapter` study-template methods; enable `study_templates` in `main.ts`. **Tests:** `132`–`135`.
 
 ### 136–139 — Chart templates (`m_tv_chart_templates`)
 
@@ -817,7 +817,7 @@ TradingView **chart** templates (theme/layout preset), **not** the same as 127 l
 - Service [`ChartTemplateServiceImpl`](backend/src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java)
 - HTTP [`ChartTemplateController`](backend/src/main/java/com/task/chart/controller/ChartTemplateController.java)
 
-**FE:** `save-load-adapter.ts` still uses localStorage key `LocalStorageSaveLoadAdapter_chartTemplates`. **Tests:** `SystemOverviewDesign136Test`–`139Test`.
+**FE:** `ServerSaveLoadAdapter` chart-template methods (`JSON.stringify` on save, parse on load). **Tests:** `SystemOverviewDesign136Test`–`139Test`.
 
 Spaces in `{name}`: URL-encode (`My%20Dark`).
 
@@ -829,7 +829,7 @@ Spaces in `{name}`: URL-encode (`My%20Dark`).
 2. **Live Peach bar writer** — `MockBarGenerator` boot seed + `TickIngestWorker` mock ticks (not a real LP). Wipe-on-boot still applies to historical warehouse rows.
 3. **History JSON** — library still needs `bars[]`; Peach columns are extra.
 4. **Strict symbol length-6** — `USD/JPY` is accepted so the widget does not 422.
-5. **SaveLoadAdapter** — layouts 127–131, study templates 132–135, chart templates 136–139 are REST-ready and **not** called from the chart UI.
+5. **Drawing templates** — no Peach table; adapter stubs those methods. Layout drawings persist in `content`.
 6. **Python pair catalog** — `market.py` still hardcodes the same five rows as `m_ccypairs`. Java `GET /curpairs` reads the master.
 7. **Python WS → DB** — never. Java ingest upserts open bars and publishes `peach:bars`; the socket only forwards Redis.
 8. **Access-token denylist on logout** — logout revokes **refresh** only; access JWT remains valid until its 1h expiry (acceptable for this demo).

@@ -14,9 +14,8 @@
  * Live candles go through datafeed/streaming.ts → Python /ws/stream.
  * Live BID/ASK/MID ticker is fx/quoteToolbar.ts → Python /ws/fx-quotes.
  *
- * Save/Load is not wired: save-load-adapter.ts exists but is not passed here.
- * Chart layouts (docs 127–131) are REST-only until this constructor gets
- * save_load_adapter pointing at those APIs.
+ * Save/Load uses ServerSaveLoadAdapter (docs 127–139): layouts, study
+ * templates, and chart templates persist in Postgres for the JWT customer.
  *
  * Vite proxies /api and /curpairs to Java :8080, /ws to Python :8081.
  */
@@ -31,6 +30,7 @@ import {
 	installLoginOverlay,
 	showLoginOverlay,
 } from './login.ts';
+import { ServerSaveLoadAdapter } from './save-load-adapter.ts';
 import { cssBlobUrl, getChartOverrides, theme } from './theme.ts';
 import { installLogoutButton, installThemeToolbar } from './toolbar.ts';
 
@@ -67,6 +67,7 @@ function initChart(): void {
 			'seconds_resolution',
 			'custom_resolutions',
 			'allow_arbitrary_symbol_search_input',
+			'study_templates',
 		] as unknown as ChartingLibraryFeatureset[],
 		disabled_features: [
 			'use_localstorage_for_settings',
@@ -75,6 +76,7 @@ function initChart(): void {
 			// stretch the price Y-axis down to zero.
 			'volume_force_overlay',
 		],
+		save_load_adapter: new ServerSaveLoadAdapter(),
 		overrides: getChartOverrides(theme),
 	});
 

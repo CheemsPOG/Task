@@ -15,8 +15,8 @@
  * promise so parallel 401s do not stampede). If refresh fails it clears the
  * token and calls the handler registered in main.ts (logout + reload).
  *
- * Use apiGet/apiPost for `/api/*`. Use fetchAuthenticatedJson for `/curpairs`
- * (that path is not under /api).
+ * Use apiGet/apiPost/apiPut/apiDelete for `/api/*`. Use fetchAuthenticatedJson
+ * for `/curpairs` (that path is not under /api).
  */
 
 import { clearToken, getAcceptLanguage, getToken, refreshAccessToken } from './auth.ts';
@@ -210,6 +210,61 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
 			method: 'POST',
 			headers: buildHeaders({ 'Content-Type': 'application/json' }),
 			body: JSON.stringify(body),
+		});
+		if (!response.ok) {
+			throw await parseError(response);
+		}
+
+		return response.json() as Promise<T>;
+	} catch (error) {
+		if (error instanceof Error) {
+			throw error;
+		}
+		throw new Error(`Request failed for ${url.pathname}`);
+	}
+}
+
+/**
+ * PUT JSON to the chart backend (authenticated).
+ *
+ * @param path path under `/api`
+ * @param body request body
+ * @returns parsed JSON
+ */
+export async function apiPut<T>(path: string, body: unknown): Promise<T> {
+	const url = new URL(`${API_BASE}${path}`, window.location.origin);
+
+	try {
+		const response = await fetchWithAuth(url, {
+			method: 'PUT',
+			headers: buildHeaders({ 'Content-Type': 'application/json' }),
+			body: JSON.stringify(body),
+		});
+		if (!response.ok) {
+			throw await parseError(response);
+		}
+
+		return response.json() as Promise<T>;
+	} catch (error) {
+		if (error instanceof Error) {
+			throw error;
+		}
+		throw new Error(`Request failed for ${url.pathname}`);
+	}
+}
+
+/**
+ * DELETE JSON from the chart backend (authenticated).
+ *
+ * @param path path under `/api`
+ * @returns parsed JSON
+ */
+export async function apiDelete<T>(path: string): Promise<T> {
+	const url = new URL(`${API_BASE}${path}`, window.location.origin);
+
+	try {
+		const response = await fetchWithAuth(url, {
+			method: 'DELETE',
 		});
 		if (!response.ok) {
 			throw await parseError(response);

@@ -20,7 +20,7 @@ Header on every authenticated call (`/api/**` and `GET /curpairs`) except health
 | Postgres + Flyway | **Done** | V1–V9 (`m_app_user` for demo auth; `m_tv_chart_templates` for 136–139) |
 | Frontend datafeed | **Done** | `datafeed.ts` + `api.ts` sends Bearer + `Accept-Language` |
 
-**Not in 120–126 (do not treat as missing):** save/load still `LocalStorageSaveLoadAdapter`; live quotes are a Java ingest mock published on Redis (Python WS only relays); `GET /curpairs` is extra quote-stream catalog (same `m_ccypairs` master as 123/124; `curpairCd` = `priority`; JWT required).
+**Not in 120–126 (do not treat as missing):** live quotes are a Java ingest mock published on Redis (Python WS only relays); `GET /curpairs` is extra quote-stream catalog (same `m_ccypairs` master as 123/124; `curpairCd` = `priority`; JWT required). Save/Load (127–139) is wired in `ServerSaveLoadAdapter`.
 
 ---
 
@@ -199,7 +199,7 @@ Header on every authenticated call (`/api/**` and `GET /curpairs`) except health
 | Register `name`, `content`, `ccypair_cd`, `chart_type` | **Done** | `chart_type` = resolution |
 | Response chart layout id | **Done** | **201** `{ "id": <number> }` (Peach may want bare number later) |
 | `updated_at` on insert | Extra | Needed for doc 129 `timestamp`; set to now |
-| SaveLoadAdapter → POST | **Open** | Still localStorage; wire after Step 12 delete |
+| SaveLoadAdapter → POST | **Done** | Widget Save → `POST /api/layouts` (`ServerSaveLoadAdapter`) |
 
 **Prove it:**
 
@@ -263,7 +263,7 @@ Expect **200** same `id`. DBeaver: `name=Renamed`, `content` new, `ccypair_cd=EU
 
 **Test class:** `SystemOverviewDesign128Test`.
 
-**Come back later:** Peach-strict keep old content; SaveLoadAdapter overwrite → PUT.
+**Come back later:** Peach-strict keep old content on PUT when the body omits it.
 
 ---
 
@@ -300,7 +300,7 @@ Headers: Authorization: Bearer <token>  (+ optional Accept-Language)
 
 **Test class:** `SystemOverviewDesign129Test`.
 
-**Come back later:** SaveLoadAdapter `getChartContent` → GET; delete (131) for full Load dialog.
+**Come back later:** Peach-exact GET body if the product rejects extra DTO fields.
 
 ---
 
@@ -336,7 +336,7 @@ After creating 2+ layouts (and updating one), order is newest `updated_at` first
 
 **Test class:** `SystemOverviewDesign130Test` (green).
 
-**Come back later:** wire `getAllCharts` in SaveLoadAdapter (delete API Done in 131).
+**Come back later:** Peach-exact list field set if product rejects extras.
 
 ---
 
@@ -372,7 +372,7 @@ Headers: Authorization: Bearer <token>  (+ optional Accept-Language)
 
 **Test class:** `SystemOverviewDesign131Test`.
 
-**Come back later:** wire `removeChart` in SaveLoadAdapter; Peach-exact response if not `{ "t": n }`.
+**Come back later:** Peach-exact delete body if not `{ "t": n }`.
 
 ---
 
@@ -533,7 +533,7 @@ Empty DB → `[]`. After seeding two names for customer `1` and one for `2`, lis
 
 **Test class:** `SystemOverviewDesign139Test`.
 
-**Come back later:** wire SaveLoadAdapter chart templates (`getAllChartTemplates` / `saveChartTemplate` / `removeChartTemplate`).
+**Come back later:** Peach-exact chart-template JSON vs widget object shape.
 
 ---
 
@@ -595,19 +595,19 @@ ORDER BY priority;
 | 124 | `GET /api/search` | **Done** | 124Test | Extra ticker/filters |
 | 125 | `GET /api/marks` | **Done** | 125Test | Extra mark fonts |
 | 126 | `GET /api/timescale_marks` | **Done** | 126Test | tooltip array |
-| 127 | `POST /api/layouts` | **Done** | 127Test | FE SaveLoadAdapter not wired |
-| 128 | `PUT /api/layouts/{id}` | **Done** | 128Test | FE not wired |
-| 129 | `GET /api/layouts/{id}` | **Done** | 129Test | FE not wired |
-| 130 | `GET /api/layouts` | **Done** | 130Test | FE not wired |
-| 131 | `DELETE /api/layouts/{id}` | **Done** | 131Test | FE not wired |
-| 132 | `GET /api/indicator-templates` | **Done** | 132Test | FE not wired |
-| 133 | `POST /api/indicator-templates` | **Done** | 133Test | FE not wired |
-| 134 | `GET /api/indicator-templates/{name}` | **Done** | 134Test | FE not wired |
-| 135 | `DELETE /api/indicator-templates/{name}` | **Done** | 135Test | FE not wired |
-| 136 | `GET /api/chart-templates` | **Done** | 136Test | FE not wired |
-| 137 | `POST /api/chart-templates` | **Done** | 137Test | FE not wired |
-| 138 | `GET /api/chart-templates/{name}` | **Done** | 138Test | FE not wired |
-| 139 | `DELETE /api/chart-templates/{name}` | **Done** | 139Test | FE not wired |
+| 127 | `POST /api/layouts` | **Done** | 127Test | Widget Save → POST (`ServerSaveLoadAdapter`) |
+| 128 | `PUT /api/layouts/{id}` | **Done** | 128Test | Widget Save overwrite → PUT |
+| 129 | `GET /api/layouts/{id}` | **Done** | 129Test | Widget Load → GET content |
+| 130 | `GET /api/layouts` | **Done** | 130Test | Widget Load list → GET |
+| 131 | `DELETE /api/layouts/{id}` | **Done** | 131Test | Widget Load Remove → DELETE |
+| 132 | `GET /api/indicator-templates` | **Done** | 132Test | Indicator Templates menu |
+| 133 | `POST /api/indicator-templates` | **Done** | 133Test | Save Indicator template |
+| 134 | `GET /api/indicator-templates/{name}` | **Done** | 134Test | Apply named template |
+| 135 | `DELETE /api/indicator-templates/{name}` | **Done** | 135Test | Adapter wired |
+| 136 | `GET /api/chart-templates` | **Done** | 136Test | Chart settings Template |
+| 137 | `POST /api/chart-templates` | **Done** | 137Test | Adapter wired (`JSON.stringify`) |
+| 138 | `GET /api/chart-templates/{name}` | **Done** | 138Test | Adapter wired (`JSON.parse`) |
+| 139 | `DELETE /api/chart-templates/{name}` | **Done** | 139Test | Adapter wired |
 | — | `GET /curpairs` + WS quotes | **Done (extra)** | CurrencyPairControllerTest | Not in MD; WS catalog still hardcoded |
 
 **Shared across 120–139:** local JWT (not Peach S-01); Flyway V1–V9; 422/404/500 error shapes; Postgres + Redis for bars.
@@ -623,11 +623,10 @@ ORDER BY priority;
 | 1 | Replace local JWT with **real Peach S-01** | Docs require Peach login token check |
 | 2 | Confirm Peach **quote API** (`curpairCd` meaning, auth, tick shape) | Our `curpairCd = priority` is a demo convention |
 | 3 | Replace mock bar writer / `TickIngestWorker` with **real Peach bar pipeline** | Doc 121 warehouse from live data; Redis quote keys stay |
-| 4 | Wire **SaveLoadAdapter** to 127–131, 132–135, 136–139 | Backend CRUD ready; FE still localStorage |
-| 5 | **Python WS** reads pair list from Java `/curpairs` or DB | Today `market.py` hardcodes 5 pairs |
-| 6 | **WebSocket auth** if Peach requires it | Demo WS is open |
-| 7 | Drop widget-only **`bars[]`** if product accepts Peach columnar only | Dual shape kept for TradingView |
-| 8 | Validate **`curpairCd`** with Peach — may not equal `priority` | Confirm before go-live |
+| 4 | **Python WS** reads pair list from Java `/curpairs` or DB | Today `market.py` hardcodes 5 pairs |
+| 5 | **WebSocket auth** if Peach requires it | Demo WS is open |
+| 6 | Drop widget-only **`bars[]`** if product accepts Peach columnar only | Dual shape kept for TradingView |
+| 7 | Validate **`curpairCd`** with Peach — may not equal `priority` | Confirm before go-live |
 
 ### Demo / polish (optional)
 
@@ -719,13 +718,10 @@ Short answer: **no for the four named Peach items as a set.** Two of them would 
 Leave unchecked on purpose:
 
 1. Real S-01  
-2. `t_chart_*` / Peach cache / sync writer  
-3. Replacing widget history JSON with Peach-only columns  
-4. Rejecting `USD/JPY` as invalid `symbol`  
-5. SaveLoadAdapter → server layouts (backend CRUD ready; wire FE)  
-6. SaveLoadAdapter → study templates (backend 132–135 ready; wire FE)  
-7. SaveLoadAdapter → chart templates (backend 136–139 ready; wire FE)
+2. Replacing mock ingest with a real Peach LP  
+3. Rejecting `USD/JPY` as invalid `symbol`  
+4. Drawing-template APIs (no Peach table)
 
-Optional small refactors **inside** datafeed (do not expand scope): extract shared marks validation; point history symbol lookup at `m_ccypairs`; dual-shape history only if the mentor asks.
+Optional small refactors **inside** datafeed (do not expand scope): extract shared marks validation; point history symbol lookup at `m_ccypairs`.
 
-**Next:** wire layout / study-template / chart-template SaveLoadAdapter to the REST APIs.
+**Next:** Peach S-01 / live LP — SaveLoadAdapter 127–139 is wired.

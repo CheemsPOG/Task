@@ -47,7 +47,7 @@ Every numbered slice below uses the same four lines:
 | In this repo | Not in this repo |
 |--------------|------------------|
 | UDF paths `/api/config`, `/history`, `/symbols`, … | Peach SSO (S-01 real token check) |
-| Layouts/templates REST 127–139 | Widget Save/Load calling those APIs (still **localStorage**) |
+| Layouts/templates REST 127–139 | Widget Save/Load → Postgres (`ServerSaveLoadAdapter`) |
 | Local JWT + refresh cookie | Production bar writer / LP feed |
 | Java **TickIngestWorker** mock ticks → Redis | Python inventing prices (removed on purpose) |
 
@@ -452,10 +452,10 @@ Namespace cheat sheet (say “thirteen types, one enum”):
 
 # Part C — Chart layouts 127–131
 
-**Say:** Saved **chart layouts** (drawings, symbol, interval) per customer. Table `m_tv_chart_layout` (V5). REST is **done**. The widget **does not call it yet** — `save-load-adapter.ts` still uses **localStorage**.
+**Say:** Saved **chart layouts** (drawings, symbol, interval) per customer. Table `m_tv_chart_layout` (V5). REST and widget Save/Load are **done** (`ServerSaveLoadAdapter`).
 
 **Code:** `ChartLayoutController` → `ChartLayoutServiceImpl` → `TvChartLayout` / `TvChartLayoutRepository`.  
-**FE (not wired):** `frontend/src/save-load-adapter.ts`.
+**FE:** `frontend/src/save-load-adapter.ts` → `/api/layouts`.
 
 | Doc | HTTP | Behavior |
 |-----|------|----------|
@@ -469,13 +469,13 @@ Namespace cheat sheet (say “thirteen types, one enum”):
 
 **Test:** `SystemOverviewDesign127Test` … `131Test`.
 
-**Honest:** Widget save/load still localStorage. Open work: wire `SaveLoadAdapter` to these APIs.
+**Honest:** Drawings persist inside layout `content`. Drawing-tool templates have no Peach API.
 
 ---
 
 # Part D — Indicator (study) templates 132–135
 
-**Say:** TradingView **study** templates (indicator presets). Unique `(customer_no, name)`, name max 64. Table `m_tv_indicator_template` (V6). REST done; widget still localStorage.
+**Say:** TradingView **study** templates (indicator presets). Unique `(customer_no, name)`, name max 64. Table `m_tv_indicator_template` (V6). REST + widget (`study_templates` + adapter) **done**.
 
 **Code:** `IndicatorTemplateController` → `IndicatorTemplateServiceImpl` → `TvIndicatorTemplate`.
 
@@ -509,7 +509,7 @@ Namespace cheat sheet (say “thirteen types, one enum”):
 
 **Test:** `SystemOverviewDesign136Test` … `139Test`.
 
-**FE:** still localStorage key `LocalStorageSaveLoadAdapter_chartTemplates`.
+**FE:** `ServerSaveLoadAdapter` chart-template methods (`JSON.stringify` / parse).
 
 ---
 
@@ -557,7 +557,7 @@ Do **not** skip these. Mentors will see them in the UI and Swagger.
 | `datafeed/datafeed.ts` | Docs 120–126 HTTP |
 | `datafeed/streaming.ts` | Live bars from `/ws/stream` |
 | `fx/quoteToolbar.ts` | Maps WS `curpairCd` via `/curpairs` |
-| `save-load-adapter.ts` | **localStorage** for 127–139 |
+| `save-load-adapter.ts` | **Done** — 127–139 REST (Postgres) |
 | `toolbar.ts` / `theme.ts` | Logout, light/dark |
 
 **Show after login:** candles, interval switcher, BID/ASK/MID dropdown (reloads history for that side), live quote, theme, Logout.
@@ -610,7 +610,7 @@ Postman/DBeaver per API: [`test.md`](test.md). Checkpoint table: [`checklist.md`
 
 1. **Peach S-01 SSO** — local JWT + refresh cookie only.
 2. **Real LP / Peach bar pipeline** — `DemoTickEngine` + wipe-on-boot seed.
-3. **SaveLoadAdapter** — 127–139 REST ready, widget still localStorage.
+3. **Drawing templates** — no Peach table; layout drawings persist in `content`.
 4. **Python catalog** — hardcoded five pairs; Java `/curpairs` reads the DB.
 5. **WS auth** — socket is public.
 6. **History dual JSON** — `bars[]` for the library; Peach columns extra.
@@ -666,7 +666,7 @@ Config flags for 120 are **yml**, not a table: `backend/src/main/resources/appli
 | 127–131 layouts | `ChartLayoutController` `/api/layouts` | `ChartLayoutServiceImpl` | `m_tv_chart_layout` / `TvChartLayout` |
 | 132–135 studies | `IndicatorTemplateController` `/api/indicator-templates` | `IndicatorTemplateServiceImpl` | `m_tv_indicator_template` |
 | 136–139 chart templates | `ChartTemplateController` `/api/chart-templates` | `ChartTemplateServiceImpl` | `m_tv_chart_templates` |
-| “Does the chart use this?” | **No** — `frontend/src/save-load-adapter.ts` is still localStorage |
+| “Does the chart use this?” | **Yes** — `ServerSaveLoadAdapter` in `main.ts` |
 
 ## J.3 Live prices (not a 120–139 doc, but they will ask)
 
@@ -734,7 +734,7 @@ Config flags for 120 are **yml**, not a table: `backend/src/main/resources/appli
 
 **Same facts as** [`test.md`](test.md). Use this file when you are already in Swagger; use `test.md` when you want Postman copy-paste.
 
-**Swagger cannot prove:** TradingView widget Save/Load (127–139 UI is still localStorage), Python `/ws/*`, or the HttpOnly refresh cookie (Authorize is access JWT only).
+**Swagger cannot prove:** TradingView widget Save/Load UX (use the chart + Network; REST is in Try it out), Python `/ws/*`, or the HttpOnly refresh cookie (Authorize is access JWT only).
 
 ---
 
@@ -1332,11 +1332,11 @@ Say once: **127–139 REST is Complete; the chart Save/Load UI is Open.**
 | 124 | Complete + Extra | Extra `ticker` / `full_name` |
 | 125 | Complete + Extra + Partial | Extra mark fields; bad CD → `[]`; extra seed m3 |
 | 126 | Complete + Extra | Tooltip array; extra font color |
-| 127 | Complete + Partial + Open | 201; slash symbol; UI not wired |
-| 128 | Complete + Partial + Open | Overwrites `content`; tenant 404 |
-| 129–131 | Complete + Open | UI not wired; 131 `{ t }` wrapper |
-| 132–135 | Complete + Open | UI not wired; 133 always 200 |
-| 136–139 | Complete + Open | UI not wired; table name plural as spec |
+| 127 | Complete + Partial | 201; slash symbol; widget Save → POST |
+| 128 | Complete + Partial | Overwrites `content`; tenant 404; widget Save → PUT |
+| 129–131 | Complete | Widget Load/Remove; 131 `{ t }` wrapper |
+| 132–135 | Complete | Indicator Templates menu; 133 always 200 |
+| 136–139 | Complete | Chart settings Template; table name plural as spec |
 
 **Never Complete:** Peach S-01 (all **Stub**). Error Japanese sentences (**Partial** copy, codes Complete).
 

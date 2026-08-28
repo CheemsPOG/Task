@@ -641,7 +641,7 @@ Same date range as 125 → labels on **time axis**.
 | Active pair check | Done → 404 |
 | Register `customer_no`, `name`, `content`, `ccypair_cd`, `chart_type` | Done |
 | Return layout id | Done → **201** `{ "id": n }` |
-| SaveLoadAdapter | **Open** — still localStorage |
+| SaveLoadAdapter | **Done** — `ServerSaveLoadAdapter` → REST / Postgres |
 | `symbol` strict length 6 | **Partial** — slash accepted |
 
 ### Postman
@@ -784,7 +784,7 @@ WHERE id = 1;
 | DTO `id`, `name`, `timestamp`, `content` | Done |
 | No `symbol` / `resolution` / `customer_no` on GET | Done |
 | Tenant: other customer | **Extra** → 404 |
-| SaveLoadAdapter `getChartContent` | **Open** |
+| SaveLoadAdapter `getChartContent` | **Done** |
 
 ### Postman — full round-trip (127 → 128 → 129)
 
@@ -901,7 +901,7 @@ GET response `timestamp` should match SQL `timestamp`.
 | DTO `id`, `name`, `resolution`, `symbol`, `timestamp` | Done |
 | No `content` on list | Done |
 | Empty → `200 []` | Done |
-| SaveLoadAdapter `getAllCharts` | **Open** |
+| SaveLoadAdapter `getAllCharts` | **Done** |
 
 ### Postman — setup then list
 
@@ -998,7 +998,7 @@ Customer `2` rows must not appear when listing as `demo` (customer `1`).
 | Hard delete row | Done |
 | Response system datetime | Done → `{ "t": unixSeconds }` |
 | Tenant: other customer | Done → 404, row kept |
-| SaveLoadAdapter `removeChart` | **Open** |
+| SaveLoadAdapter `removeChart` | **Done** |
 | Bare number vs `{t}` | **Extra wrapper** |
 
 ### Postman — full delete flow
@@ -1109,7 +1109,7 @@ Deleted id must be absent.
 | DTO `name` only | Done |
 | Empty → `200 []` | Done |
 | Sort order in MD | not specified — app uses **name ASC** |
-| SaveLoadAdapter `getAllStudyTemplates` | **Open** |
+| SaveLoadAdapter `getAllStudyTemplates` | **Done** |
 
 ### Postman — seed via 133 or DBeaver
 
@@ -1201,7 +1201,7 @@ Test seeds its own rows in `@Transactional` tests:
 | Miss → register `customer_no`, `name`, `content` | Done |
 | Return update datetime of the row | Done → **200** `{ "t": unix }` from `updated_at` |
 | HTTP 201 on first insert | **Extra** — app always **200** (upsert) |
-| SaveLoadAdapter `saveStudyTemplate` | **Open** |
+| SaveLoadAdapter `saveStudyTemplate` | **Done** |
 
 Unique key: `(customer_no, name)`. Same name for `demo2` is a **different** row.
 
@@ -1320,7 +1320,7 @@ URL-encode spaces: `My RSI` → `My%20RSI`.
 | DTO `name`, `content` | Done |
 | No extra fields (`customer_no`, timestamp) | Done |
 | Other customer | **Extra** → 404 |
-| SaveLoadAdapter `getStudyTemplateContent` | **Open** |
+| SaveLoadAdapter `getStudyTemplateContent` | **Done** |
 
 ### Postman — full round-trip (133 → 134 → 133 → 134)
 
@@ -1447,7 +1447,7 @@ Customer `2` must not appear in GET when using the `demo` token.
 | Hard delete row | Done |
 | Return system datetime | Done → `{ "t": unix }` (**now**, not row `updated_at`) |
 | Other customer | Done → 404, row **kept** |
-| SaveLoadAdapter `removeStudyTemplate` | **Open** |
+| SaveLoadAdapter `removeStudyTemplate` | **Done** |
 | Bare number vs `{t}` | **Extra wrapper** (same as 131) |
 
 ### Postman — full delete flow
@@ -1568,7 +1568,7 @@ Deleted name for customer `1` must be absent. If step “other customer” ran, 
 | DTO `name` only | Done |
 | Empty → `200 []` | Done |
 | Sort order in MD | not specified — app uses **name ASC** |
-| SaveLoadAdapter chart templates | **Open** (still `localStorage`) |
+| SaveLoadAdapter chart templates | **Done** |
 
 ### Postman — seed via 137 or DBeaver
 
@@ -1658,7 +1658,7 @@ SELECT customer_no, name FROM m_tv_chart_templates ORDER BY customer_no, name;
 | Update if found | Done: **content only** (name / customer stay) |
 | Return update datetime of [1] | Done → `{ "t": unix }` from row `updated_at` |
 | Unique per customer | Done — `demo2` may reuse the same name |
-| SaveLoadAdapter | **Open** |
+| SaveLoadAdapter | **Done** |
 | Bare number vs `{t}` | **Extra wrapper** (same as 133) |
 
 ### Postman — register then update
@@ -1757,7 +1757,7 @@ Customer `2` can have its own `My Dark` after logging in as `demo2` and POSTing.
 | Missing row | Done → 404 `CODE:30404` |
 | DTO `name` + `content` | Done |
 | Other customer | Done → 404 (same as 134) |
-| SaveLoadAdapter | **Open** |
+| SaveLoadAdapter | **Done** |
 
 Spaces in names must be URL-encoded (`My%20Dark`).
 
@@ -1886,7 +1886,7 @@ Customer `2` must not appear in GET when using the `demo` token.
 | Hard delete row | Done |
 | Return system datetime | Done → `{ "t": unix }` (**now**, not row `updated_at`) |
 | Other customer | Done → 404, row **kept** |
-| SaveLoadAdapter | **Open** |
+| SaveLoadAdapter | **Done** |
 | Bare number vs `{t}` | **Extra wrapper** (same as 135) |
 
 ### Postman — full delete flow
@@ -1997,7 +1997,7 @@ Deleted name for customer `1` must be absent. If step “other customer” ran, 
 | 124 | `GET /api/search` | Yes | 124Test | Extra ticker/filters |
 | 125 | `GET /api/marks` | Yes | 125Test | Extra mark fonts; symbol len partial |
 | 126 | `GET /api/timescale_marks` | Yes | 126Test | tooltip array; symbol len partial |
-| 127 | `POST /api/layouts` | Yes | 127Test | SaveLoadAdapter open; 201 + `{id}` |
+| 127 | `POST /api/layouts` | Yes | 127Test | Widget Save → POST; 201 + `{id}` |
 | 128 | `PUT /api/layouts/{id}` | Yes | 128Test | content overwrite vs MD |
 | 129 | `GET /api/layouts/{id}` | Yes | 129Test | Tenant filter extra; adapter open |
 | 130 | `GET /api/layouts` | Yes | 130Test | Sort name N/A; adapter open |
@@ -2011,7 +2011,7 @@ Deleted name for customer `1` must be absent. If step “other customer” ran, 
 | 138 | `GET /api/chart-templates/{name}` | Yes | 138Test | Tenant 404 extra; adapter open |
 | 139 | `DELETE /api/chart-templates/{name}` | Yes | 139Test | `{t}` wrapper; adapter open |
 
-**Frontend not wired to server layouts/templates:** [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) still uses **localStorage** for chart layouts (127–131), study templates (132–135), and chart templates (136–139). Backend CRUD is ready; wiring is **Open**.
+**Frontend Save/Load:** [`frontend/src/save-load-adapter.ts`](frontend/src/save-load-adapter.ts) `ServerSaveLoadAdapter` calls `/api/layouts`, `/api/indicator-templates`, and `/api/chart-templates`. Widget header Save/Load is wired. Drawing-tool templates have no Peach table (stubs).
 
 ---
 
