@@ -12,7 +12,8 @@
  */
 
 import type { IChartingLibraryWidget, ThemeName } from 'charting_library';
-import { getChartOverrides, theme as initialTheme } from './theme.ts';
+import { saveTheme } from './chartPrefs.ts';
+import { getChartOverrides, resolveTheme } from './theme.ts';
 
 export function installThemeToolbar(widget: IChartingLibraryWidget): void {
 	widget.headerReady().then(() => {
@@ -50,7 +51,7 @@ export function installThemeToolbar(widget: IChartingLibraryWidget): void {
 		checkboxEl.checked =
 			typeof widget.getTheme === 'function'
 				? widget.getTheme() === 'dark'
-				: initialTheme === 'dark';
+				: resolveTheme() === 'dark';
 		updateLabel();
 
 		checkboxEl.addEventListener('change', async function onChange() {
@@ -59,6 +60,7 @@ export function installThemeToolbar(widget: IChartingLibraryWidget): void {
 			try {
 				await widget.changeTheme(themeToSet, { disableUndo: true });
 				widget.applyOverrides(getChartOverrides(themeToSet));
+				saveTheme(themeToSet);
 			} finally {
 				this.disabled = false;
 				updateLabel();

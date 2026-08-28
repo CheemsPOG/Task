@@ -46,6 +46,13 @@ import { subscribeOnStream, unsubscribeFromStream } from './streaming.ts';
 
 const lastBarsCache = new Map<string, Bar>();
 
+function barCacheKey(
+	symbolInfo: LibrarySymbolInfo,
+	resolution: ResolutionString
+): string {
+	return `${symbolInfo.ticker ?? symbolInfo.name}|${resolution}|${quoteStore.mode}`;
+}
+
 interface ServerTimeResponse {
 	serverTime: number;
 }
@@ -163,10 +170,7 @@ const Datafeed: IBasicDataFeed = {
 					close: closes[index],
 				}));
 				if (periodParams.firstDataRequest) {
-					lastBarsCache.set(
-						`${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`,
-						bars[bars.length - 1]
-					);
+					lastBarsCache.set(barCacheKey(symbolInfo, resolution), bars[bars.length - 1]);
 				}
 				onHistoryCallback(bars, { noData: false });
 				return;
@@ -231,8 +235,7 @@ const Datafeed: IBasicDataFeed = {
 		subscriberUID: string,
 		onResetCacheNeededCallback: () => void
 	) {
-		const cacheKey = `${symbolInfo.ticker ?? symbolInfo.name}|${quoteStore.mode}`;
-		const lastBar = lastBarsCache.get(cacheKey);
+		const lastBar = lastBarsCache.get(barCacheKey(symbolInfo, resolution));
 		subscribeOnStream(
 			symbolInfo,
 			resolution,

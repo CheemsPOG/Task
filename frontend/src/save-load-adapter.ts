@@ -11,6 +11,9 @@
  * /api/chart-templates. JWT customer_no is applied
  * on the server. Drawings live inside layout content; drawing-template and
  * line-tool APIs have no Peach tables so those methods stay empty stubs.
+ * Deleting the last layout only closes the Load dialog; the visible chart
+ * is left as-is. getChartContent 404 returns cached/draft JSON (never `{}`
+ * and never widget.save) so the Load dialog cannot deadlock.
  */
 
 import type {
@@ -27,13 +30,24 @@ import type {
 	StudyTemplateMetaInfo,
 } from 'charting_library';
 import { ApiHttpError, apiDelete, apiGet, apiPost, apiPut } from './api.ts';
+import {
+	clearLastLayoutId,
+	getFactoryChartContent,
+	loadChartDraft,
+	loadChartPrefs,
+	saveLastLayoutId,
+} from './chartPrefs.ts';
 
-interface LayoutListItem {
+export interface LayoutListItem {
 	id: number;
 	name: string;
 	resolution: string;
 	symbol: string;
 	timestamp: number;
+}
+
+export interface SaveLoadAdapterHooks {
+	onLastLayoutRemoved?: () => void;
 }
 
 interface LayoutIdResponse {
@@ -68,7 +82,22 @@ function isNotFound(error: unknown): boolean {
 	return error instanceof ApiHttpError && error.status === 404;
 }
 
+function cachedChartContent(lastContent: string | null): string {
+	if (lastContent && lastContent !== '{}') {
+		return lastContent;
+	}
+	const draft = loadChartDraft();
+	if (draft) {
+		return JSON.stringify(draft);
+	}
+	return getFactoryChartContent() ?? lastContent ?? '';
+}
+
 export class ServerSaveLoadAdapter implements IExternalSaveLoadAdapter {
+	private lastChartContent: string | null = null;
+
+	constructor(private readonly hooks: SaveLoadAdapterHooks = {}) {}
+
 	async getAllCharts(): Promise<ChartMetaInfo[]> {
 		const layouts = await apiGet<LayoutListItem[]>('/layouts');
 		return layouts.map(layout => ({
@@ -82,9 +111,21 @@ export class ServerSaveLoadAdapter implements IExternalSaveLoadAdapter {
 
 	async removeChart<T extends number | string>(id: T): Promise<void> {
 		await apiDelete(`/layouts/${id}`);
+		if (String(id) === loadChartPrefs().lastLayoutId) {
+			clearLastLayoutId();
+		}
+		try {
+			const remaining = await apiGet<LayoutListItem[]>('/layouts');
+			if (remaining.length === 0) {
+				window.setTimeout(() => this.hooks.onLastLayoutRemoved?.(), 0);
+			}
+		} catch {
+			// Delete already succeeded; list refresh is best-effort.
+		}
 	}
 
 	async saveChart(chartData: ChartData): Promise<string> {
+		this.lastChartContent = chartData.content;
 		const body = {
 			name: chartData.name,
 			content: chartData.content,
@@ -94,12 +135,22 @@ export class ServerSaveLoadAdapter implements IExternalSaveLoadAdapter {
 		const saved = chartData.id
 			? await apiPut<LayoutIdResponse>(`/layouts/${chartData.id}`, body)
 			: await apiPost<LayoutIdResponse>('/layouts', body);
+		saveLastLayoutId(String(saved.id));
 		return String(saved.id);
 	}
 
 	async getChartContent(chartId: number): Promise<string> {
-		const layout = await apiGet<LayoutDetail>(`/layouts/${chartId}`);
-		return layout.content;
+		try {
+			const layout = await apiGet<LayoutDetail>(`/layouts/${chartId}`);
+			this.lastChartContent = layout.content;
+			saveLastLayoutId(String(chartId));
+			return layout.content;
+		} catch (error) {
+			if (!isNotFound(error)) {
+				throw error;
+			}
+			return cachedChartContent(this.lastChartContent);
+		}
 	}
 
 	async getAllStudyTemplates(): Promise<StudyTemplateMetaInfo[]> {

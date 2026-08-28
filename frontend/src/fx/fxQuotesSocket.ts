@@ -54,12 +54,18 @@ function ensureSocket(): void {
 
 	socket = new WebSocket(wsUrl());
 
-	socket.addEventListener('open', () => {
+	socket.addEventListener('open', event => {
+		if (event.target !== socket) {
+			return;
+		}
 		reconnectDelay = INITIAL_RECONNECT_MS;
 		clearReconnect();
 	});
 
 	socket.addEventListener('message', event => {
+		if (event.target !== socket) {
+			return;
+		}
 		let payload: unknown;
 		try {
 			payload = JSON.parse(event.data);
@@ -70,7 +76,10 @@ function ensureSocket(): void {
 		quoteStore.applyQuote(payload);
 	});
 
-	socket.addEventListener('close', () => {
+	socket.addEventListener('close', event => {
+		if (event.target !== socket) {
+			return;
+		}
 		socket = null;
 		if (!started) {
 			return;
@@ -78,8 +87,11 @@ function ensureSocket(): void {
 		scheduleReconnect();
 	});
 
-	socket.addEventListener('error', () => {
-		socket?.close();
+	socket.addEventListener('error', event => {
+		if (event.target !== socket) {
+			return;
+		}
+		socket.close();
 	});
 }
 

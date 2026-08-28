@@ -11,8 +11,14 @@
  * Selected pair follows the widget symbol (USD/JPY ↔ curpairCd 1).
  */
 
-import type { DropdownItem, IChartingLibraryWidget, IDropdownApi } from 'charting_library';
-import { resubscribeAllWithCurrentPrice } from '../datafeed/streaming.ts';
+import type {
+	DropdownItem,
+	IChartingLibraryWidget,
+	IChartWidgetApi,
+	IDropdownApi,
+} from 'charting_library';
+import { saveLastChartView } from '../chartPrefs.ts';
+import { ensureStreamAlive, resubscribeAllWithCurrentPrice } from '../datafeed/streaming.ts';
 import { fetchCurpairs } from './currencyPairs.ts';
 import { connectFxQuotes } from './fxQuotesSocket.ts';
 import { quoteStore } from './quoteStore.ts';
@@ -49,6 +55,17 @@ function quoteLabel(): string {
 	return `${pair.curpairDisplay}  BID ${bid}  ASK ${ask}  MID ${mid}`;
 }
 
+let boundChart: IChartWidgetApi | null = null;
+
+function persistChartView(widget: IChartingLibraryWidget): void {
+	try {
+		const chart = widget.activeChart();
+		saveLastChartView(chart.symbol(), String(chart.resolution()));
+	} catch {
+		// Chart API is only available after onChartReady.
+	}
+}
+
 function syncQuoteToChartSymbol(widget: IChartingLibraryWidget): void {
 	try {
 		quoteStore.selectBySymbol(widget.activeChart().symbol());
@@ -57,7 +74,27 @@ function syncQuoteToChartSymbol(widget: IChartingLibraryWidget): void {
 	}
 }
 
+function bindActiveChart(widget: IChartingLibraryWidget): void {
+	try {
+		const chart = widget.activeChart();
+		if (boundChart === chart) {
+			return;
+		}
+		boundChart = chart;
+		chart.onSymbolChanged().subscribe(null, () => {
+			syncQuoteToChartSymbol(widget);
+			persistChartView(widget);
+		});
+		chart.onIntervalChanged().subscribe(null, () => {
+			persistChartView(widget);
+		});
+	} catch {
+		// Chart API is only available after onChartReady.
+	}
+}
+
 function reloadChartSeries(widget: IChartingLibraryWidget): void {
+	// Invalidate TV bar cache first, then resetData so getBars refetches.
 	resubscribeAllWithCurrentPrice();
 	try {
 		widget.activeChart().resetData();
@@ -68,10 +105,14 @@ function reloadChartSeries(widget: IChartingLibraryWidget): void {
 
 export function installFxQuoteToolbar(widget: IChartingLibraryWidget): void {
 	widget.onChartReady(() => {
-		syncQuoteToChartSymbol(widget);
-		widget.activeChart().onSymbolChanged().subscribe(null, () => {
+		const onChartLoaded = (): void => {
+			bindActiveChart(widget);
 			syncQuoteToChartSymbol(widget);
-		});
+			persistChartView(widget);
+			ensureStreamAlive();
+		};
+		onChartLoaded();
+		widget.subscribe('chart_loaded', onChartLoaded);
 	});
 
 	widget.headerReady().then(async () => {

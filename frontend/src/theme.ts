@@ -5,14 +5,16 @@
 /**
  * Chart pane colors and the CSS blob for the header theme switch.
  *
- * Initial theme: ?theme=dark|light, else prefers-color-scheme. Toolbar
- * (toolbar.ts) can change it later via widget.changeTheme.
+ * Initial theme: ?theme=dark|light, else last saved pref, else
+ * prefers-color-scheme. Toolbar (toolbar.ts) can change it later via
+ * widget.changeTheme and persists the choice in chartPrefs.ts.
  *
  * custom_css_url in main.ts points at cssBlobUrl so the switcher styles
  * apply inside the widget iframe/header.
  */
 
 import type { Overrides, ThemeName } from 'charting_library';
+import { loadChartPrefs, saveTheme } from './chartPrefs.ts';
 
 function getRequestedTheme(): ThemeName | null {
 	const requestedTheme = new URLSearchParams(window.location.search).get('theme');
@@ -94,10 +96,25 @@ const customCSS = `
 const cssBlob = new Blob([customCSS], { type: 'text/css' });
 
 export const cssBlobUrl = URL.createObjectURL(cssBlob);
-export const theme: ThemeName =
-	getRequestedTheme() ?? (prefersDarkTheme() ? 'dark' : 'light');
 
-export function getChartOverrides(currentTheme: ThemeName = theme): Overrides {
+/**
+ * Theme for this session: URL wins, then per-customer localStorage, then OS.
+ *
+ * A `?theme=` query also writes prefs so the next refresh without the query
+ * keeps the same theme.
+ *
+ * @returns `dark` or `light`
+ */
+export function resolveTheme(): ThemeName {
+	const fromUrl = getRequestedTheme();
+	if (fromUrl) {
+		saveTheme(fromUrl);
+		return fromUrl;
+	}
+	return loadChartPrefs().theme ?? (prefersDarkTheme() ? 'dark' : 'light');
+}
+
+export function getChartOverrides(currentTheme: ThemeName = resolveTheme()): Overrides {
 	if (currentTheme === 'dark') {
 		return {
 			'paneProperties.background': '#111827',

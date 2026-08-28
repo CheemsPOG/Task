@@ -7,11 +7,14 @@
  *
  * quoteToolbar.ts renders from this store. datafeed.ts reads `mode` when
  * requesting history. streaming.ts reads `mode` when subscribing to bars.
+ * setMode persists the side in localStorage (chartPrefs.ts) so refresh
+ * keeps BID / ASK / MID.
  *
  * Quotes keyed by string curpairCd ("1" for USDJPY). Malformed or unknown
  * codes are ignored so a bad tick cannot blank the ticker.
  */
 
+import { savePriceMode } from '../chartPrefs.ts';
 import type { CurrencyPair, PriceMode, RealtimeQuote } from './types.ts';
 
 export type QuoteStoreListener = () => void;
@@ -116,6 +119,7 @@ class QuoteStore {
 			return;
 		}
 		this.mode = mode;
+		savePriceMode(mode);
 		this.notify();
 	}
 

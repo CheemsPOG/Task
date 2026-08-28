@@ -17,22 +17,34 @@
  * Save/Load uses ServerSaveLoadAdapter (docs 127–139): layouts, study
  * templates (`study_templates`), and chart style templates
  * (`chart_template_storage`) persist in Postgres for the JWT customer.
+ * Price mode, theme, and last viewed pair persist in localStorage
+ * (`chartPrefs.ts`). Named layouts win on refresh (`load_last_chart`).
+ * A local draft is used only when the customer has no saved layouts.
+ * USD/JPY is only the first-visit default.
  *
  * Vite proxies /api and /curpairs to Java :8080, /ws to Python :8081.
  */
 
-import type { ChartingLibraryFeatureset, ResolutionString } from 'charting_library';
-import { setUnauthorizedHandler } from './api.ts';
+import type { ChartingLibraryFeatureset, IChartingLibraryWidget, ResolutionString } from 'charting_library';
+import { apiGet, setUnauthorizedHandler } from './api.ts';
 import { getToken, logout, refreshAccessToken } from './auth.ts';
+import {
+	DEFAULT_INTERVAL,
+	DEFAULT_SYMBOL,
+	loadChartDraft,
+	loadChartPrefs,
+} from './chartPrefs.ts';
+import { snapshotChart } from './chartReset.ts';
 import Datafeed from './datafeed/datafeed.ts';
+import { quoteStore } from './fx/quoteStore.ts';
 import { installFxQuoteToolbar } from './fx/quoteToolbar.ts';
 import {
 	hideLoginOverlay,
 	installLoginOverlay,
 	showLoginOverlay,
 } from './login.ts';
-import { ServerSaveLoadAdapter } from './save-load-adapter.ts';
-import { cssBlobUrl, getChartOverrides, theme } from './theme.ts';
+import { ServerSaveLoadAdapter, type LayoutListItem } from './save-load-adapter.ts';
+import { cssBlobUrl, getChartOverrides, resolveTheme } from './theme.ts';
 import { installLogoutButton, installThemeToolbar } from './toolbar.ts';
 
 let chartStarted = false;
@@ -41,20 +53,49 @@ let chartStarted = false;
  * Creates the chart once. TradingView's constructor reads window.TradingView
  * from charting_library.standalone.js loaded in index.html.
  */
-function initChart(): void {
+async function initChart(): Promise<void> {
 	if (chartStarted) {
 		return;
 	}
 	chartStarted = true;
+
+	const storedPrefs = loadChartPrefs();
+	if (storedPrefs.priceMode) {
+		quoteStore.setMode(storedPrefs.priceMode);
+	}
+
+	const currentTheme = resolveTheme();
+	const bootSymbol = storedPrefs.lastSymbol ?? DEFAULT_SYMBOL;
+	const bootInterval = (storedPrefs.lastInterval ?? DEFAULT_INTERVAL) as ResolutionString;
+
+	let hasLayouts = false;
+	try {
+		const layouts = await apiGet<LayoutListItem[]>('/layouts');
+		hasLayouts = layouts.length > 0;
+	} catch {
+		hasLayouts = false;
+	}
+	const draft = loadChartDraft() ?? undefined;
 
 	const Widget = window.TradingView?.widget;
 	if (!Widget) {
 		throw new Error('TradingView Advanced Charts library failed to load.');
 	}
 
-	const widget = new Widget({
-		symbol: 'USD/JPY',
-		interval: '1D' as ResolutionString,
+	let widget!: IChartingLibraryWidget;
+	const adapter = new ServerSaveLoadAdapter({
+		onLastLayoutRemoved: () => {
+			try {
+				widget.closePopupsAndDialogs();
+			} catch {
+				// Load dialog may already be gone.
+			}
+		},
+	});
+
+	widget = new Widget({
+		symbol: bootSymbol,
+		interval: bootInterval,
 		fullscreen: true,
 		container: 'tv_chart_container',
 		datafeed: Datafeed,
@@ -62,7 +103,7 @@ function initChart(): void {
 		locale: 'en',
 		timezone: 'Etc/UTC',
 		symbol_search_request_delay: 400,
-		theme,
+		theme: currentTheme,
 		custom_css_url: cssBlobUrl,
 		enabled_features: [
 			'seconds_resolution',
@@ -78,8 +119,11 @@ function initChart(): void {
 			// stretch the price Y-axis down to zero.
 			'volume_force_overlay',
 		],
-		save_load_adapter: new ServerSaveLoadAdapter(),
-		overrides: getChartOverrides(theme),
+		save_load_adapter: adapter,
+		load_last_chart: hasLayouts,
+		saved_data: hasLayouts ? undefined : draft,
+		auto_save_delay: 5,
+		overrides: getChartOverrides(currentTheme),
 	});
 
 	window.tvWidget = widget;
@@ -90,6 +134,33 @@ function initChart(): void {
 			window.location.reload();
 		});
 	});
+
+	widget.onChartReady(() => {
+		if (!hasLayouts) {
+			restoreLastViewedPair(widget, bootSymbol, bootInterval);
+		}
+		const captureFactory = !hasLayouts && !draft;
+		snapshotChart(widget, captureFactory);
+		widget.subscribe('onAutoSaveNeeded', () => {
+			snapshotChart(widget, false);
+		});
+	});
+}
+
+function restoreLastViewedPair(
+	widget: IChartingLibraryWidget,
+	symbol: string,
+	interval: ResolutionString
+): void {
+	try {
+		const chart = widget.activeChart();
+		if (chart.symbol() === symbol && String(chart.resolution()) === String(interval)) {
+			return;
+		}
+		widget.setSymbol(symbol, interval, () => undefined);
+	} catch {
+		// Chart API is only available after onChartReady.
+	}
 }
 
 /**
@@ -106,20 +177,20 @@ async function boot(): Promise<void> {
 	installLoginOverlay({
 		onLoggedIn: () => {
 			hideLoginOverlay();
-			initChart();
+			void initChart();
 		},
 	});
 
 	if (getToken()) {
 		hideLoginOverlay();
-		initChart();
+		void initChart();
 		return;
 	}
 
 	try {
 		await refreshAccessToken();
 		hideLoginOverlay();
-		initChart();
+		void initChart();
 	} catch {
 		showLoginOverlay();
 	}

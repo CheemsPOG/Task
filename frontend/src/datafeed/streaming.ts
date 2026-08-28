@@ -54,6 +54,30 @@ function wsUrl(): string {
 	return `${protocol}//${window.location.host}/ws/stream`;
 }
 
+function isCurrentSocket(event: Event): boolean {
+	return socket !== null && event.target === socket;
+}
+
+function clearReconnect(): void {
+	if (reconnectTimer === null) {
+		return;
+	}
+	window.clearTimeout(reconnectTimer);
+	reconnectTimer = null;
+}
+
+function sendSubscribe(ws: WebSocket, uid: string, handler: SubscriberHandler): void {
+	ws.send(
+		JSON.stringify({
+			action: 'subscribe',
+			uid,
+			symbol: handler.symbol,
+			resolution: handler.resolution,
+			price: handler.price,
+		})
+	);
+}
+
 function ensureSocket(): WebSocket {
 	if (
 		socket &&
@@ -65,9 +89,13 @@ function ensureSocket(): WebSocket {
 
 	socket = new WebSocket(wsUrl());
 
-	socket.addEventListener('open', () => {
+	socket.addEventListener('open', event => {
+		if (!isCurrentSocket(event)) {
+			return;
+		}
 		const ws = socket;
 		reconnectDelay = 1_000;
+		clearReconnect();
 
 		if (hasConnectedBefore) {
 			subscriberToHandler.forEach(handler => {
@@ -81,19 +109,14 @@ function ensureSocket(): WebSocket {
 		}
 
 		subscriberToHandler.forEach((handler, uid) => {
-			ws.send(
-				JSON.stringify({
-					action: 'subscribe',
-					uid,
-					symbol: handler.symbol,
-					resolution: handler.resolution,
-					price: handler.price,
-				})
-			);
+			sendSubscribe(ws, uid, handler);
 		});
 	});
 
 	socket.addEventListener('message', event => {
+		if (!isCurrentSocket(event)) {
+			return;
+		}
 		let message: StreamMessage;
 		try {
 			message = JSON.parse(event.data) as StreamMessage;
@@ -114,9 +137,14 @@ function ensureSocket(): WebSocket {
 		}
 	});
 
-	socket.addEventListener('close', () => {
+	socket.addEventListener('close', event => {
+		if (!isCurrentSocket(event)) {
+			return;
+		}
 		socket = null;
-		if (subscriberToHandler.size === 0) return;
+		if (subscriberToHandler.size === 0) {
+			return;
+		}
 
 		reconnectTimer = window.setTimeout(() => {
 			reconnectDelay = Math.min(reconnectDelay * 2, 30_000);
@@ -124,8 +152,11 @@ function ensureSocket(): WebSocket {
 		}, reconnectDelay);
 	});
 
-	socket.addEventListener('error', () => {
-		socket?.close();
+	socket.addEventListener('error', event => {
+		if (!isCurrentSocket(event)) {
+			return;
+		}
+		socket.close();
 	});
 
 	return socket;
@@ -170,44 +201,53 @@ export function subscribeOnStream(
 		lastBarTime,
 	});
 
+	clearReconnect();
 	const ws = ensureSocket();
 	if (ws.readyState === WebSocket.OPEN) {
-		ws.send(
-			JSON.stringify({
-				action: 'subscribe',
-				uid: subscriberUID,
-				symbol: symbolInfo.ticker ?? symbolInfo.name,
-				resolution,
-				price: quoteStore.mode,
-			})
-		);
+		const handler = subscriberToHandler.get(subscriberUID);
+		if (handler) {
+			sendSubscribe(ws, subscriberUID, handler);
+		}
 	}
 }
 
 /**
- * BID/ASK/MID changed: drop pending bars and subscribe again on the same uid
- * so the widget does not keep the old side's candle.
+ * BID/ASK/MID changed: drop pending bars, invalidate TradingView's bar cache,
+ * then subscribe again on the same uid so candles use the new side.
+ *
+ * onResetCacheNeededCallback must run before chart.resetData() (see
+ * IChartWidgetApi.resetData). Without it the library keeps USD/JPY bars
+ * cached and never calls getBars. Callbacks are collected first because
+ * the library may unsubscribe during the callback and mutate this map.
  */
 export function resubscribeAllWithCurrentPrice(): void {
+	const resetCallbacks: Array<() => void> = [];
 	subscriberToHandler.forEach((handler, uid) => {
 		handler.price = quoteStore.mode;
 		pendingByUid.delete(uid);
+		if (handler.onResetCacheNeededCallback) {
+			resetCallbacks.push(handler.onResetCacheNeededCallback);
+		}
+	});
+	for (const resetCache of resetCallbacks) {
+		resetCache();
+	}
+
+	subscriberToHandler.forEach((handler, uid) => {
+		handler.price = quoteStore.mode;
 		if (socket?.readyState !== WebSocket.OPEN) {
 			return;
 		}
 		socket.send(JSON.stringify({ action: 'unsubscribe', uid }));
-		socket.send(
-			JSON.stringify({
-				action: 'subscribe',
-				uid,
-				symbol: handler.symbol,
-				resolution: handler.resolution,
-				price: quoteStore.mode,
-			})
-		);
+		sendSubscribe(socket, uid, handler);
 	});
 }
 
+/**
+ * Layout load unsubscribes every series then resubscribes after getBars.
+ * Keep the socket open across that gap — closing it races the replacement
+ * connection and the stale `close` handler nulls the new WebSocket.
+ */
 export function unsubscribeFromStream(subscriberUID: string): void {
 	pendingByUid.delete(subscriberUID);
 	subscriberToHandler.delete(subscriberUID);
@@ -217,12 +257,21 @@ export function unsubscribeFromStream(subscriberUID: string): void {
 	}
 
 	if (subscriberToHandler.size === 0) {
-		if (reconnectTimer) {
-			window.clearTimeout(reconnectTimer);
-			reconnectTimer = null;
-		}
-		socket?.close();
-		socket = null;
+		clearReconnect();
 		reconnectDelay = 1_000;
 	}
+}
+
+/** After a layout load: reconnect if the socket died, else re-send subscribes. */
+export function ensureStreamAlive(): void {
+	if (subscriberToHandler.size === 0) {
+		return;
+	}
+	const ws = ensureSocket();
+	if (ws.readyState !== WebSocket.OPEN) {
+		return;
+	}
+	subscriberToHandler.forEach((handler, uid) => {
+		sendSubscribe(ws, uid, handler);
+	});
 }
