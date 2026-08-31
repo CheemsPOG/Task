@@ -17,7 +17,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * OHLC writer). {@code ChartCacheWriter} seeds warehouse/Redis at boot. HTTP
  * lives in {@code controller} (docs 120–139). Python is a separate process that
  * only relays Redis {@code peach:quotes} (ticks) and {@code peach:bars}
- * (forming candles).
+ * (forming candles). If scheduling silently stops app-wide, check
+ * {@code @EnableScheduling} here first.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

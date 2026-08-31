@@ -1,0 +1,44 @@
+{
+  "projectRoot": "D:\\Personal Projects\\New\\Task\\backend",
+  "batchFiles": [
+    {"path": "src/main/java/com/task/chart/constants/ErrorCodes.java", "language": "java", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/dto/response/ErrorResponse.java", "language": "java", "sizeLines": 44, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java", "language": "java", "sizeLines": 120, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java", "language": "java", "sizeLines": 38, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/exception/ServerErrorException.java", "language": "java", "sizeLines": 38, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/exception/ValidationException.java", "language": "java", "sizeLines": 37, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/CustomerContext.java", "language": "java", "sizeLines": 76, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java", "language": "java", "sizeLines": 85, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/LocalizedMessageService.java", "language": "java", "sizeLines": 40, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java", "language": "java", "sizeLines": 56, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/constants/ErrorCodes.java": [],
+    "src/main/java/com/task/chart/dto/response/ErrorResponse.java": [],
+    "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "src/main/java/com/task/chart/service/LocalizedMessageService.java"
+    ],
+    "src/main/java/com/task/chart/exception/ResourceNotFoundException.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java"
+    ],
+    "src/main/java/com/task/chart/exception/ServerErrorException.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java"
+    ],
+    "src/main/java/com/task/chart/exception/ValidationException.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java"
+    ],
+    "src/main/java/com/task/chart/security/CustomerContext.java": [
+      "src/main/java/com/task/chart/exception/ServerErrorException.java"
+    ],
+    "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "src/main/java/com/task/chart/dto/response/ErrorResponse.java"
+    ],
+    "src/main/java/com/task/chart/service/LocalizedMessageService.java": [],
+    "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java": [
+      "src/main/java/com/task/chart/service/LocalizedMessageService.java"
+    ]
+  }
+}

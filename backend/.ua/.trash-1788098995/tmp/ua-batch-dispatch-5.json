@@ -1,0 +1,195 @@
+{
+  "batchIndex": 5,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartLayoutController.java",
+      "language": "java",
+      "sizeLines": 174,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "language": "java",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "language": "java",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvChartLayout.java",
+      "language": "java",
+      "sizeLines": 144,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvChartLayoutRepository.java",
+      "language": "java",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartLayoutService.java",
+      "language": "java",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+      "language": "java",
+      "sizeLines": 221,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/controller/ChartLayoutController.java": [
+      "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "src/main/java/com/task/chart/service/ChartLayoutService.java"
+    ],
+    "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java": [],
+    "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java": [],
+    "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java": [],
+    "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java": [],
+    "src/main/java/com/task/chart/entity/TvChartLayout.java": [],
+    "src/main/java/com/task/chart/repository/TvChartLayoutRepository.java": [
+      "src/main/java/com/task/chart/entity/TvChartLayout.java"
+    ],
+    "src/main/java/com/task/chart/service/ChartLayoutService.java": [
+      "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java": [
+      "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "src/main/java/com/task/chart/entity/Ccypair.java",
+      "src/main/java/com/task/chart/entity/TvChartLayout.java",
+      "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "src/main/java/com/task/chart/exception/ValidationException.java",
+      "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "src/main/java/com/task/chart/repository/TvChartLayoutRepository.java",
+      "src/main/java/com/task/chart/security/CustomerContext.java",
+      "src/main/java/com/task/chart/service/ChartLayoutService.java",
+      "src/main/java/com/task/chart/util/ResolutionMapper.java"
+    ]
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/controller/ChartLayoutController.java": [
+      {
+        "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+        "batchIndex": 6,
+        "symbols": [
+          "SystemDatetimeResponse"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/ChartLayoutService.java": [
+      {
+        "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+        "batchIndex": 6,
+        "symbols": [
+          "SystemDatetimeResponse"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java": [
+      {
+        "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+        "batchIndex": 6,
+        "symbols": [
+          "SystemDatetimeResponse"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/entity/Ccypair.java",
+        "batchIndex": 3,
+        "symbols": [
+          "ACTIVE",
+          "getCcypairCd",
+          "getCcypairJp",
+          "getRateUnit",
+          "getIsDeleted",
+          "setIsDeleted",
+          "getPriority",
+          "Ccypair"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ResourceNotFoundException",
+          "ResourceNotFoundException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ValidationException",
+          "ValidationException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+        "batchIndex": 3,
+        "symbols": [
+          "CcypairRepository"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/security/CustomerContext.java",
+        "batchIndex": 4,
+        "symbols": [
+          "set",
+          "get",
+          "requireCustomerNo",
+          "clear",
+          "CustomerContext"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+        "batchIndex": 1,
+        "symbols": [
+          "HISTORY_RESOLUTIONS",
+          "MARKS_RESOLUTIONS",
+          "SECONDS_MULTIPLIERS",
+          "DAILY_MULTIPLIERS",
+          "WEEKLY_MULTIPLIERS",
+          "MONTHLY_MULTIPLIERS",
+          "periodMillis",
+          "isHistoryResolution",
+          "isMarksResolution",
+          "toPeachChartType",
+          "ResolutionMapper"
+        ]
+      }
+    ]
+  }
+}

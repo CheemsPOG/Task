@@ -1,0 +1,324 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "type": "file",
+      "name": "SearchSymbolDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "summary": "DTO for one UDF symbol-search hit, including ticker, description, exchange, and type.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "datafeed"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "type": "file",
+      "name": "ServerTimeResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "summary": "Response wrapping Unix epoch seconds for the UDF /time endpoint.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "datafeed"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "type": "file",
+      "name": "SymbolInfoDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "summary": "Resolved symbol metadata for TradingView: ticker, session, timezone, price scale, and supported resolutions.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "datafeed"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "type": "file",
+      "name": "TimescaleMarkDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "summary": "DTO for a TradingView timescale mark: id, time, color, label, and tooltip list for the /timescale_marks endpoint.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "datafeed"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/Season.java",
+      "type": "file",
+      "name": "Season.java",
+      "filePath": "src/main/java/com/task/chart/entity/Season.java",
+      "summary": "JPA entity for daylight-saving versus standard-time seasons, with start/end instants used to pick the FX trading session string.",
+      "tags": [
+        "data-model",
+        "entity",
+        "jpa",
+        "session"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/TvMark.java",
+      "type": "file",
+      "name": "TvMark.java",
+      "filePath": "src/main/java/com/task/chart/entity/TvMark.java",
+      "summary": "JPA entity for persisted TradingView chart marks keyed by currency pair, resolution, and timestamp.",
+      "tags": [
+        "data-model",
+        "entity",
+        "jpa",
+        "marks"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "type": "file",
+      "name": "TvTimescaleMark.java",
+      "filePath": "src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "summary": "JPA entity for persisted TradingView timescale marks keyed by currency pair, resolution, and timestamp.",
+      "tags": [
+        "data-model",
+        "entity",
+        "jpa",
+        "marks"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java:SearchSymbolDto",
+      "type": "class",
+      "name": "SearchSymbolDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "lineRange": [
+        32,
+        39
+      ],
+      "summary": "Symbol-search hit DTO with ticker, description, type, and exchange.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "search"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java:ServerTimeResponse",
+      "type": "class",
+      "name": "ServerTimeResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "lineRange": [
+        33,
+        44
+      ],
+      "summary": "Wrapper for Unix server time in seconds returned by /time.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "time"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java:SymbolInfoDto",
+      "type": "class",
+      "name": "SymbolInfoDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "lineRange": [
+        34,
+        59
+      ],
+      "summary": "Full UDF symbol-info payload including session, timezone, minmov, pricescale, and resolution lists.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "symbol"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java:TimescaleMarkDto",
+      "type": "class",
+      "name": "TimescaleMarkDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "lineRange": [
+        34,
+        41
+      ],
+      "summary": "Timescale-mark DTO with id, time, color, label, and tooltip strings.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/Season.java:Season",
+      "type": "class",
+      "name": "Season",
+      "filePath": "src/main/java/com/task/chart/entity/Season.java",
+      "lineRange": [
+        39,
+        88
+      ],
+      "summary": "Maps the season table with daylight-saving/standard codes and inclusive start/end instants.",
+      "tags": [
+        "entity",
+        "jpa",
+        "data-model",
+        "session"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/TvMark.java:TvMark",
+      "type": "class",
+      "name": "TvMark",
+      "filePath": "src/main/java/com/task/chart/entity/TvMark.java",
+      "lineRange": [
+        36,
+        92
+      ],
+      "summary": "Persisted chart mark with pair code, resolution, timestamp, color, label, and text.",
+      "tags": [
+        "entity",
+        "jpa",
+        "data-model",
+        "marks"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/TvTimescaleMark.java:TvTimescaleMark",
+      "type": "class",
+      "name": "TvTimescaleMark",
+      "filePath": "src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "lineRange": [
+        36,
+        92
+      ],
+      "summary": "Persisted timescale mark with pair code, resolution, timestamp, color, label, and tooltip.",
+      "tags": [
+        "entity",
+        "jpa",
+        "data-model",
+        "marks"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java:SearchSymbolDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java:SearchSymbolDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java:ServerTimeResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java:ServerTimeResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java:SymbolInfoDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java:SymbolInfoDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java:TimescaleMarkDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java:TimescaleMarkDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/Season.java",
+      "target": "class:src/main/java/com/task/chart/entity/Season.java:Season",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/Season.java",
+      "target": "class:src/main/java/com/task/chart/entity/Season.java:Season",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvMark.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvMark.java:TvMark",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvMark.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvMark.java:TvMark",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvTimescaleMark.java:TvTimescaleMark",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvTimescaleMark.java:TvTimescaleMark",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

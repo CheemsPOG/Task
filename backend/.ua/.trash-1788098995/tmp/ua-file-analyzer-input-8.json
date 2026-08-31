@@ -1,0 +1,37 @@
+{
+  "projectRoot": "D:\\Personal Projects\\New\\Task\\backend",
+  "batchFiles": [
+    {"path": "src/main/java/com/task/chart/cache/CachedChartBar.java", "language": "java", "sizeLines": 181, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/cache/ChartCacheWriter.java", "language": "java", "sizeLines": 173, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/constants/PriceComponent.java", "language": "java", "sizeLines": 77, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/dto/response/BarDto.java", "language": "java", "sizeLines": 40, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/MockBarGenerator.java", "language": "java", "sizeLines": 99, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/SymbolCatalog.java", "language": "java", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java", "language": "java", "sizeLines": 173, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/cache/CachedChartBar.java": [
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java"
+    ],
+    "src/main/java/com/task/chart/cache/ChartCacheWriter.java": [
+      "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "src/main/java/com/task/chart/service/SymbolCatalog.java"
+    ],
+    "src/main/java/com/task/chart/constants/PriceComponent.java": [],
+    "src/main/java/com/task/chart/dto/response/BarDto.java": [],
+    "src/main/java/com/task/chart/service/MockBarGenerator.java": [
+      "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java"
+    ],
+    "src/main/java/com/task/chart/service/SymbolCatalog.java": [],
+    "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java": [
+      "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "src/main/java/com/task/chart/util/DemoMarket.java"
+    ]
+  }
+}

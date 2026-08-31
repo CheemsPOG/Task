@@ -1,0 +1,314 @@
+{
+  "batchIndex": 1,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "language": "java",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "language": "java",
+      "sizeLines": 289,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "language": "java",
+      "sizeLines": 251,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "language": "java",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "language": "java",
+      "sizeLines": 31,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "language": "java",
+      "sizeLines": 118,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "language": "java",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "language": "java",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "language": "java",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "language": "java",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/Season.java",
+      "language": "java",
+      "sizeLines": 88,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvMark.java",
+      "language": "java",
+      "sizeLines": 92,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "language": "java",
+      "sizeLines": 92,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "language": "java",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "language": "java",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "language": "java",
+      "sizeLines": 52,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartDataService.java",
+      "language": "java",
+      "sizeLines": 119,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "language": "java",
+      "sizeLines": 478,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "language": "java",
+      "sizeLines": 141,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/cache/CacheNamespace.java": [
+      "src/main/java/com/task/chart/util/ResolutionMapper.java"
+    ],
+    "src/main/java/com/task/chart/cache/ChartCacheStore.java": [],
+    "src/main/java/com/task/chart/controller/ChartDataController.java": [
+      "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "src/main/java/com/task/chart/service/ChartDataService.java"
+    ],
+    "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java": [],
+    "src/main/java/com/task/chart/dto/response/HealthResponse.java": [],
+    "src/main/java/com/task/chart/dto/response/HistoryResponse.java": [],
+    "src/main/java/com/task/chart/dto/response/MarkDto.java": [],
+    "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java": [],
+    "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java": [],
+    "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java": [],
+    "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java": [],
+    "src/main/java/com/task/chart/entity/Season.java": [],
+    "src/main/java/com/task/chart/entity/TvMark.java": [],
+    "src/main/java/com/task/chart/entity/TvTimescaleMark.java": [],
+    "src/main/java/com/task/chart/repository/SeasonRepository.java": [
+      "src/main/java/com/task/chart/entity/Season.java"
+    ],
+    "src/main/java/com/task/chart/repository/TvMarkRepository.java": [
+      "src/main/java/com/task/chart/entity/TvMark.java"
+    ],
+    "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java": [
+      "src/main/java/com/task/chart/entity/TvTimescaleMark.java"
+    ],
+    "src/main/java/com/task/chart/service/ChartDataService.java": [
+      "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java": [
+      "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "src/main/java/com/task/chart/config/AppProperties.java",
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "src/main/java/com/task/chart/entity/Ccypair.java",
+      "src/main/java/com/task/chart/entity/Season.java",
+      "src/main/java/com/task/chart/entity/TvMark.java",
+      "src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "src/main/java/com/task/chart/exception/ValidationException.java",
+      "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "src/main/java/com/task/chart/service/ChartDataService.java",
+      "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "src/main/java/com/task/chart/util/ResolutionMapper.java"
+    ],
+    "src/main/java/com/task/chart/util/ResolutionMapper.java": []
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java": [
+      {
+        "path": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+        "batchIndex": 8,
+        "symbols": [
+          "toBarDto",
+          "open",
+          "high",
+          "low",
+          "close",
+          "openFromTick",
+          "applyTick",
+          "CachedChartBar"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/config/AppProperties.java",
+        "batchIndex": 2,
+        "symbols": [
+          "getCorsOrigins",
+          "setCorsOrigins",
+          "getJwt",
+          "setJwt",
+          "getTradingView",
+          "setTradingView",
+          "AppProperties"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/constants/PriceComponent.java",
+        "batchIndex": 8,
+        "symbols": [
+          "from",
+          "fromBidAsk",
+          "PriceComponent"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/dto/response/BarDto.java",
+        "batchIndex": 8,
+        "symbols": [
+          "BarDto"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/entity/Ccypair.java",
+        "batchIndex": 3,
+        "symbols": [
+          "ACTIVE",
+          "getCcypairCd",
+          "getCcypairJp",
+          "getRateUnit",
+          "getIsDeleted",
+          "setIsDeleted",
+          "getPriority",
+          "Ccypair"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ResourceNotFoundException",
+          "ResourceNotFoundException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ServerErrorException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ServerErrorException",
+          "ServerErrorException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ValidationException",
+          "ValidationException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+        "batchIndex": 3,
+        "symbols": [
+          "CcypairRepository"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+        "batchIndex": 8,
+        "symbols": [
+          "SymbolCatalog"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/util/ResolutionMapper.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      }
+    ]
+  }
+}

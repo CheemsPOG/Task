@@ -24,8 +24,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * <p>Parses the 1h HS256 access JWT via {@link JwtService}; on success the principal is a
  * {@link ChartPrincipal} and {@code customer_no} is stored for tenant CRUD. {@link SecurityConfig}
  * inserts this filter before {@code UsernamePasswordAuthenticationFilter}. A bad token is dropped so
- * {@link JsonUnauthorizedEntryPoint} can return JSON 401 on protected paths. This is NOT Peach S-01,
- * NOT refresh-cookie handling, and NOT the Python WS.
+ * {@link JsonUnauthorizedEntryPoint} can return JSON 401 on protected paths — this filter does not
+ * write 401 itself.
+ *
+ * <p><strong>NOT:</strong> not Peach S-01; not refresh-cookie handling; not the Python WS.
+ * {@link #doFilterInternal} <em>must</em> clear {@link CustomerContext} in {@code finally}.
+ * Skipping that leaks the previous request's {@code customer_no} onto the next Tomcat worker.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

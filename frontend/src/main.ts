@@ -17,10 +17,11 @@
  * Save/Load uses ServerSaveLoadAdapter (docs 127–139): layouts, study
  * templates (`study_templates`), and chart style templates
  * (`chart_template_storage`) persist in Postgres for the JWT customer.
- * Price mode, theme, and last viewed pair persist in localStorage
- * (`chartPrefs.ts`). Named layouts win on refresh (`load_last_chart`).
- * A local draft is used only when the customer has no saved layouts.
- * USD/JPY is only the first-visit default.
+ * Price mode, theme, and last viewed pair/interval persist in localStorage
+ * (`chartPrefs.ts`). Named layouts still load drawings and pane setup
+ * (`load_last_chart`); the last header interval is re-applied after that
+ * so a refresh keeps 1W / 5m / etc. A local draft is used only when the
+ * customer has no saved layouts. USD/JPY is only the first-visit default.
  *
  * Vite proxies /api and /curpairs to Java :8080, /ws to Python :8081.
  */
@@ -128,7 +129,11 @@ async function initChart(): Promise<void> {
 
 	window.tvWidget = widget;
 	installThemeToolbar(widget);
-	installFxQuoteToolbar(widget);
+	installFxQuoteToolbar(widget, {
+		restoreSymbol: bootSymbol,
+		restoreInterval: bootInterval,
+		waitForChartLoaded: hasLayouts,
+	});
 	installLogoutButton(widget, () => {
 		void logout().finally(() => {
 			window.location.reload();
@@ -136,31 +141,12 @@ async function initChart(): Promise<void> {
 	});
 
 	widget.onChartReady(() => {
-		if (!hasLayouts) {
-			restoreLastViewedPair(widget, bootSymbol, bootInterval);
-		}
 		const captureFactory = !hasLayouts && !draft;
 		snapshotChart(widget, captureFactory);
 		widget.subscribe('onAutoSaveNeeded', () => {
 			snapshotChart(widget, false);
 		});
 	});
-}
-
-function restoreLastViewedPair(
-	widget: IChartingLibraryWidget,
-	symbol: string,
-	interval: ResolutionString
-): void {
-	try {
-		const chart = widget.activeChart();
-		if (chart.symbol() === symbol && String(chart.resolution()) === String(interval)) {
-			return;
-		}
-		widget.setSymbol(symbol, interval, () => undefined);
-	} catch {
-		// Chart API is only available after onChartReady.
-	}
 }
 
 /**

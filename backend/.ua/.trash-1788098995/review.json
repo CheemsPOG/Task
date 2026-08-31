@@ -1,0 +1,33 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'file:.gitattributes' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 392,
+    "totalEdges": 906,
+    "totalLayers": 8,
+    "tourSteps": 9,
+    "nodeTypes": {
+      "file": 115,
+      "class": 102,
+      "function": 148,
+      "table": 21,
+      "config": 5,
+      "document": 1
+    },
+    "edgeTypes": {
+      "contains": 259,
+      "exports": 210,
+      "imports": 182,
+      "depends_on": 10,
+      "calls": 171,
+      "implements": 9,
+      "migrates": 21,
+      "related": 18,
+      "configures": 9,
+      "documents": 9,
+      "defines_schema": 8
+    }
+  }
+}

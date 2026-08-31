@@ -19,8 +19,11 @@ import org.springframework.stereotype.Service;
  *
  * <p>HS256 access tokens: {@code sub} is username, claim {@code customer_no} is the tenant, lifetime
  * 1h from {@code app.jwt}. {@link com.task.chart.service.impl.AuthServiceImpl} issues tokens;
- * {@link JwtAuthenticationFilter} parses them. This is NOT Peach S-01 SSO, NOT the opaque refresh
- * UUID in Redis, and NOT the Python WS.
+ * {@link JwtAuthenticationFilter} parses them.
+ *
+ * <p><strong>NOT:</strong> not Peach S-01 SSO; not the opaque refresh UUID in Redis;
+ * not the Python WS. Secret is {@code app.jwt.secret} (demo-only). Rotating it logs
+ * out every session with no graceful migration.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

@@ -1,0 +1,76 @@
+{
+  "projectRoot": "D:\\Personal Projects\\New\\Task\\backend",
+  "batchFiles": [
+    {"path": "src/main/java/com/task/chart/ChartBackendApplication.java", "language": "java", "sizeLines": 53, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/config/AppProperties.java", "language": "java", "sizeLines": 264, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/config/AppUserSeedRunner.java", "language": "java", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/controller/AuthController.java", "language": "java", "sizeLines": 129, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/dto/request/LoginRequest.java", "language": "java", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/dto/response/LoginResponse.java", "language": "java", "sizeLines": 37, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/dto/response/RefreshResponse.java", "language": "java", "sizeLines": 32, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/entity/AppUser.java", "language": "java", "sizeLines": 105, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/exception/BadCredentialsAppException.java", "language": "java", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/exception/UnauthorizedAppException.java", "language": "java", "sizeLines": 42, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/repository/AppUserRepository.java", "language": "java", "sizeLines": 52, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/AuthCookieSupport.java", "language": "java", "sizeLines": 95, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/JwtService.java", "language": "java", "sizeLines": 109, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/RefreshTokenSession.java", "language": "java", "sizeLines": 32, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/RefreshTokenStore.java", "language": "java", "sizeLines": 131, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/AuthService.java", "language": "java", "sizeLines": 65, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java", "language": "java", "sizeLines": 154, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/ChartBackendApplication.java": [
+      "src/main/java/com/task/chart/config/AppProperties.java"
+    ],
+    "src/main/java/com/task/chart/config/AppProperties.java": [],
+    "src/main/java/com/task/chart/config/AppUserSeedRunner.java": [
+      "src/main/java/com/task/chart/entity/AppUser.java",
+      "src/main/java/com/task/chart/repository/AppUserRepository.java"
+    ],
+    "src/main/java/com/task/chart/controller/AuthController.java": [
+      "src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "src/main/java/com/task/chart/service/AuthService.java"
+    ],
+    "src/main/java/com/task/chart/dto/request/LoginRequest.java": [],
+    "src/main/java/com/task/chart/dto/response/LoginResponse.java": [],
+    "src/main/java/com/task/chart/dto/response/RefreshResponse.java": [],
+    "src/main/java/com/task/chart/entity/AppUser.java": [],
+    "src/main/java/com/task/chart/exception/BadCredentialsAppException.java": [],
+    "src/main/java/com/task/chart/exception/UnauthorizedAppException.java": [],
+    "src/main/java/com/task/chart/repository/AppUserRepository.java": [
+      "src/main/java/com/task/chart/entity/AppUser.java"
+    ],
+    "src/main/java/com/task/chart/security/AuthCookieSupport.java": [],
+    "src/main/java/com/task/chart/security/JwtService.java": [
+      "src/main/java/com/task/chart/config/AppProperties.java"
+    ],
+    "src/main/java/com/task/chart/security/RefreshTokenSession.java": [],
+    "src/main/java/com/task/chart/security/RefreshTokenStore.java": [
+      "src/main/java/com/task/chart/config/AppProperties.java"
+    ],
+    "src/main/java/com/task/chart/service/AuthService.java": [
+      "src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "src/main/java/com/task/chart/dto/response/RefreshResponse.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java": [
+      "src/main/java/com/task/chart/config/AppProperties.java",
+      "src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "src/main/java/com/task/chart/entity/AppUser.java",
+      "src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "src/main/java/com/task/chart/exception/ValidationException.java",
+      "src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "src/main/java/com/task/chart/security/JwtService.java",
+      "src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "src/main/java/com/task/chart/service/AuthService.java"
+    ]
+  }
+}

@@ -1,0 +1,775 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "type": "file",
+      "name": "ChartTemplateController.java",
+      "filePath": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "summary": "REST controller for TradingView chart-style templates at /api/chart-templates, covering list, upsert, get, and delete (design docs 136–139).",
+      "tags": ["api-handler", "rest-controller", "chart-templates", "entry-point"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/controller/ChartTemplateController.java:ChartTemplateController",
+      "type": "class",
+      "name": "ChartTemplateController",
+      "filePath": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "lineRange": [47, 145],
+      "summary": "Spring REST controller that delegates chart-template HTTP operations to ChartTemplateService and documents OpenAPI responses for JWT, validation, and not-found cases.",
+      "tags": ["api-handler", "rest-controller", "openapi", "chart-templates"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:list",
+      "type": "function",
+      "name": "list",
+      "filePath": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "lineRange": [68, 78],
+      "summary": "GET /api/chart-templates handler that returns the current customer's name-only chart template list.",
+      "tags": ["api-handler", "list", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:upsert",
+      "type": "function",
+      "name": "upsert",
+      "filePath": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "lineRange": [86, 102],
+      "summary": "POST /api/chart-templates handler that registers or updates a named chart template and returns the row update timestamp.",
+      "tags": ["api-handler", "upsert", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:get",
+      "type": "function",
+      "name": "get",
+      "filePath": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "lineRange": [110, 123],
+      "summary": "GET /api/chart-templates/{name} handler that loads one owned template's name and content.",
+      "tags": ["api-handler", "get", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:delete",
+      "type": "function",
+      "name": "delete",
+      "filePath": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "lineRange": [131, 144],
+      "summary": "DELETE /api/chart-templates/{name} handler that removes one owned template and returns a unix-seconds timestamp.",
+      "tags": ["api-handler", "delete", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "type": "file",
+      "name": "UpsertChartTemplateRequest.java",
+      "filePath": "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "summary": "Request body for POST /api/chart-templates carrying template name and TradingView chart-style JSON content.",
+      "tags": ["data-model", "request", "serialization", "chart-templates"],
+      "complexity": "simple",
+      "languageNotes": "Java record with OpenAPI @Schema annotations on name and content."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java:UpsertChartTemplateRequest",
+      "type": "class",
+      "name": "UpsertChartTemplateRequest",
+      "filePath": "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "lineRange": [34, 37],
+      "summary": "Immutable request record with template name (max 64) and content blob used by the chart-template upsert API.",
+      "tags": ["data-model", "request", "record", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "type": "file",
+      "name": "ChartTemplateDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "summary": "GET-by-name response payload with a chart template's name and widget content for the JWT customer.",
+      "tags": ["data-model", "response", "serialization", "chart-templates"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as the design-doc 138 JSON body."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java:ChartTemplateDto",
+      "type": "class",
+      "name": "ChartTemplateDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "lineRange": [31, 32],
+      "summary": "Immutable response record holding one chart-style preset's name and content string.",
+      "tags": ["data-model", "response", "record", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "type": "file",
+      "name": "ChartTemplateListItemDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "summary": "Name-only list row for GET /api/chart-templates, omitting content so clients can present a sorted template picker.",
+      "tags": ["data-model", "response", "serialization", "chart-templates"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as the design-doc 136 list item."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java:ChartTemplateListItemDto",
+      "type": "class",
+      "name": "ChartTemplateListItemDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "lineRange": [31, 32],
+      "summary": "Immutable list-item record containing only the chart template name.",
+      "tags": ["data-model", "response", "record", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "type": "file",
+      "name": "TvChartTemplate.java",
+      "filePath": "src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "summary": "JPA entity for m_tv_chart_templates storing per-customer TradingView chart-style presets unique on (customer_no, name).",
+      "tags": ["data-model", "jpa", "persistence", "chart-templates"],
+      "complexity": "moderate",
+      "languageNotes": "JPA entity with IDENTITY id and unique constraint uq_m_tv_chart_templates_customer_name."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/TvChartTemplate.java:TvChartTemplate",
+      "type": "class",
+      "name": "TvChartTemplate",
+      "filePath": "src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "lineRange": [40, 113],
+      "summary": "Persisted chart template row with customer number, name, JSON content, and updatedAt; applyContent updates content only on upsert.",
+      "tags": ["data-model", "jpa", "entity", "persistence"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "type": "file",
+      "name": "TvChartTemplateRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "summary": "Spring Data JPA repository for listing a customer's chart templates by name and loading one row by (customer_no, name).",
+      "tags": ["repository", "jpa", "data-access", "chart-templates"],
+      "complexity": "simple",
+      "languageNotes": "Spring Data derived query methods on JpaRepository<TvChartTemplate, Long>."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "class",
+      "name": "TvChartTemplateRepository",
+      "filePath": "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "lineRange": [35, 53],
+      "summary": "Repository interface exposing findByCustomerNoOrderByNameAsc and findByCustomerNoAndName for tenant-scoped template access.",
+      "tags": ["repository", "jpa", "interface", "data-access"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "type": "file",
+      "name": "ChartTemplateService.java",
+      "filePath": "src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "summary": "Service contract for tenant CRUD of chart templates keyed by (customer_no, name), used by ChartTemplateController.",
+      "tags": ["service", "interface", "chart-templates", "api-contract"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "class",
+      "name": "ChartTemplateService",
+      "filePath": "src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "lineRange": [37, 69],
+      "summary": "Interface defining list, upsert, get, and delete operations for per-customer chart-style templates.",
+      "tags": ["service", "interface", "chart-templates", "api-contract"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "type": "file",
+      "name": "ChartTemplateServiceImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "summary": "Transactional ChartTemplateService implementation that validates names, scopes rows by JWT customer, and upserts content on m_tv_chart_templates.",
+      "tags": ["service", "business-logic", "transactional", "chart-templates"],
+      "complexity": "moderate",
+      "languageNotes": "Spring @Service using @Transactional and CustomerContext.requireCustomerNo for tenant isolation."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:ChartTemplateServiceImpl",
+      "type": "class",
+      "name": "ChartTemplateServiceImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [47, 144],
+      "summary": "Implements chart-template CRUD with a 64-character name limit, insert-or-update on unique (customer_no, name), and 404 when the tenant does not own the name.",
+      "tags": ["service", "business-logic", "validation", "transactional"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:list",
+      "type": "function",
+      "name": "list",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [63, 69],
+      "summary": "Loads the current customer's templates ordered by name and maps them to name-only list items.",
+      "tags": ["service", "list", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "type": "function",
+      "name": "upsert",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [71, 99],
+      "summary": "Validates name and content, then updates existing content or inserts a new TvChartTemplate row for the JWT customer.",
+      "tags": ["service", "upsert", "validation", "persistence"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:get",
+      "type": "function",
+      "name": "get",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [101, 106],
+      "summary": "Returns name and content for an owned template, or fails if the name is invalid or missing for this customer.",
+      "tags": ["service", "get", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:delete",
+      "type": "function",
+      "name": "delete",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [108, 114],
+      "summary": "Deletes an owned template row and returns the current time as unix seconds.",
+      "tags": ["service", "delete", "chart-templates"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireOwnedTemplate",
+      "type": "function",
+      "name": "requireOwnedTemplate",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [120, 130],
+      "summary": "Resolves a template by trimmed name and JWT customer number, throwing ResourceNotFoundException when absent.",
+      "tags": ["validation", "tenant-scope", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireTemplateName",
+      "type": "function",
+      "name": "requireTemplateName",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "lineRange": [132, 143],
+      "summary": "Rejects blank names and names longer than 64 characters, returning the trimmed name on success.",
+      "tags": ["validation", "name-check"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "class:src/main/java/com/task/chart/controller/ChartTemplateController.java:ChartTemplateController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:upsert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:get",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:delete",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "target": "class:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java:UpsertChartTemplateRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java:ChartTemplateDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java:ChartTemplateListItemDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvChartTemplate.java:TvChartTemplate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:ChartTemplateServiceImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:get",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:delete",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireOwnedTemplate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireTemplateName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "class:src/main/java/com/task/chart/controller/ChartTemplateController.java:ChartTemplateController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:list",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:upsert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:get",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:delete",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "target": "class:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java:UpsertChartTemplateRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java:ChartTemplateDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java:ChartTemplateListItemDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvChartTemplate.java:TvChartTemplate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:ChartTemplateServiceImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:list",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:get",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:delete",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:ChartTemplateServiceImpl",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:list",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:upsert",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:get",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartTemplateController.java:delete",
+      "target": "class:src/main/java/com/task/chart/service/ChartTemplateService.java:ChartTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:list",
+      "target": "function:src/main/java/com/task/chart/security/CustomerContext.java:requireCustomerNo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:list",
+      "target": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "target": "function:src/main/java/com/task/chart/security/CustomerContext.java:requireCustomerNo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/entity/TvChartTemplate.java:TvChartTemplate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:get",
+      "target": "class:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java:ChartTemplateDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:delete",
+      "target": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:delete",
+      "target": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireOwnedTemplate",
+      "target": "function:src/main/java/com/task/chart/security/CustomerContext.java:requireCustomerNo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireOwnedTemplate",
+      "target": "class:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java:TvChartTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireOwnedTemplate",
+      "target": "class:src/main/java/com/task/chart/exception/ResourceNotFoundException.java:ResourceNotFoundException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java:requireTemplateName",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

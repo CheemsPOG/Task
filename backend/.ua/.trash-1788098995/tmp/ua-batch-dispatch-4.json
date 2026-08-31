@@ -1,0 +1,272 @@
+{
+  "batchIndex": 4,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "language": "java",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "language": "java",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "language": "java",
+      "sizeLines": 120,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "language": "java",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "language": "java",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/CustomerContext.java",
+      "language": "java",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "language": "java",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "language": "java",
+      "sizeLines": 56,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/constants/ErrorCodes.java": [],
+    "src/main/java/com/task/chart/dto/response/ErrorResponse.java": [],
+    "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "src/main/java/com/task/chart/service/LocalizedMessageService.java"
+    ],
+    "src/main/java/com/task/chart/exception/ResourceNotFoundException.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java"
+    ],
+    "src/main/java/com/task/chart/exception/ServerErrorException.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java"
+    ],
+    "src/main/java/com/task/chart/exception/ValidationException.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java"
+    ],
+    "src/main/java/com/task/chart/security/CustomerContext.java": [
+      "src/main/java/com/task/chart/exception/ServerErrorException.java"
+    ],
+    "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java": [
+      "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "src/main/java/com/task/chart/dto/response/ErrorResponse.java"
+    ],
+    "src/main/java/com/task/chart/service/LocalizedMessageService.java": [],
+    "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java": [
+      "src/main/java/com/task/chart/service/LocalizedMessageService.java"
+    ]
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/exception/ResourceNotFoundException.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+        "batchIndex": 7,
+        "symbols": [
+          "ChartTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "ChartTemplateServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+        "batchIndex": 6,
+        "symbols": [
+          "IndicatorTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "IndicatorTemplateServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/exception/ServerErrorException.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/exception/ValidationException.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+        "batchIndex": 2,
+        "symbols": [
+          "AuthServiceImpl",
+          "login",
+          "refresh",
+          "logout",
+          "AuthServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+        "batchIndex": 7,
+        "symbols": [
+          "ChartTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "ChartTemplateServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+        "batchIndex": 6,
+        "symbols": [
+          "IndicatorTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "IndicatorTemplateServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/security/CustomerContext.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+        "batchIndex": 7,
+        "symbols": [
+          "ChartTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "ChartTemplateServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+        "batchIndex": 6,
+        "symbols": [
+          "IndicatorTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "IndicatorTemplateServiceImpl"
+        ]
+      }
+    ]
+  }
+}

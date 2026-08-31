@@ -1,0 +1,536 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "type": "file",
+      "name": "V1__create_m_ccypairs.sql",
+      "filePath": "src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "summary": "Flyway V1 migration that creates the currency-pair master table used as the FX symbol catalog for charts and quotes.",
+      "tags": ["database", "migration", "schema-definition", "fx-pairs"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "table",
+      "name": "m_ccypairs",
+      "filePath": "src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "summary": "Master table of FX currency pairs with Japanese name, rate unit, soft-delete flag, and display priority.",
+      "tags": ["database", "fx-pairs", "master-data", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V2__create_m_season.sql",
+      "type": "file",
+      "name": "V2__create_m_season.sql",
+      "filePath": "src/main/resources/db/migration/V2__create_m_season.sql",
+      "summary": "Flyway V2 migration that creates the season master table for trading calendar windows.",
+      "tags": ["database", "migration", "schema-definition", "calendar"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V2__create_m_season.sql:m_season",
+      "type": "table",
+      "name": "m_season",
+      "filePath": "src/main/resources/db/migration/V2__create_m_season.sql",
+      "summary": "Season master storing a season code and inclusive start/end timestamps for chart or market windows.",
+      "tags": ["database", "calendar", "master-data", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V3__create_m_tv_mark.sql",
+      "type": "file",
+      "name": "V3__create_m_tv_mark.sql",
+      "filePath": "src/main/resources/db/migration/V3__create_m_tv_mark.sql",
+      "summary": "Flyway V3 migration that creates the TradingView bar-mark table for per-symbol, per-resolution chart annotations.",
+      "tags": ["database", "migration", "schema-definition", "chart-marks"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V3__create_m_tv_mark.sql:m_tv_mark",
+      "type": "table",
+      "name": "m_tv_mark",
+      "filePath": "src/main/resources/db/migration/V3__create_m_tv_mark.sql",
+      "summary": "Stores TradingView marks keyed by currency pair and resolution, with timestamp, color, label, and mark text.",
+      "tags": ["database", "chart-marks", "tradingview", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql",
+      "type": "file",
+      "name": "V4__create_m_tv_timescale_mark.sql",
+      "filePath": "src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql",
+      "summary": "Flyway V4 migration that creates the TradingView timescale-mark table for time-axis annotations.",
+      "tags": ["database", "migration", "schema-definition", "chart-marks"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql:m_tv_timescale_mark",
+      "type": "table",
+      "name": "m_tv_timescale_mark",
+      "filePath": "src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql",
+      "summary": "Stores TradingView timescale marks keyed by currency pair and resolution, with color, label, and tooltip.",
+      "tags": ["database", "chart-marks", "tradingview", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql",
+      "type": "file",
+      "name": "V5__create_m_tv_chart_layout.sql",
+      "filePath": "src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql",
+      "summary": "Flyway V5 migration that creates the per-customer TradingView chart layout persistence table.",
+      "tags": ["database", "migration", "schema-definition", "chart-layout"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql:m_tv_chart_layout",
+      "type": "table",
+      "name": "m_tv_chart_layout",
+      "filePath": "src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql",
+      "summary": "Persists saved chart layouts per customer, including JSON content, symbol, chart type, and last update time.",
+      "tags": ["database", "chart-layout", "tradingview", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql",
+      "type": "file",
+      "name": "V6__create_m_tv_indicator_template.sql",
+      "filePath": "src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql",
+      "summary": "Flyway V6 migration that creates the per-customer TradingView indicator template table.",
+      "tags": ["database", "migration", "schema-definition", "indicators"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql:m_tv_indicator_template",
+      "type": "table",
+      "name": "m_tv_indicator_template",
+      "filePath": "src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql",
+      "summary": "Stores named indicator templates per customer as JSON content with an updated-at timestamp.",
+      "tags": ["database", "indicators", "tradingview", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "type": "file",
+      "name": "V7__create_m_app_user.sql",
+      "filePath": "src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "summary": "Flyway V7 migration that creates the application user table for login credentials and customer binding.",
+      "tags": ["database", "migration", "schema-definition", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V7__create_m_app_user.sql:m_app_user",
+      "type": "table",
+      "name": "m_app_user",
+      "filePath": "src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "summary": "Application users with username, password hash, customer number, enabled flag, and created-at timestamp.",
+      "tags": ["database", "authentication", "master-data", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "type": "file",
+      "name": "V8__create_t_chart_tables.sql",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "Flyway V8 migration that creates thirteen OHLC fact tables, one per chart timeframe from 1-second through monthly bars.",
+      "tags": ["database", "migration", "schema-definition", "ohlc", "chart-data"],
+      "complexity": "moderate",
+      "languageNotes": "Repeated identical bid/ask OHLC plus volume schema across 13 timeframe tables (1s through month)."
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1",
+      "type": "table",
+      "name": "t_chart_1",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "1-second OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_60",
+      "type": "table",
+      "name": "t_chart_60",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "1-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_300",
+      "type": "table",
+      "name": "t_chart_300",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "5-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_600",
+      "type": "table",
+      "name": "t_chart_600",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "10-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_900",
+      "type": "table",
+      "name": "t_chart_900",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "15-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1800",
+      "type": "table",
+      "name": "t_chart_1800",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "30-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_3600",
+      "type": "table",
+      "name": "t_chart_3600",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "1-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_7200",
+      "type": "table",
+      "name": "t_chart_7200",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "2-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_14400",
+      "type": "table",
+      "name": "t_chart_14400",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "4-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_28800",
+      "type": "table",
+      "name": "t_chart_28800",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "8-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_day",
+      "type": "table",
+      "name": "t_chart_day",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "Daily OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_week",
+      "type": "table",
+      "name": "t_chart_week",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "Weekly OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_month",
+      "type": "table",
+      "name": "t_chart_month",
+      "filePath": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "summary": "Monthly OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+      "tags": ["database", "ohlc", "chart-data", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql",
+      "type": "file",
+      "name": "V9__create_m_tv_chart_templates.sql",
+      "filePath": "src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql",
+      "summary": "Flyway V9 migration that creates the per-customer TradingView chart template table.",
+      "tags": ["database", "migration", "schema-definition", "chart-template"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql:m_tv_chart_templates",
+      "type": "table",
+      "name": "m_tv_chart_templates",
+      "filePath": "src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql",
+      "summary": "Stores named chart templates per customer as JSON content with an updated-at timestamp.",
+      "tags": ["database", "chart-template", "tradingview", "schema-definition"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V2__create_m_season.sql",
+      "target": "table:src/main/resources/db/migration/V2__create_m_season.sql:m_season",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V3__create_m_tv_mark.sql",
+      "target": "table:src/main/resources/db/migration/V3__create_m_tv_mark.sql:m_tv_mark",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql",
+      "target": "table:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql:m_tv_timescale_mark",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql",
+      "target": "table:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql:m_tv_chart_layout",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql",
+      "target": "table:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql:m_tv_indicator_template",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "target": "table:src/main/resources/db/migration/V7__create_m_app_user.sql:m_app_user",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_60",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_300",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_600",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_900",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1800",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_3600",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_7200",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_14400",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_28800",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_day",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_week",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "target": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_month",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql",
+      "target": "table:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql:m_tv_chart_templates",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V3__create_m_tv_mark.sql:m_tv_mark",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql:m_tv_timescale_mark",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql:m_tv_chart_layout",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_60",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_300",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_600",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_900",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1800",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_3600",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_7200",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_14400",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_28800",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_day",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_week",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_month",
+      "target": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

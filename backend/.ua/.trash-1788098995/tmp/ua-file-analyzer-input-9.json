@@ -1,0 +1,25 @@
+{
+  "projectRoot": "D:\\Personal Projects\\New\\Task\\backend",
+  "batchFiles": [
+    {"path": "src/main/resources/db/migration/V1__create_m_ccypairs.sql", "language": "sql", "sizeLines": 18, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V2__create_m_season.sql", "language": "sql", "sizeLines": 13, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V3__create_m_tv_mark.sql", "language": "sql", "sizeLines": 19, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql", "language": "sql", "sizeLines": 18, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql", "language": "sql", "sizeLines": 12, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql", "language": "sql", "sizeLines": 10, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V7__create_m_app_user.sql", "language": "sql", "sizeLines": 12, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V8__create_t_chart_tables.sql", "language": "sql", "sizeLines": 199, "fileCategory": "data"},
+    {"path": "src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql", "language": "sql", "sizeLines": 11, "fileCategory": "data"}
+  ],
+  "batchImportData": {
+    "src/main/resources/db/migration/V1__create_m_ccypairs.sql": [],
+    "src/main/resources/db/migration/V2__create_m_season.sql": [],
+    "src/main/resources/db/migration/V3__create_m_tv_mark.sql": [],
+    "src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql": [],
+    "src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql": [],
+    "src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql": [],
+    "src/main/resources/db/migration/V7__create_m_app_user.sql": [],
+    "src/main/resources/db/migration/V8__create_t_chart_tables.sql": [],
+    "src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql": []
+  }
+}

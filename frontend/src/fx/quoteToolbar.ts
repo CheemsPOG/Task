@@ -9,6 +9,9 @@
  * resets history and resubscribes /ws/stream so candles use the same side.
  *
  * Selected pair follows the widget symbol (USD/JPY ↔ curpairCd 1).
+ * Header interval is written to chartPrefs and restored after a named layout
+ * loads. Changing interval without a bottom time-frame snaps the visible
+ * range to seeded history so the pane is not left on empty years.
  */
 
 import type {
@@ -16,12 +19,14 @@ import type {
 	IChartingLibraryWidget,
 	IChartWidgetApi,
 	IDropdownApi,
+	ResolutionString,
 } from 'charting_library';
+import { fetchAuthenticatedJson } from '../api.ts';
 import { saveLastChartView } from '../chartPrefs.ts';
+import { restoreLastViewedPair, visibleTimeframeForResolution } from '../chartView.ts';
 import { ensureStreamAlive, resubscribeAllWithCurrentPrice } from '../datafeed/streaming.ts';
-import { fetchCurpairs } from './currencyPairs.ts';
 import { connectFxQuotes } from './fxQuotesSocket.ts';
-import { quoteStore } from './quoteStore.ts';
+import { parseCurrencyPairs, quoteStore } from './quoteStore.ts';
 import { formatQuotePrice, type PriceMode } from './types.ts';
 
 const MODES: PriceMode[] = ['bid', 'ask', 'mid'];
@@ -85,8 +90,12 @@ function bindActiveChart(widget: IChartingLibraryWidget): void {
 			syncQuoteToChartSymbol(widget);
 			persistChartView(widget);
 		});
-		chart.onIntervalChanged().subscribe(null, () => {
+		chart.onIntervalChanged().subscribe(null, (interval, timeframeObj) => {
 			persistChartView(widget);
+			if (timeframeObj.timeframe != null) {
+				return;
+			}
+			timeframeObj.timeframe = visibleTimeframeForResolution(String(interval));
 		});
 	} catch {
 		// Chart API is only available after onChartReady.
@@ -103,21 +112,54 @@ function reloadChartSeries(widget: IChartingLibraryWidget): void {
 	}
 }
 
-export function installFxQuoteToolbar(widget: IChartingLibraryWidget): void {
+export interface QuoteToolbarOptions {
+	restoreSymbol: string;
+	restoreInterval: ResolutionString;
+	waitForChartLoaded: boolean;
+}
+
+export function installFxQuoteToolbar(
+	widget: IChartingLibraryWidget,
+	options: QuoteToolbarOptions
+): void {
+	let appliedLayoutRestore = false;
+
 	widget.onChartReady(() => {
-		const onChartLoaded = (): void => {
+		const restoreFromPrefs = (): void => {
+			restoreLastViewedPair(widget, options.restoreSymbol, options.restoreInterval);
+			persistChartView(widget);
+		};
+
+		bindActiveChart(widget);
+		syncQuoteToChartSymbol(widget);
+		ensureStreamAlive();
+
+		widget.subscribe('chart_loaded', () => {
 			bindActiveChart(widget);
 			syncQuoteToChartSymbol(widget);
-			persistChartView(widget);
 			ensureStreamAlive();
-		};
-		onChartLoaded();
-		widget.subscribe('chart_loaded', onChartLoaded);
+			if (options.waitForChartLoaded && !appliedLayoutRestore) {
+				appliedLayoutRestore = true;
+				restoreFromPrefs();
+				return;
+			}
+			persistChartView(widget);
+		});
+
+		if (!options.waitForChartLoaded) {
+			restoreFromPrefs();
+			return;
+		}
+		window.setTimeout(() => {
+			if (!appliedLayoutRestore) {
+				restoreFromPrefs();
+			}
+		}, 800);
 	});
 
 	widget.headerReady().then(async () => {
 		try {
-			const pairs = await fetchCurpairs();
+			const pairs = parseCurrencyPairs(await fetchAuthenticatedJson<unknown>('/curpairs'));
 			if (pairs.length === 0) {
 				quoteStore.markPairsError();
 			} else {

@@ -1,0 +1,41 @@
+{
+  "nodes": [
+    {
+      "id": "config:src/main/resources/application.yml",
+      "type": "config",
+      "name": "application.yml",
+      "filePath": "src/main/resources/application.yml",
+      "summary": "Spring Boot runtime configuration for the chart backend: Postgres and Redis connections, Flyway migrations, JWT and CORS, TradingView datafeed flags, and demo tick-cache cadence.",
+      "tags": ["configuration", "spring-boot", "datasource", "jwt", "tradingview"],
+      "complexity": "moderate",
+      "languageNotes": "YAML with Spring Boot relaxed binding and ${ENV:default} placeholders for Docker Compose Postgres and Redis."
+    },
+    {
+      "id": "config:src/main/resources/messages.properties",
+      "type": "config",
+      "name": "messages.properties",
+      "filePath": "src/main/resources/messages.properties",
+      "summary": "Default English API error messages keyed to ErrorCodes.MSG_* for validation, not-found, server, unauthorized, bad-credentials, and bad-request.",
+      "tags": ["configuration", "i18n", "localization", "error-handling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:src/main/resources/messages_ja.properties",
+      "type": "config",
+      "name": "messages_ja.properties",
+      "filePath": "src/main/resources/messages_ja.properties",
+      "summary": "Japanese API error message overrides loaded when Accept-Language starts with ja, covering the same ErrorCodes keys as the English bundle.",
+      "tags": ["configuration", "i18n", "localization", "japanese"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:src/main/resources/messages.properties",
+      "target": "config:src/main/resources/messages_ja.properties",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

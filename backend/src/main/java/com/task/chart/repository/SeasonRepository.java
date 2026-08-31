@@ -17,6 +17,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * so design doc 123 can pick summer vs winter session text. Callers pass now for both window
  * bounds. It is not a holiday calendar and not the bar warehouse.
  *
+ * <p>Demo seeds one winter row covering 2020–2099. A caller outside that window gets
+ * {@code ServerErrorException} (500), not a graceful fallback.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

@@ -21,6 +21,10 @@ import org.springframework.stereotype.Component;
  *
  * <p>Published by {@link TickIngestWorker}, the only live OHLC writer.
  *
+ * <p><strong>NOT:</strong> not a schema shared with Python (channel names
+ * {@code peach:quotes} / {@code peach:bars} are hardcoded in {@code market.py} —
+ * renaming here silently breaks the gateway). Not a subscriber. Not OHLC math.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

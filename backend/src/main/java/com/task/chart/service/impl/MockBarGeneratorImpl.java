@@ -33,20 +33,29 @@ import org.springframework.stereotype.Service;
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>peachBarAt for cache writer</td></tr>
  *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.1.2</td><td>2026/08/31</td><td>Task</td><td>Review comments: boot-only, no live OHLC</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.1
+ * @version 1.1.2
  */
 @Service
 public class MockBarGeneratorImpl implements MockBarGenerator {
 
+	/**
+	 * Deterministic series for tests/boot. Same seed → same past. Not used after
+	 * {@code ChartCacheWriter} finishes.
+	 */
 	@Override
 	public List<BarDto> generate(CachedSymbol symbol, long periodMs, long toMs, int countBack) {
 		return generate(symbol, periodMs, toMs, countBack, PriceComponent.MID);
 	}
 
+	/**
+	 * Builds {@code countBack} bars on one side, aligned to period opens before {@code toMs}.
+	 * Tests use this; boot seed uses {@link #peachBarAt} (both sides) instead.
+	 */
 	@Override
 	public List<BarDto> generate(
 			CachedSymbol symbol,
@@ -70,11 +79,19 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 		return bars;
 	}
 
+	/**
+	 * MID convenience overload for tests. Production seed uses {@link #peachBarAt}.
+	 */
 	@Override
 	public BarDto barAt(CachedSymbol symbol, long periodMs, long time) {
 		return barAt(symbol, periodMs, time, PriceComponent.MID);
 	}
 
+	/**
+	 * One mock candle: open/close from the sine walk, high/low from intra-bar samples
+	 * plus side-specific wicks (ASK high, BID low) so MID sits between the two series.
+	 * Null {@code price} becomes MID — unused by {@link #peachBarAt}, which always passes BID/ASK.
+	 */
 	@Override
 	public BarDto barAt(CachedSymbol symbol, long periodMs, long time, PriceComponent price) {
 		PriceComponent component = price == null ? PriceComponent.MID : price;
@@ -108,6 +125,11 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 		return new BarDto(time, open, high, low, close, volume);
 	}
 
+	/**
+	 * Boot seed only ({@code ChartCacheWriter}). Writes <em>both</em> bid and ask OHLC
+	 * into one warehouse row. After boot, {@code TickIngestWorker} owns the last bar —
+	 * do not call this from {@code /api/history}.
+	 */
 	@Override
 	public CachedChartBar peachBarAt(CachedSymbol symbol, long periodMs, long timeMs) {
 		BarDto bid = barAt(symbol, periodMs, timeMs, PriceComponent.BID);
@@ -126,6 +148,9 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 				bid.volume());
 	}
 
+	/**
+	 * Bid walk plus spread: ASK = bid + full spread, MID = bid + half. Not live LP math.
+	 */
 	private static double priceAt(
 			CachedSymbol symbol,
 			long periodMs,
@@ -140,6 +165,10 @@ public class MockBarGeneratorImpl implements MockBarGenerator {
 		};
 	}
 
+	/**
+	 * Deterministic bid from pair seed + sine waves + hash noise. Same inputs → same
+	 * history, which is why tests can assert exact OHLC.
+	 */
 	private static double bidAt(CachedSymbol symbol, long periodMs, long time) {
 		double seed = DemoMarket.seedBid(symbol.providerSymbol());
 		long steps = Math.floorDiv(time, periodMs);

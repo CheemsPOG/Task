@@ -5,16 +5,22 @@
 package com.task.chart.cache;
 
 import com.task.chart.util.ResolutionMapper;
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.Locale;
 
 /**
  * Peach cache mapping from design doc 121 (chart_type → {@code t_chart_*} → {@code cache_set_*}).
  *
  * <p>Used by ingest, warehouse JDBC, and Redis keys. Never pass a request string
  * as a table name — resolve TradingView resolution through this enum only.
+ *
+ * <p><strong>Trap:</strong> TradingView {@code "1"} is 1 <em>minute</em>
+ * ({@link #CACHE_SET_1M} → {@code t_chart_60} / {@code cache_set_1m}), not 1 month
+ * ({@link #CACHE_SET_MONTH} / TV {@code "1M"}). Adding a resolution requires this
+ * enum <em>and</em> {@link ResolutionMapper} <em>and</em> a Flyway {@code t_chart_*}
+ * table.
+ *
+ * <p><strong>NOT:</strong> not a place to interpolate user input into SQL; not
+ * weekend/session logic (demo ticks are 24/7); not the widget's own resolution list
+ * in {@code datafeed.ts}.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -27,11 +33,13 @@ import java.util.Locale;
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/26</td><td>Task</td><td>skipWeekend helper</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.4.0</td><td>2026/08/30</td><td>Task</td><td>skipWeekend is seeder-only</td></tr>
+ *   <tr><td>1.5.0</td><td>2026/08/30</td><td>Task</td><td>Remove weekend skip (24/7 mock)</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.3.0
+ * @version 1.5.0
  */
 public enum CacheNamespace {
 
@@ -107,25 +115,6 @@ public enum CacheNamespace {
 	}
 
 	/**
-	 * Day/week/month bars skip Saturday and Sunday (UTC), matching the boot seeder.
-	 *
-	 * @param openMs bar open epoch millis
-	 * @return true when this namespace should not write that open
-	 */
-	public boolean skipWeekend(long openMs) {
-
-		if (this != CACHE_SET_DAY && this != CACHE_SET_WEEK && this != CACHE_SET_MONTH) {
-			return false;
-		}
-
-		DayOfWeek day = Instant.ofEpochMilli(openMs)
-				.atZone(ZoneOffset.UTC)
-				.getDayOfWeek();
-
-		return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
-	}
-
-	/**
 	 * Resolves namespace from TradingView resolution via Peach chart_type.
 	 *
 	 * @param resolution TradingView resolution
@@ -142,30 +131,6 @@ public enum CacheNamespace {
 		for (CacheNamespace namespace : values()) {
 
 			if (namespace.chartType.equals(chartType)) {
-				return namespace;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Resolves namespace from Peach chart_type.
-	 *
-	 * @param chartType Peach chart_type
-	 * @return namespace, or {@code null}
-	 */
-	public static CacheNamespace fromChartType(String chartType) {
-
-		if (chartType == null || chartType.isBlank()) {
-			return null;
-		}
-
-		String needle = chartType.trim().toUpperCase(Locale.ROOT);
-
-		for (CacheNamespace namespace : values()) {
-
-			if (namespace.chartType.equals(needle)) {
 				return namespace;
 			}
 		}

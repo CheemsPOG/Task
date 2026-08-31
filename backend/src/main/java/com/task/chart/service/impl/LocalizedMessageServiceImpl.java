@@ -47,7 +47,9 @@ public class LocalizedMessageServiceImpl implements LocalizedMessageService {
 	}
 
 	/**
-	 * @return localized text for the message key
+	 * Resolves {@code message} from {@code messages.properties} / {@code messages_ja.properties}
+	 * via {@code Accept-Language}. A new error path needs <em>both</em> keys or JA clients
+	 * fall back to the English (or missing-key) string.
 	 */
 	@Override
 	public String get(String code) {

@@ -1,0 +1,809 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "type": "file",
+      "name": "IndicatorTemplateController.java",
+      "filePath": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "summary": "REST controller exposing list, upsert, get, and delete endpoints for TradingView study (indicator) templates under /api/indicator-templates.",
+      "tags": ["api-handler", "rest-controller", "indicator-template", "crud"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:IndicatorTemplateController",
+      "type": "class",
+      "name": "IndicatorTemplateController",
+      "filePath": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "lineRange": [48, 146],
+      "summary": "Spring REST controller that delegates indicator-template CRUD to IndicatorTemplateService and documents the 132–135 HTTP API.",
+      "tags": ["api-handler", "rest-controller", "indicator-template", "crud"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:list",
+      "type": "function",
+      "name": "list",
+      "filePath": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "lineRange": [69, 79],
+      "summary": "GET handler that returns name-only indicator template rows for the authenticated customer.",
+      "tags": ["api-handler", "list", "http-get"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:upsert",
+      "type": "function",
+      "name": "upsert",
+      "filePath": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "lineRange": [87, 103],
+      "summary": "POST handler that registers or updates a named study template and returns a unix-seconds timestamp.",
+      "tags": ["api-handler", "upsert", "http-post"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:get",
+      "type": "function",
+      "name": "get",
+      "filePath": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "lineRange": [111, 124],
+      "summary": "GET-by-name handler that returns one study template's name and content blob.",
+      "tags": ["api-handler", "http-get", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:delete",
+      "type": "function",
+      "name": "delete",
+      "filePath": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "lineRange": [132, 145],
+      "summary": "DELETE-by-name handler that removes one customer-owned study template and returns a timestamp.",
+      "tags": ["api-handler", "http-delete", "crud"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "type": "file",
+      "name": "UpsertIndicatorTemplateRequest.java",
+      "filePath": "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "summary": "Request body for POST /api/indicator-templates carrying template name and study JSON content.",
+      "tags": ["type-definition", "request-dto", "serialization", "indicator-template"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as an OpenAPI-documented request payload."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java:UpsertIndicatorTemplateRequest",
+      "type": "class",
+      "name": "UpsertIndicatorTemplateRequest",
+      "filePath": "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "lineRange": [34, 37],
+      "summary": "Record with name (max 64) and content fields used to insert or update a study template.",
+      "tags": ["type-definition", "request-dto", "serialization", "record"],
+      "complexity": "simple",
+      "languageNotes": "Compact Java record with OpenAPI @Schema annotations on components."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "type": "file",
+      "name": "IndicatorTemplateDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "summary": "GET-by-name response payload containing one study template's name and content for the JWT customer.",
+      "tags": ["type-definition", "response-dto", "serialization", "indicator-template"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as a JSON response body."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java:IndicatorTemplateDto",
+      "type": "class",
+      "name": "IndicatorTemplateDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "lineRange": [31, 32],
+      "summary": "Record holding name and content for a single loaded indicator template.",
+      "tags": ["type-definition", "response-dto", "serialization", "record"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "type": "file",
+      "name": "IndicatorTemplateListItemDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "summary": "Name-only list-row DTO for GET /api/indicator-templates, omitting the study content blob.",
+      "tags": ["type-definition", "response-dto", "serialization", "indicator-template"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as a JSON list-item payload."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java:IndicatorTemplateListItemDto",
+      "type": "class",
+      "name": "IndicatorTemplateListItemDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "lineRange": [31, 32],
+      "summary": "Record with a single name field representing one row in the indicator-template list.",
+      "tags": ["type-definition", "response-dto", "serialization", "record"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "file",
+      "name": "SystemDatetimeResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "summary": "Shared unix-seconds timestamp payload used by indicator, layout, and chart-template upsert/delete responses.",
+      "tags": ["type-definition", "response-dto", "serialization", "timestamp"],
+      "complexity": "simple",
+      "languageNotes": "Java record with a single long field serialized as JSON key t."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "class",
+      "name": "SystemDatetimeResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "lineRange": [31, 32],
+      "summary": "Record wrapping a unix-seconds timestamp t for Peach-style delete and upsert acknowledgements.",
+      "tags": ["type-definition", "response-dto", "timestamp", "record"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "type": "file",
+      "name": "TvIndicatorTemplate.java",
+      "filePath": "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "summary": "JPA entity mapping m_tv_indicator_template, uniquely keyed by customer_no and name, holding study JSON content.",
+      "tags": ["data-model", "jpa-entity", "persistence", "indicator-template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java:TvIndicatorTemplate",
+      "type": "class",
+      "name": "TvIndicatorTemplate",
+      "filePath": "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "lineRange": [40, 113],
+      "summary": "Persistent study-template row with identity, tenant, name, content, and updatedAt, plus applyContent for updates.",
+      "tags": ["data-model", "jpa-entity", "persistence", "indicator-template"],
+      "complexity": "moderate",
+      "languageNotes": "Jakarta Persistence entity with a unique constraint on (customer_no, name)."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "type": "file",
+      "name": "TvIndicatorTemplateRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "summary": "Spring Data JPA repository for listing and loading customer-scoped indicator templates by name.",
+      "tags": ["repository", "jpa", "data-access", "indicator-template"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "class",
+      "name": "TvIndicatorTemplateRepository",
+      "filePath": "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "lineRange": [35, 53],
+      "summary": "JpaRepository interface providing findByCustomerNoOrderByNameAsc and findByCustomerNoAndName lookups.",
+      "tags": ["repository", "jpa", "data-access", "spring-data"],
+      "complexity": "simple",
+      "languageNotes": "Spring Data derived-query methods; no custom implementation class."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "type": "file",
+      "name": "IndicatorTemplateService.java",
+      "filePath": "src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "summary": "Service contract for tenant-scoped indicator-template list, upsert, get, and delete operations.",
+      "tags": ["service", "interface", "api-contract", "indicator-template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "class",
+      "name": "IndicatorTemplateService",
+      "filePath": "src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "lineRange": [39, 71],
+      "summary": "Interface defining list, upsert, get, and delete for study templates keyed by customer and name.",
+      "tags": ["service", "interface", "api-contract", "crud"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "type": "file",
+      "name": "IndicatorTemplateServiceImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "summary": "Transactional implementation of indicator-template CRUD, scoping rows by JWT customer and validating name length.",
+      "tags": ["service", "business-logic", "persistence", "indicator-template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:IndicatorTemplateServiceImpl",
+      "type": "class",
+      "name": "IndicatorTemplateServiceImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [48, 147],
+      "summary": "Service implementation that upserts, lists, loads, and deletes m_tv_indicator_template rows for the current customer.",
+      "tags": ["service", "business-logic", "persistence", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:list",
+      "type": "function",
+      "name": "list",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [64, 71],
+      "summary": "Loads the current customer's templates ordered by name and maps them to name-only list DTOs.",
+      "tags": ["service", "list", "read-only"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "type": "function",
+      "name": "upsert",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [73, 102],
+      "summary": "Validates name and content, then inserts a new template or updates content on the existing customer+name row.",
+      "tags": ["service", "upsert", "validation", "persistence"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:get",
+      "type": "function",
+      "name": "get",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [104, 109],
+      "summary": "Returns name and content for one customer-owned template, or fails if it does not exist.",
+      "tags": ["service", "lookup", "read-only"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:delete",
+      "type": "function",
+      "name": "delete",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [111, 117],
+      "summary": "Deletes one customer-owned template and returns the current time as unix seconds.",
+      "tags": ["service", "delete", "persistence"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireOwnedTemplate",
+      "type": "function",
+      "name": "requireOwnedTemplate",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [123, 133],
+      "summary": "Resolves a template by validated name and current customer, throwing ResourceNotFoundException when missing.",
+      "tags": ["validation", "lookup", "authorization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireTemplateName",
+      "type": "function",
+      "name": "requireTemplateName",
+      "filePath": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "lineRange": [135, 146],
+      "summary": "Trims and validates a template name, rejecting blank values and names longer than 64 characters.",
+      "tags": ["validation", "utility", "input-check"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "class:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:IndicatorTemplateController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:upsert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:get",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:delete",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "target": "class:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java:UpsertIndicatorTemplateRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java:IndicatorTemplateDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java:IndicatorTemplateListItemDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java:TvIndicatorTemplate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:IndicatorTemplateServiceImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:get",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:delete",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireOwnedTemplate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireTemplateName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "class:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:IndicatorTemplateController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:list",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:upsert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:get",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "target": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:delete",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "target": "class:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java:UpsertIndicatorTemplateRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java:IndicatorTemplateDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java:IndicatorTemplateListItemDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "target": "class:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java:TvIndicatorTemplate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:IndicatorTemplateServiceImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:list",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:get",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:delete",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:IndicatorTemplateServiceImpl",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:list",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:upsert",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:get",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/IndicatorTemplateController.java:delete",
+      "target": "class:src/main/java/com/task/chart/service/IndicatorTemplateService.java:IndicatorTemplateService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:list",
+      "target": "function:src/main/java/com/task/chart/security/CustomerContext.java:requireCustomerNo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:list",
+      "target": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "target": "function:src/main/java/com/task/chart/security/CustomerContext.java:requireCustomerNo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java:TvIndicatorTemplate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:upsert",
+      "target": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:get",
+      "target": "class:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java:IndicatorTemplateDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:delete",
+      "target": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:delete",
+      "target": "class:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java:SystemDatetimeResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireOwnedTemplate",
+      "target": "function:src/main/java/com/task/chart/security/CustomerContext.java:requireCustomerNo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireOwnedTemplate",
+      "target": "class:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java:TvIndicatorTemplateRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireOwnedTemplate",
+      "target": "class:src/main/java/com/task/chart/exception/ResourceNotFoundException.java:ResourceNotFoundException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java:requireTemplateName",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

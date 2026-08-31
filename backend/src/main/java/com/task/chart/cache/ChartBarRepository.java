@@ -21,6 +21,11 @@ import org.springframework.stereotype.Repository;
  * boot replace comes from {@link ChartCacheWriter}. {@code GET /api/history} reads
  * {@link ChartCacheStore}, which falls back here on a cold Redis key.
  *
+ * <p><strong>NOT:</strong> not JPA (13 near-identical entities would be noise);
+ * not {@code @Transactional} on {@link #replacePair} (DELETE then INSERT so H2
+ * and Postgres stay identical — a crash mid-replace can leave that pair empty
+ * until the next boot seed). Not a place to put raw request strings in SQL.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -62,6 +67,7 @@ public class ChartBarRepository {
 	 */
 	public void replacePair(CacheNamespace namespace, String curpairCd, Collection<CachedChartBar> bars) {
 
+		// DELETE-then-INSERT (not UPSERT) so H2 tests match Postgres. Mid-crash can empty this pair.
 		String table = namespace.tableName();
 		jdbcTemplate.update("DELETE FROM " + table + " WHERE curpair_cd = ?", curpairCd);
 

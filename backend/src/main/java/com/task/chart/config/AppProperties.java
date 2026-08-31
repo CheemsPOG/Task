@@ -29,11 +29,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/25</td><td>Task</td><td>Split access and refresh TTL</td></tr>
  *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/30</td><td>Task</td><td>24x7 mock session</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.1
+ * @version 1.2.0
  */
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
@@ -109,6 +110,7 @@ public class AppProperties {
 	 *
 	 * <p>{@link com.task.chart.service.impl.ChartDataServiceImpl#config()} copies these flags into
 	 * JSON. Session strings {@code timeSummer}/{@code timeWinter} are chosen from {@code m_season}.
+	 * Demo mock is 24/7 so both default to {@code 24x7}.
 	 */
 	public static class TradingView {
 
@@ -122,8 +124,8 @@ public class AppProperties {
 		private boolean hasIntraday = true;
 		private String visiblePlotsSet = "ohlc";
 		private boolean hasSeconds = true;
-		private String timeSummer = "0700-3000:2|0600-3000:345|0600-2940:6";
-		private String timeWinter = "0700-3100:2|0700-3100:345|0700-3040:6";
+		private String timeSummer = "24x7";
+		private String timeWinter = "24x7";
 		private int searchDefaultLimit = 100;
 		private int searchMaxLimit = 100;
 		private List<String> supportedResolutions = new ArrayList<>(List.of(

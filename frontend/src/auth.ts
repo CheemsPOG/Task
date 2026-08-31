@@ -80,17 +80,36 @@ function authHeaders(extra: Record<string, string> = {}): HeadersInit {
 	};
 }
 
-async function parseAuthError(response: Response, fallback: string): Promise<Error> {
+/**
+ * Reads `{ message, errorCode }` from a failed JSON response; keeps `fallback`
+ * when the body is empty or not JSON. Login uses a status-specific fallback;
+ * api.ts uses `HTTP ${status}`.
+ *
+ * @param response failed HTTP response
+ * @param fallback message when the body has no `message`
+ * @returns parsed message and optional error code
+ */
+export async function readErrorBody(
+	response: Response,
+	fallback: string
+): Promise<{ message: string; errorCode?: string }> {
 	let message = fallback;
+	let errorCode: string | undefined;
 	try {
 		const body = (await response.json()) as AuthErrorBody;
 		if (body.message) {
 			message = body.message;
 		}
+		errorCode = body.errorCode;
 	} catch {
-		/* keep default message */
+		// Keep fallback when the body is empty or not JSON.
 	}
-	return new Error(message);
+	return { message, errorCode };
+}
+
+async function parseAuthError(response: Response, fallback: string): Promise<Error> {
+	const parsed = await readErrorBody(response, fallback);
+	return new Error(parsed.message);
 }
 
 /**

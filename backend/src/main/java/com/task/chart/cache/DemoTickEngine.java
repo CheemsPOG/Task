@@ -25,6 +25,10 @@ import org.springframework.stereotype.Component;
  * {@link TickIngestWorker} still writes OHLC; {@link QuoteBus} still publishes
  * {@code peach:quotes} and {@code peach:bars}; Python still only relays.
  *
+ * <p><strong>NOT:</strong> not FX product rules (do not put validation, tenant
+ * scoping, or session hours here — throw this class away when a real LP arrives);
+ * not the OHLC writer; not the Python gateway.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

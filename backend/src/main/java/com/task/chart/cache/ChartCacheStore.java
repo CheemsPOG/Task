@@ -25,6 +25,12 @@ import org.springframework.stereotype.Component;
  * <p>Live last-bar writes come only from {@link TickIngestWorker}. This class
  * does not invent OHLC. Python does not read these ZSETs.
  *
+ * <p><strong>NOT:</strong> not a Redis {@code SUBSCRIBE}r (point-in-time ZRANGE only);
+ * not {@code stitchCurrentBar} / live-candle math (if REST history and the WS candle
+ * disagree, compare this store's last member against {@link TickIngestWorker});
+ * not the warehouse writer (that is {@link ChartBarRepository}); not the Python
+ * gateway.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

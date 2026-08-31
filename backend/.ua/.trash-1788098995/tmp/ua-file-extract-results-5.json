@@ -1,0 +1,1128 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 9,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 9,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 9,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartLayoutController.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 174,
+      "nonEmptyLines": 159,
+      "functions": [
+        {
+          "name": "ChartLayoutController",
+          "startLine": 63,
+          "endLine": 65,
+          "params": [
+            "chartLayoutService"
+          ]
+        },
+        {
+          "name": "register",
+          "startLine": 73,
+          "endLine": 92,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "update",
+          "startLine": 101,
+          "endLine": 115,
+          "params": [
+            "id",
+            "request"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 122,
+          "endLine": 132,
+          "params": []
+        },
+        {
+          "name": "get",
+          "startLine": 140,
+          "endLine": 152,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "delete",
+          "startLine": 160,
+          "endLine": 173,
+          "params": [
+            "id"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartLayoutController",
+          "startLine": 51,
+          "endLine": 174,
+          "methods": [
+            "ChartLayoutController",
+            "register",
+            "update",
+            "list",
+            "get",
+            "delete"
+          ],
+          "properties": [
+            "chartLayoutService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartLayoutController",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "register",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "update",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 140,
+          "isDefault": false
+        },
+        {
+          "name": "delete",
+          "line": 160,
+          "isDefault": false
+        },
+        {
+          "name": "ChartLayoutController",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register",
+          "callee": "chartLayoutService.register",
+          "lineNumber": 91
+        },
+        {
+          "caller": "update",
+          "callee": "chartLayoutService.update",
+          "lineNumber": 114
+        },
+        {
+          "caller": "list",
+          "callee": "chartLayoutService.list",
+          "lineNumber": 131
+        },
+        {
+          "caller": "get",
+          "callee": "chartLayoutService.get",
+          "lineNumber": 151
+        },
+        {
+          "caller": "delete",
+          "callee": "chartLayoutService.delete",
+          "lineNumber": 172
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 7,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 36,
+      "classes": [
+        {
+          "name": "RegisterChartLayoutRequest",
+          "startLine": 34,
+          "endLine": 39,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "RegisterChartLayoutRequest",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 34,
+      "classes": [
+        {
+          "name": "ChartLayoutDto",
+          "startLine": 31,
+          "endLine": 36,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartLayoutDto",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "ChartLayoutIdResponse",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartLayoutIdResponse",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 35,
+      "classes": [
+        {
+          "name": "ChartLayoutListItemDto",
+          "startLine": 31,
+          "endLine": 37,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartLayoutListItemDto",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvChartLayout.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 144,
+      "nonEmptyLines": 124,
+      "functions": [
+        {
+          "name": "TvChartLayout",
+          "startLine": 66,
+          "endLine": 67,
+          "params": []
+        },
+        {
+          "name": "TvChartLayout",
+          "startLine": 79,
+          "endLine": 92,
+          "params": [
+            "customerNo",
+            "name",
+            "content",
+            "ccypairCd",
+            "chartType",
+            "updatedAt"
+          ]
+        },
+        {
+          "name": "getId",
+          "startLine": 94,
+          "endLine": 96,
+          "params": []
+        },
+        {
+          "name": "getCustomerNo",
+          "startLine": 98,
+          "endLine": 100,
+          "params": []
+        },
+        {
+          "name": "getName",
+          "startLine": 102,
+          "endLine": 104,
+          "params": []
+        },
+        {
+          "name": "getContent",
+          "startLine": 106,
+          "endLine": 108,
+          "params": []
+        },
+        {
+          "name": "getCcypairCd",
+          "startLine": 110,
+          "endLine": 112,
+          "params": []
+        },
+        {
+          "name": "getChartType",
+          "startLine": 114,
+          "endLine": 116,
+          "params": []
+        },
+        {
+          "name": "getUpdatedAt",
+          "startLine": 118,
+          "endLine": 120,
+          "params": []
+        },
+        {
+          "name": "applyUpdate",
+          "startLine": 132,
+          "endLine": 143,
+          "params": [
+            "name",
+            "content",
+            "ccypairCd",
+            "chartType",
+            "updatedAt"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TvChartLayout",
+          "startLine": 39,
+          "endLine": 144,
+          "methods": [
+            "TvChartLayout",
+            "TvChartLayout",
+            "getId",
+            "getCustomerNo",
+            "getName",
+            "getContent",
+            "getCcypairCd",
+            "getChartType",
+            "getUpdatedAt",
+            "applyUpdate"
+          ],
+          "properties": [
+            "id",
+            "customerNo",
+            "name",
+            "content",
+            "ccypairCd",
+            "chartType",
+            "updatedAt"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvChartLayout",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "getId",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "getCustomerNo",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "getName",
+          "line": 102,
+          "isDefault": false
+        },
+        {
+          "name": "getContent",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "getCcypairCd",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "getChartType",
+          "line": 114,
+          "isDefault": false
+        },
+        {
+          "name": "getUpdatedAt",
+          "line": 118,
+          "isDefault": false
+        },
+        {
+          "name": "applyUpdate",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "TvChartLayout",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 10,
+        "functionCount": 10,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvChartLayoutRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 45,
+      "nonEmptyLines": 41,
+      "classes": [
+        {
+          "name": "TvChartLayoutRepository",
+          "startLine": 36,
+          "endLine": 45,
+          "methods": [
+            "findByCustomerNoOrderByUpdatedAtDesc"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvChartLayoutRepository",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartLayoutService.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 74,
+      "classes": [
+        {
+          "name": "ChartLayoutService",
+          "startLine": 41,
+          "endLine": 82,
+          "methods": [
+            "register",
+            "update",
+            "get",
+            "list",
+            "delete"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartLayoutService",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 221,
+      "nonEmptyLines": 192,
+      "functions": [
+        {
+          "name": "ChartLayoutServiceImpl",
+          "startLine": 69,
+          "endLine": 74,
+          "params": [
+            "tvChartLayoutRepository",
+            "ccypairRepository"
+          ]
+        },
+        {
+          "name": "register",
+          "startLine": 76,
+          "endLine": 97,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "update",
+          "startLine": 99,
+          "endLine": 119,
+          "params": [
+            "idPath",
+            "request"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 121,
+          "endLine": 130,
+          "params": [
+            "idPath"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 132,
+          "endLine": 138,
+          "params": []
+        },
+        {
+          "name": "delete",
+          "startLine": 140,
+          "endLine": 146,
+          "params": [
+            "idPath"
+          ]
+        },
+        {
+          "name": "toListItem",
+          "startLine": 148,
+          "endLine": 155,
+          "params": [
+            "layout"
+          ]
+        },
+        {
+          "name": "requireOwnedLayout",
+          "startLine": 157,
+          "endLine": 168,
+          "params": [
+            "idPath"
+          ]
+        },
+        {
+          "name": "parseLayoutId",
+          "startLine": 170,
+          "endLine": 180,
+          "params": [
+            "idPath"
+          ]
+        },
+        {
+          "name": "requireActivePair",
+          "startLine": 182,
+          "endLine": 187,
+          "params": [
+            "ccypairCd"
+          ]
+        },
+        {
+          "name": "validateUpsertBody",
+          "startLine": 189,
+          "endLine": 209,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "normalizeCcypairCd",
+          "startLine": 211,
+          "endLine": 220,
+          "params": [
+            "symbolName"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartLayoutServiceImpl",
+          "startLine": 55,
+          "endLine": 221,
+          "methods": [
+            "ChartLayoutServiceImpl",
+            "register",
+            "update",
+            "get",
+            "list",
+            "delete",
+            "toListItem",
+            "requireOwnedLayout",
+            "parseLayoutId",
+            "requireActivePair",
+            "validateUpsertBody",
+            "normalizeCcypairCd"
+          ],
+          "properties": [
+            "NAME_MAX_LENGTH",
+            "tvChartLayoutRepository",
+            "ccypairRepository"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartLayoutServiceImpl",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "register",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "update",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "delete",
+          "line": 140,
+          "isDefault": false
+        },
+        {
+          "name": "ChartLayoutServiceImpl",
+          "line": 55,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register",
+          "callee": "new ValidationException",
+          "lineNumber": 80
+        },
+        {
+          "caller": "register",
+          "callee": "validateUpsertBody",
+          "lineNumber": 83
+        },
+        {
+          "caller": "register",
+          "callee": "normalizeCcypairCd",
+          "lineNumber": 84
+        },
+        {
+          "caller": "register",
+          "callee": "request.symbol",
+          "lineNumber": 84
+        },
+        {
+          "caller": "register",
+          "callee": "requireActivePair",
+          "lineNumber": 85
+        },
+        {
+          "caller": "register",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 87
+        },
+        {
+          "caller": "register",
+          "callee": "new TvChartLayout",
+          "lineNumber": 88
+        },
+        {
+          "caller": "register",
+          "callee": "request.name().trim",
+          "lineNumber": 90
+        },
+        {
+          "caller": "register",
+          "callee": "request.name",
+          "lineNumber": 90
+        },
+        {
+          "caller": "register",
+          "callee": "request.content",
+          "lineNumber": 91
+        },
+        {
+          "caller": "register",
+          "callee": "request.resolution",
+          "lineNumber": 93
+        },
+        {
+          "caller": "register",
+          "callee": "Instant.now",
+          "lineNumber": 94
+        },
+        {
+          "caller": "register",
+          "callee": "tvChartLayoutRepository.save",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register",
+          "callee": "new ChartLayoutIdResponse",
+          "lineNumber": 96
+        },
+        {
+          "caller": "register",
+          "callee": "saved.getId",
+          "lineNumber": 96
+        },
+        {
+          "caller": "update",
+          "callee": "new ValidationException",
+          "lineNumber": 103
+        },
+        {
+          "caller": "update",
+          "callee": "validateUpsertBody",
+          "lineNumber": 106
+        },
+        {
+          "caller": "update",
+          "callee": "normalizeCcypairCd",
+          "lineNumber": 107
+        },
+        {
+          "caller": "update",
+          "callee": "request.symbol",
+          "lineNumber": 107
+        },
+        {
+          "caller": "update",
+          "callee": "requireActivePair",
+          "lineNumber": 108
+        },
+        {
+          "caller": "update",
+          "callee": "requireOwnedLayout",
+          "lineNumber": 110
+        },
+        {
+          "caller": "update",
+          "callee": "layout.applyUpdate",
+          "lineNumber": 111
+        },
+        {
+          "caller": "update",
+          "callee": "request.name().trim",
+          "lineNumber": 112
+        },
+        {
+          "caller": "update",
+          "callee": "request.name",
+          "lineNumber": 112
+        },
+        {
+          "caller": "update",
+          "callee": "request.content",
+          "lineNumber": 113
+        },
+        {
+          "caller": "update",
+          "callee": "request.resolution",
+          "lineNumber": 115
+        },
+        {
+          "caller": "update",
+          "callee": "Instant.now",
+          "lineNumber": 116
+        },
+        {
+          "caller": "update",
+          "callee": "tvChartLayoutRepository.save",
+          "lineNumber": 117
+        },
+        {
+          "caller": "update",
+          "callee": "new ChartLayoutIdResponse",
+          "lineNumber": 118
+        },
+        {
+          "caller": "update",
+          "callee": "layout.getId",
+          "lineNumber": 118
+        },
+        {
+          "caller": "get",
+          "callee": "requireOwnedLayout",
+          "lineNumber": 124
+        },
+        {
+          "caller": "get",
+          "callee": "new ChartLayoutDto",
+          "lineNumber": 125
+        },
+        {
+          "caller": "get",
+          "callee": "layout.getId",
+          "lineNumber": 126
+        },
+        {
+          "caller": "get",
+          "callee": "layout.getName",
+          "lineNumber": 127
+        },
+        {
+          "caller": "get",
+          "callee": "layout.getUpdatedAt().getEpochSecond",
+          "lineNumber": 128
+        },
+        {
+          "caller": "get",
+          "callee": "layout.getUpdatedAt",
+          "lineNumber": 128
+        },
+        {
+          "caller": "get",
+          "callee": "layout.getContent",
+          "lineNumber": 129
+        },
+        {
+          "caller": "list",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 135
+        },
+        {
+          "caller": "list",
+          "callee": "tvChartLayoutRepository.findByCustomerNoOrderByUpdatedAtDesc",
+          "lineNumber": 136
+        },
+        {
+          "caller": "list",
+          "callee": "layouts.stream().map(ChartLayoutServiceImpl::toListItem).toList",
+          "lineNumber": 137
+        },
+        {
+          "caller": "list",
+          "callee": "layouts.stream().map",
+          "lineNumber": 137
+        },
+        {
+          "caller": "list",
+          "callee": "layouts.stream",
+          "lineNumber": 137
+        },
+        {
+          "caller": "delete",
+          "callee": "requireOwnedLayout",
+          "lineNumber": 143
+        },
+        {
+          "caller": "delete",
+          "callee": "tvChartLayoutRepository.delete",
+          "lineNumber": 144
+        },
+        {
+          "caller": "delete",
+          "callee": "new SystemDatetimeResponse",
+          "lineNumber": 145
+        },
+        {
+          "caller": "delete",
+          "callee": "Instant.now().getEpochSecond",
+          "lineNumber": 145
+        },
+        {
+          "caller": "delete",
+          "callee": "Instant.now",
+          "lineNumber": 145
+        },
+        {
+          "caller": "toListItem",
+          "callee": "new ChartLayoutListItemDto",
+          "lineNumber": 149
+        },
+        {
+          "caller": "toListItem",
+          "callee": "layout.getId",
+          "lineNumber": 150
+        },
+        {
+          "caller": "toListItem",
+          "callee": "layout.getName",
+          "lineNumber": 151
+        },
+        {
+          "caller": "toListItem",
+          "callee": "layout.getChartType",
+          "lineNumber": 152
+        },
+        {
+          "caller": "toListItem",
+          "callee": "layout.getCcypairCd",
+          "lineNumber": 153
+        },
+        {
+          "caller": "toListItem",
+          "callee": "layout.getUpdatedAt().getEpochSecond",
+          "lineNumber": 154
+        },
+        {
+          "caller": "toListItem",
+          "callee": "layout.getUpdatedAt",
+          "lineNumber": 154
+        },
+        {
+          "caller": "requireOwnedLayout",
+          "callee": "parseLayoutId",
+          "lineNumber": 158
+        },
+        {
+          "caller": "requireOwnedLayout",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 159
+        },
+        {
+          "caller": "requireOwnedLayout",
+          "callee": "tvChartLayoutRepository.findById(layoutId).orElse",
+          "lineNumber": 160
+        },
+        {
+          "caller": "requireOwnedLayout",
+          "callee": "tvChartLayoutRepository.findById",
+          "lineNumber": 160
+        },
+        {
+          "caller": "requireOwnedLayout",
+          "callee": "layout.getCustomerNo",
+          "lineNumber": 163
+        },
+        {
+          "caller": "requireOwnedLayout",
+          "callee": "new ResourceNotFoundException",
+          "lineNumber": 164
+        },
+        {
+          "caller": "parseLayoutId",
+          "callee": "idPath.isBlank",
+          "lineNumber": 171
+        },
+        {
+          "caller": "parseLayoutId",
+          "callee": "new ValidationException",
+          "lineNumber": 172
+        },
+        {
+          "caller": "parseLayoutId",
+          "callee": "Long.parseLong",
+          "lineNumber": 176
+        },
+        {
+          "caller": "parseLayoutId",
+          "callee": "idPath.trim",
+          "lineNumber": 176
+        },
+        {
+          "caller": "parseLayoutId",
+          "callee": "new ValidationException",
+          "lineNumber": 178
+        },
+        {
+          "caller": "requireActivePair",
+          "callee": "ccypairRepository.findByCcypairCdAndIsDeleted",
+          "lineNumber": 183
+        },
+        {
+          "caller": "requireActivePair",
+          "callee": "found.isEmpty",
+          "lineNumber": 184
+        },
+        {
+          "caller": "requireActivePair",
+          "callee": "new ResourceNotFoundException",
+          "lineNumber": 185
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "request.name",
+          "lineNumber": 190
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "name.isBlank",
+          "lineNumber": 191
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "name.trim().length",
+          "lineNumber": 191
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "name.trim",
+          "lineNumber": 191
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "new ValidationException",
+          "lineNumber": 192
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "request.content",
+          "lineNumber": 195
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "content.isBlank",
+          "lineNumber": 196
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "new ValidationException",
+          "lineNumber": 197
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "request.symbol",
+          "lineNumber": 200
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "symbol.isBlank",
+          "lineNumber": 201
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "new ValidationException",
+          "lineNumber": 202
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "request.resolution",
+          "lineNumber": 205
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "resolution.isBlank",
+          "lineNumber": 206
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "ResolutionMapper.isMarksResolution",
+          "lineNumber": 206
+        },
+        {
+          "caller": "validateUpsertBody",
+          "callee": "new ValidationException",
+          "lineNumber": 207
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "symbolName.trim().toUpperCase",
+          "lineNumber": 212
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "symbolName.trim",
+          "lineNumber": 212
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "upper.startsWith",
+          "lineNumber": 215
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "upper.substring",
+          "lineNumber": 216
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "upper.replace",
+          "lineNumber": 219
+        }
+      ],
+      "metrics": {
+        "importCount": 14,
+        "exportCount": 7,
+        "functionCount": 12,
+        "classCount": 1
+      }
+    }
+  ]
+}

@@ -30,6 +30,16 @@ import org.springframework.stereotype.Component;
  * <p>To attach a real Peach feed, replace {@link DemoTickEngine} only. Keep this
  * worker, the warehouse, Redis keys, and the Python gateway.
  *
+ * <p><strong>NOT:</strong> not {@code @Transactional} (each JDBC upsert is its own
+ * statement so a pair failure is not rolled back as a batch); not a request handler
+ * (do not look for this in controllers); not Python (gateway only relays
+ * {@code peach:quotes}/{@code peach:bars}); not {@link ChartCacheWriter} (boot seed
+ * only, {@code @Order(100)} before this {@code @Order(200)}); not candle math in
+ * {@link ChartCacheStore} (that class only reads what this worker last wrote).
+ * One failed pair currently aborts the rest of that tick — there is no per-pair
+ * try/catch. That is deliberate: a warehouse/Redis outage should stop ingest rather
+ * than silently skip pairs.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -41,11 +51,13 @@ import org.springframework.stereotype.Component;
  *   <tr><td>1.0.0</td><td>2026/08/26</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/26</td><td>Task</td><td>Publish forming bars for WS relay</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.3.0</td><td>2026/08/30</td><td>Task</td><td>Live DWM bars follow 24/7 demo ticks</td></tr>
+ *   <tr><td>1.3.1</td><td>2026/08/31</td><td>Task</td><td>Review NOT list: no per-pair isolation</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.3.1
  */
 @Component
 @Order(200)
@@ -117,7 +129,8 @@ public class TickIngestWorker implements ApplicationRunner {
 
 		for (FxQuoteMessage quote : quotes) {
 
-			// Warehouse + Redis cache_set_* + peach:bars, then header tick peach:quotes.
+			// Same pair: persist OHLC first, then header tick. No try/catch — one
+			// JDBC/Redis failure stops remaining pairs this cycle (not silently skipped).
 			upsertOpenBars(quote);
 			quoteBus.publish(quote);
 		}
@@ -205,11 +218,6 @@ public class TickIngestWorker implements ApplicationRunner {
 
 		long periodMs = namespace.periodMillis();
 		long openMs = Math.floorDiv(nowMs - 1, periodMs) * periodMs;
-
-		if (namespace.skipWeekend(openMs)) {
-			return;
-		}
-
 		long openSec = openMs / 1000L;
 		String formingKey = namespace.name() + ":" + curpairName;
 		CachedChartBar previous = formingBars.get(formingKey);

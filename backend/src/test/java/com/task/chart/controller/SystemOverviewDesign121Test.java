@@ -45,11 +45,12 @@ import org.springframework.test.web.servlet.MvcResult;
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Phase 1 cache read path</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/27</td><td>Task</td><td>Doc 121 columnar JSON only</td></tr>
+ *   <tr><td>1.3.0</td><td>2026/08/30</td><td>Task</td><td>Saturday 1D has bars (24/7 mock)</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.2.0
+ * @version 1.3.0
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -355,12 +356,9 @@ class SystemOverviewDesign121Test {
 		}
 
 		@Test
-		void weekendGapReturnsNoDataWithNextTimeOnPriorFriday() throws Exception {
+		void saturdayDailyRangeReturnsSeededBars() throws Exception {
 			LocalDate saturday = LocalDate.now(ZoneOffset.UTC)
 					.with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
-			if (saturday.getDayOfWeek() != DayOfWeek.SATURDAY) {
-				saturday = saturday.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
-			}
 			long from = saturday.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
 			long to = from + 86_400L - 1;
 
@@ -374,18 +372,10 @@ class SystemOverviewDesign121Test {
 					.andReturn();
 
 			JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
-			assertThat(root.path("s").asText()).isEqualTo("no_data");
+			assertThat(root.path("s").asText()).isEqualTo("ok");
 			assertNoExtraHistoryFields(root);
-			assertThat(root.path("t")).isEmpty();
-			assertThat(root.path("o")).isEmpty();
-			assertThat(root.path("h")).isEmpty();
-			assertThat(root.path("l")).isEmpty();
-			assertThat(root.path("c")).isEmpty();
-			assertThat(root.has("nextTime")).isTrue();
-			long nextTime = root.path("nextTime").asLong();
-			assertThat(nextTime).isLessThan(from);
-			DayOfWeek nextDay = Instant.ofEpochSecond(nextTime).atZone(ZoneOffset.UTC).getDayOfWeek();
-			assertThat(nextDay).isNotIn(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+			assertThat(root.path("t").size()).isGreaterThanOrEqualTo(1);
+			assertColumnarShape(root);
 		}
 
 		@Test

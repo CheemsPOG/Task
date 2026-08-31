@@ -40,6 +40,7 @@ PERIOD_MS: dict[str, int] = {
     "1": MINUTE,
     "3": 3 * MINUTE,
     "5": 5 * MINUTE,
+    "10": 10 * MINUTE,
     "15": 15 * MINUTE,
     "30": 30 * MINUTE,
     "60": HOUR,

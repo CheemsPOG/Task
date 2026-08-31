@@ -60,8 +60,8 @@ app:
     has-intraday: true
     visible-plots-set: ohlc
     has-seconds: true
-    time-summer: "0700-3000:2|0600-3000:345|0600-2940:6"
-    time-winter: "0700-3100:2|0700-3100:345|0700-3040:6"
+    time-summer: "24x7"
+    time-winter: "24x7"
     search-default-limit: 100
     search-max-limit: 100
     supported-resolutions:

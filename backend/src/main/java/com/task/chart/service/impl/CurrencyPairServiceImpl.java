@@ -19,7 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
  * {@code curpairCd} = {@code priority}, {@code curpairName} = {@code ccypair_cd},
  * {@code curpairDisplay} = slash form ({@code USDJPY} → {@code USD/JPY}).
  * {@link com.task.chart.controller.CurrencyPairController} and {@code TickIngestWorker} call
- * {@link #list()}. This is NOT doc 123 {@code GET /api/symbols}, NOT Peach S-01, and NOT the Python WS.
+ * {@link #list()}.
+ *
+ * <p><strong>NOT:</strong> not doc 123 {@code GET /api/symbols}; not Peach S-01; not the
+ * Python WS. {@code GET /curpairs} lives <em>outside</em> {@code /api} but still needs a
+ * Bearer JWT ({@code SecurityConfig}). {@code curpairCd} is master {@code priority} — that
+ * is the id Python publishes as a <em>string</em> on {@code peach:quotes}.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -32,11 +37,12 @@ import org.springframework.transaction.annotation.Transactional;
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/24</td><td>Task</td><td>Read catalog from m_ccypairs</td></tr>
  *   <tr><td>1.1.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.1.2</td><td>2026/08/31</td><td>Task</td><td>Review comments: priority vs CD</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.1
+ * @version 1.1.2
  */
 @Service
 public class CurrencyPairServiceImpl implements CurrencyPairService {
@@ -53,9 +59,8 @@ public class CurrencyPairServiceImpl implements CurrencyPairService {
 	}
 
 	/**
-	 * Returns active pairs for the quote-stream catalog.
-	 *
-	 * @return catalog rows
+	 * Active rows only ({@code is_deleted = 0}), ordered by {@code priority}. Soft-deleted
+	 * pairs stay out of the widget catalog and the ingest loop.
 	 */
 	@Override
 	@Transactional(readOnly = true)
@@ -65,10 +70,8 @@ public class CurrencyPairServiceImpl implements CurrencyPairService {
 	}
 
 	/**
-	 * Looks up one catalog row by numeric {@code curpairCd} (master {@code priority}).
-	 *
-	 * @param curpairCd quote-stream pair code
-	 * @return matching row, or {@code null}
+	 * Lookup by numeric quote-stream id ({@code priority}), not by {@code USDJPY}.
+	 * Returns {@code null} on miss — callers decide 404 vs skip.
 	 */
 	@Override
 	@Transactional(readOnly = true)
@@ -79,11 +82,18 @@ public class CurrencyPairServiceImpl implements CurrencyPairService {
 				.orElse(null);
 	}
 
+	/**
+	 * JSON {@code curpairCd} = {@code priority} (Python tick id). {@code curpairName} =
+	 * {@code ccypair_cd}. Do not swap those two fields — the WS would key quotes wrong.
+	 */
 	private static CurrencyPairDto toDto(Ccypair row) {
 		String name = row.getCcypairCd();
 		return new CurrencyPairDto(row.getPriority(), name, toDisplay(name));
 	}
 
+	/**
+	 * {@code USDJPY} → {@code USD/JPY} for the header catalog. Non-6-char values pass through.
+	 */
 	private static String toDisplay(String ccypairCd) {
 		if (ccypairCd == null || ccypairCd.length() != 6) {
 			return ccypairCd;

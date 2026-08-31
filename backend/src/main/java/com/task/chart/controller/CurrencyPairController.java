@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
  * FX pair catalog HTTP API used to map WebSocket quotes. Extra vs design docs
  * 120–139 (same {@code m_ccypairs} master as docs 123 / 124). HTTP only; no SQL.
  *
+ * <p><strong>NOT:</strong> not under {@code /api}, but {@link com.task.chart.security.SecurityConfig}
+ * still requires Bearer on {@code GET /curpairs}. Do not copy this path into a new
+ * controller without also adding that matcher. {@code curpairCd} is {@code priority}
+ * (Python WS uses the same id as a string).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

@@ -1,0 +1,3225 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 20,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 20,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 20,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 130,
+      "nonEmptyLines": 113,
+      "functions": [
+        {
+          "name": "CacheNamespace",
+          "startLine": 55,
+          "endLine": 60,
+          "params": [
+            "chartType",
+            "tableName",
+            "cacheName",
+            "tvResolution"
+          ]
+        },
+        {
+          "name": "chartType",
+          "startLine": 67,
+          "endLine": 69,
+          "params": []
+        },
+        {
+          "name": "tableName",
+          "startLine": 76,
+          "endLine": 78,
+          "params": []
+        },
+        {
+          "name": "cacheName",
+          "startLine": 85,
+          "endLine": 87,
+          "params": []
+        },
+        {
+          "name": "tvResolution",
+          "startLine": 94,
+          "endLine": 96,
+          "params": []
+        },
+        {
+          "name": "periodMillis",
+          "startLine": 103,
+          "endLine": 105,
+          "params": []
+        },
+        {
+          "name": "fromTvResolution",
+          "startLine": 113,
+          "endLine": 129,
+          "params": [
+            "resolution"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "CacheNamespace",
+          "startLine": 34,
+          "endLine": 130,
+          "methods": [
+            "CacheNamespace",
+            "chartType",
+            "tableName",
+            "cacheName",
+            "tvResolution",
+            "periodMillis",
+            "fromTvResolution"
+          ],
+          "properties": [
+            "chartType",
+            "tableName",
+            "cacheName",
+            "tvResolution"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chartType",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "tableName",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "cacheName",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "tvResolution",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "periodMillis",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "fromTvResolution",
+          "line": 113,
+          "isDefault": false
+        },
+        {
+          "name": "CacheNamespace",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "periodMillis",
+          "callee": "ResolutionMapper.periodMillis",
+          "lineNumber": 104
+        },
+        {
+          "caller": "fromTvResolution",
+          "callee": "ResolutionMapper.toPeachChartType",
+          "lineNumber": 115
+        },
+        {
+          "caller": "fromTvResolution",
+          "callee": "values",
+          "lineNumber": 121
+        },
+        {
+          "caller": "fromTvResolution",
+          "callee": "namespace.chartType.equals",
+          "lineNumber": 123
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 289,
+      "nonEmptyLines": 241,
+      "functions": [
+        {
+          "name": "ChartCacheStore",
+          "startLine": 62,
+          "endLine": 69,
+          "params": [
+            "redis",
+            "chartBarRepository"
+          ]
+        },
+        {
+          "name": "replacePair",
+          "startLine": 78,
+          "endLine": 85,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "bars"
+          ]
+        },
+        {
+          "name": "put",
+          "startLine": 93,
+          "endLine": 102,
+          "params": [
+            "namespace",
+            "bar"
+          ]
+        },
+        {
+          "name": "query",
+          "startLine": 115,
+          "endLine": 137,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "fromSec",
+            "toSec"
+          ]
+        },
+        {
+          "name": "nextTimeBefore",
+          "startLine": 147,
+          "endLine": 168,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "fromSec"
+          ]
+        },
+        {
+          "name": "size",
+          "startLine": 177,
+          "endLine": 187,
+          "params": [
+            "namespace",
+            "curpairCd"
+          ]
+        },
+        {
+          "name": "redisKey",
+          "startLine": 196,
+          "endLine": 198,
+          "params": [
+            "namespace",
+            "curpairCd"
+          ]
+        },
+        {
+          "name": "warmFromWarehouseIfEmpty",
+          "startLine": 206,
+          "endLine": 219,
+          "params": [
+            "namespace",
+            "curpairCd"
+          ]
+        },
+        {
+          "name": "replacePairUnlocked",
+          "startLine": 228,
+          "endLine": 247,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "bars"
+          ]
+        },
+        {
+          "name": "toJson",
+          "startLine": 255,
+          "endLine": 262,
+          "params": [
+            "bar"
+          ]
+        },
+        {
+          "name": "decode",
+          "startLine": 270,
+          "endLine": 288,
+          "params": [
+            "members"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartCacheStore",
+          "startLine": 46,
+          "endLine": 289,
+          "methods": [
+            "ChartCacheStore",
+            "replacePair",
+            "put",
+            "query",
+            "nextTimeBefore",
+            "size",
+            "redisKey",
+            "warmFromWarehouseIfEmpty",
+            "replacePairUnlocked",
+            "toJson",
+            "decode"
+          ],
+          "properties": [
+            "KEY_PREFIX",
+            "redis",
+            "chartBarRepository",
+            "objectMapper",
+            "locks"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartCacheStore",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "replacePair",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "put",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "query",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "nextTimeBefore",
+          "line": 147,
+          "isDefault": false
+        },
+        {
+          "name": "size",
+          "line": 177,
+          "isDefault": false
+        },
+        {
+          "name": "redisKey",
+          "line": 196,
+          "isDefault": false
+        },
+        {
+          "name": "ChartCacheStore",
+          "line": 46,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ChartCacheStore",
+          "callee": "new Object",
+          "lineNumber": 67
+        },
+        {
+          "caller": "replacePair",
+          "callee": "namespace.ordinal",
+          "lineNumber": 80
+        },
+        {
+          "caller": "replacePair",
+          "callee": "replacePairUnlocked",
+          "lineNumber": 83
+        },
+        {
+          "caller": "put",
+          "callee": "namespace.ordinal",
+          "lineNumber": 95
+        },
+        {
+          "caller": "put",
+          "callee": "redisKey",
+          "lineNumber": 98
+        },
+        {
+          "caller": "put",
+          "callee": "bar.curpairCd",
+          "lineNumber": 98
+        },
+        {
+          "caller": "put",
+          "callee": "redis.opsForZSet().removeRangeByScore",
+          "lineNumber": 99
+        },
+        {
+          "caller": "put",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 99
+        },
+        {
+          "caller": "put",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 99
+        },
+        {
+          "caller": "put",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 99
+        },
+        {
+          "caller": "put",
+          "callee": "redis.opsForZSet().add",
+          "lineNumber": 100
+        },
+        {
+          "caller": "put",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 100
+        },
+        {
+          "caller": "put",
+          "callee": "toJson",
+          "lineNumber": 100
+        },
+        {
+          "caller": "put",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 100
+        },
+        {
+          "caller": "query",
+          "callee": "namespace.ordinal",
+          "lineNumber": 121
+        },
+        {
+          "caller": "query",
+          "callee": "warmFromWarehouseIfEmpty",
+          "lineNumber": 124
+        },
+        {
+          "caller": "query",
+          "callee": "redisKey",
+          "lineNumber": 125
+        },
+        {
+          "caller": "query",
+          "callee": "fromSec.doubleValue",
+          "lineNumber": 126
+        },
+        {
+          "caller": "query",
+          "callee": "toSec.doubleValue",
+          "lineNumber": 127
+        },
+        {
+          "caller": "query",
+          "callee": "List.of",
+          "lineNumber": 130
+        },
+        {
+          "caller": "query",
+          "callee": "redis.opsForZSet().rangeByScore",
+          "lineNumber": 133
+        },
+        {
+          "caller": "query",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 133
+        },
+        {
+          "caller": "query",
+          "callee": "decode",
+          "lineNumber": 135
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "namespace.ordinal",
+          "lineNumber": 149
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "warmFromWarehouseIfEmpty",
+          "lineNumber": 152
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "redisKey",
+          "lineNumber": 153
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "redis.opsForZSet().reverseRangeByScore",
+          "lineNumber": 154
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 154
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "decode",
+          "lineNumber": 160
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "bars.isEmpty",
+          "lineNumber": 162
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "bars.get(0).chartDatetimeSec",
+          "lineNumber": 163
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "bars.get",
+          "lineNumber": 163
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "chartBarRepository.nextTimeBefore",
+          "lineNumber": 166
+        },
+        {
+          "caller": "size",
+          "callee": "namespace.ordinal",
+          "lineNumber": 179
+        },
+        {
+          "caller": "size",
+          "callee": "warmFromWarehouseIfEmpty",
+          "lineNumber": 182
+        },
+        {
+          "caller": "size",
+          "callee": "redis.opsForZSet().zCard",
+          "lineNumber": 183
+        },
+        {
+          "caller": "size",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 183
+        },
+        {
+          "caller": "size",
+          "callee": "redisKey",
+          "lineNumber": 183
+        },
+        {
+          "caller": "size",
+          "callee": "card.intValue",
+          "lineNumber": 185
+        },
+        {
+          "caller": "redisKey",
+          "callee": "namespace.cacheName",
+          "lineNumber": 197
+        },
+        {
+          "caller": "warmFromWarehouseIfEmpty",
+          "callee": "redis.opsForZSet().zCard",
+          "lineNumber": 208
+        },
+        {
+          "caller": "warmFromWarehouseIfEmpty",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 208
+        },
+        {
+          "caller": "warmFromWarehouseIfEmpty",
+          "callee": "redisKey",
+          "lineNumber": 208
+        },
+        {
+          "caller": "warmFromWarehouseIfEmpty",
+          "callee": "chartBarRepository.query",
+          "lineNumber": 214
+        },
+        {
+          "caller": "warmFromWarehouseIfEmpty",
+          "callee": "fromDb.isEmpty",
+          "lineNumber": 216
+        },
+        {
+          "caller": "warmFromWarehouseIfEmpty",
+          "callee": "replacePairUnlocked",
+          "lineNumber": 217
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "redisKey",
+          "lineNumber": 233
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "redis.delete",
+          "lineNumber": 234
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "bars.isEmpty",
+          "lineNumber": 236
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "new HashSet<>",
+          "lineNumber": 240
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "bars.size",
+          "lineNumber": 240
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "tuples.add",
+          "lineNumber": 243
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "ZSetOperations.TypedTuple.of",
+          "lineNumber": 243
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "toJson",
+          "lineNumber": 243
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 243
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "redis.opsForZSet().add",
+          "lineNumber": 246
+        },
+        {
+          "caller": "replacePairUnlocked",
+          "callee": "redis.opsForZSet",
+          "lineNumber": 246
+        },
+        {
+          "caller": "toJson",
+          "callee": "objectMapper.writeValueAsString",
+          "lineNumber": 258
+        },
+        {
+          "caller": "toJson",
+          "callee": "new IllegalStateException",
+          "lineNumber": 260
+        },
+        {
+          "caller": "decode",
+          "callee": "members.isEmpty",
+          "lineNumber": 272
+        },
+        {
+          "caller": "decode",
+          "callee": "List.of",
+          "lineNumber": 273
+        },
+        {
+          "caller": "decode",
+          "callee": "new ArrayList<>",
+          "lineNumber": 276
+        },
+        {
+          "caller": "decode",
+          "callee": "members.size",
+          "lineNumber": 276
+        },
+        {
+          "caller": "decode",
+          "callee": "bars.add",
+          "lineNumber": 281
+        },
+        {
+          "caller": "decode",
+          "callee": "objectMapper.readValue",
+          "lineNumber": 281
+        },
+        {
+          "caller": "decode",
+          "callee": "new IllegalStateException",
+          "lineNumber": 283
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 11,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 251,
+      "nonEmptyLines": 229,
+      "functions": [
+        {
+          "name": "ChartDataController",
+          "startLine": 64,
+          "endLine": 66,
+          "params": [
+            "chartDataService"
+          ]
+        },
+        {
+          "name": "health",
+          "startLine": 73,
+          "endLine": 81,
+          "params": []
+        },
+        {
+          "name": "config",
+          "startLine": 88,
+          "endLine": 98,
+          "params": []
+        },
+        {
+          "name": "time",
+          "startLine": 105,
+          "endLine": 115,
+          "params": []
+        },
+        {
+          "name": "search",
+          "startLine": 126,
+          "endLine": 141,
+          "params": [
+            "query",
+            "exchange",
+            "type",
+            "limit"
+          ]
+        },
+        {
+          "name": "symbols",
+          "startLine": 149,
+          "endLine": 163,
+          "params": [
+            "symbol"
+          ]
+        },
+        {
+          "name": "marks",
+          "startLine": 174,
+          "endLine": 189,
+          "params": [
+            "symbol",
+            "resolution",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "name": "timescaleMarks",
+          "startLine": 200,
+          "endLine": 215,
+          "params": [
+            "symbol",
+            "resolution",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "name": "history",
+          "startLine": 230,
+          "endLine": 249,
+          "params": [
+            "symbol",
+            "resolution",
+            "from",
+            "to",
+            "countBack",
+            "price",
+            "bid_ask"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartDataController",
+          "startLine": 52,
+          "endLine": 251,
+          "methods": [
+            "ChartDataController",
+            "health",
+            "config",
+            "time",
+            "search",
+            "symbols",
+            "marks",
+            "timescaleMarks",
+            "history"
+          ],
+          "properties": [
+            "chartDataService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartDataController",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "health",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "config",
+          "line": 88,
+          "isDefault": false
+        },
+        {
+          "name": "time",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "search",
+          "line": 126,
+          "isDefault": false
+        },
+        {
+          "name": "symbols",
+          "line": 149,
+          "isDefault": false
+        },
+        {
+          "name": "marks",
+          "line": 174,
+          "isDefault": false
+        },
+        {
+          "name": "timescaleMarks",
+          "line": 200,
+          "isDefault": false
+        },
+        {
+          "name": "history",
+          "line": 230,
+          "isDefault": false
+        },
+        {
+          "name": "ChartDataController",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "health",
+          "callee": "new HealthResponse",
+          "lineNumber": 80
+        },
+        {
+          "caller": "config",
+          "callee": "chartDataService.config",
+          "lineNumber": 97
+        },
+        {
+          "caller": "time",
+          "callee": "new ServerTimeResponse",
+          "lineNumber": 114
+        },
+        {
+          "caller": "time",
+          "callee": "chartDataService.serverTimeSeconds",
+          "lineNumber": 114
+        },
+        {
+          "caller": "search",
+          "callee": "chartDataService.search",
+          "lineNumber": 140
+        },
+        {
+          "caller": "symbols",
+          "callee": "chartDataService.resolve",
+          "lineNumber": 162
+        },
+        {
+          "caller": "marks",
+          "callee": "chartDataService.marks",
+          "lineNumber": 188
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "chartDataService.timescaleMarks",
+          "lineNumber": 214
+        },
+        {
+          "caller": "history",
+          "callee": "chartDataService.history",
+          "lineNumber": 248
+        }
+      ],
+      "metrics": {
+        "importCount": 9,
+        "exportCount": 10,
+        "functionCount": 9,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 45,
+      "classes": [
+        {
+          "name": "DatafeedConfigResponse",
+          "startLine": 33,
+          "endLine": 50,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DatafeedConfigResponse",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 29,
+      "classes": [
+        {
+          "name": "HealthResponse",
+          "startLine": 30,
+          "endLine": 31,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "HealthResponse",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 118,
+      "nonEmptyLines": 109,
+      "functions": [
+        {
+          "name": "ok",
+          "startLine": 55,
+          "endLine": 65,
+          "params": [
+            "bars"
+          ]
+        },
+        {
+          "name": "empty",
+          "startLine": 73,
+          "endLine": 82,
+          "params": [
+            "nextTimeSeconds"
+          ]
+        },
+        {
+          "name": "empty",
+          "startLine": 89,
+          "endLine": 91,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "HistoryResponse",
+          "startLine": 39,
+          "endLine": 118,
+          "methods": [
+            "ok",
+            "empty",
+            "empty"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ok",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "empty",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "empty",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "HistoryResponse",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ok",
+          "callee": "Columnar.fromBars",
+          "lineNumber": 56
+        },
+        {
+          "caller": "ok",
+          "callee": "new HistoryResponse",
+          "lineNumber": 57
+        },
+        {
+          "caller": "ok",
+          "callee": "columnar.t",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ok",
+          "callee": "columnar.o",
+          "lineNumber": 60
+        },
+        {
+          "caller": "ok",
+          "callee": "columnar.h",
+          "lineNumber": 61
+        },
+        {
+          "caller": "ok",
+          "callee": "columnar.l",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ok",
+          "callee": "columnar.c",
+          "lineNumber": 63
+        },
+        {
+          "caller": "empty",
+          "callee": "new HistoryResponse",
+          "lineNumber": 74
+        },
+        {
+          "caller": "empty",
+          "callee": "List.of",
+          "lineNumber": 76
+        },
+        {
+          "caller": "empty",
+          "callee": "List.of",
+          "lineNumber": 77
+        },
+        {
+          "caller": "empty",
+          "callee": "List.of",
+          "lineNumber": 78
+        },
+        {
+          "caller": "empty",
+          "callee": "List.of",
+          "lineNumber": 79
+        },
+        {
+          "caller": "empty",
+          "callee": "List.of",
+          "lineNumber": 80
+        },
+        {
+          "caller": "empty",
+          "callee": "empty",
+          "lineNumber": 90
+        },
+        {
+          "caller": "fromBars",
+          "callee": "new ArrayList<>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bars.size",
+          "lineNumber": 101
+        },
+        {
+          "caller": "fromBars",
+          "callee": "new ArrayList<>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bars.size",
+          "lineNumber": 102
+        },
+        {
+          "caller": "fromBars",
+          "callee": "new ArrayList<>",
+          "lineNumber": 103
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bars.size",
+          "lineNumber": 103
+        },
+        {
+          "caller": "fromBars",
+          "callee": "new ArrayList<>",
+          "lineNumber": 104
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bars.size",
+          "lineNumber": 104
+        },
+        {
+          "caller": "fromBars",
+          "callee": "new ArrayList<>",
+          "lineNumber": 105
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bars.size",
+          "lineNumber": 105
+        },
+        {
+          "caller": "fromBars",
+          "callee": "times.add",
+          "lineNumber": 109
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bar.time",
+          "lineNumber": 109
+        },
+        {
+          "caller": "fromBars",
+          "callee": "opens.add",
+          "lineNumber": 110
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bar.open",
+          "lineNumber": 110
+        },
+        {
+          "caller": "fromBars",
+          "callee": "highs.add",
+          "lineNumber": 111
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bar.high",
+          "lineNumber": 111
+        },
+        {
+          "caller": "fromBars",
+          "callee": "lows.add",
+          "lineNumber": 112
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bar.low",
+          "lineNumber": 112
+        },
+        {
+          "caller": "fromBars",
+          "callee": "closes.add",
+          "lineNumber": 113
+        },
+        {
+          "caller": "fromBars",
+          "callee": "bar.close",
+          "lineNumber": 113
+        },
+        {
+          "caller": "fromBars",
+          "callee": "new Columnar",
+          "lineNumber": 115
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 38,
+      "classes": [
+        {
+          "name": "MarkDto",
+          "startLine": 32,
+          "endLine": 40,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MarkDto",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "SearchSymbolDto",
+          "startLine": 32,
+          "endLine": 39,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SearchSymbolDto",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 40,
+      "functions": [
+        {
+          "name": "ServerTimeResponse",
+          "startLine": 40,
+          "endLine": 42,
+          "params": [
+            "unixSeconds"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ServerTimeResponse",
+          "startLine": 33,
+          "endLine": 44,
+          "methods": [
+            "ServerTimeResponse"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ServerTimeResponse",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "ServerTimeResponse",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 56,
+      "classes": [
+        {
+          "name": "SymbolInfoDto",
+          "startLine": 34,
+          "endLine": 59,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SymbolInfoDto",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 38,
+      "classes": [
+        {
+          "name": "TimescaleMarkDto",
+          "startLine": 34,
+          "endLine": 41,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TimescaleMarkDto",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/Season.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 72,
+      "functions": [
+        {
+          "name": "Season",
+          "startLine": 62,
+          "endLine": 63,
+          "params": []
+        },
+        {
+          "name": "getId",
+          "startLine": 65,
+          "endLine": 67,
+          "params": []
+        },
+        {
+          "name": "getSeasonCd",
+          "startLine": 69,
+          "endLine": 71,
+          "params": []
+        },
+        {
+          "name": "setSeasonCd",
+          "startLine": 73,
+          "endLine": 75,
+          "params": [
+            "seasonCd"
+          ]
+        },
+        {
+          "name": "getStartAt",
+          "startLine": 77,
+          "endLine": 79,
+          "params": []
+        },
+        {
+          "name": "getEndAt",
+          "startLine": 81,
+          "endLine": 83,
+          "params": []
+        },
+        {
+          "name": "setEndAt",
+          "startLine": 85,
+          "endLine": 87,
+          "params": [
+            "endAt"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Season",
+          "startLine": 39,
+          "endLine": 88,
+          "methods": [
+            "Season",
+            "getId",
+            "getSeasonCd",
+            "setSeasonCd",
+            "getStartAt",
+            "getEndAt",
+            "setEndAt"
+          ],
+          "properties": [
+            "DAYLIGHT_SAVING",
+            "STANDARD",
+            "id",
+            "seasonCd",
+            "startAt",
+            "endAt"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DAYLIGHT_SAVING",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "STANDARD",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "getId",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "getSeasonCd",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "setSeasonCd",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "getStartAt",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "getEndAt",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "setEndAt",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "Season",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 9,
+        "functionCount": 7,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvMark.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 92,
+      "nonEmptyLines": 74,
+      "functions": [
+        {
+          "name": "TvMark",
+          "startLine": 62,
+          "endLine": 63,
+          "params": []
+        },
+        {
+          "name": "getId",
+          "startLine": 65,
+          "endLine": 67,
+          "params": []
+        },
+        {
+          "name": "getCcypairCd",
+          "startLine": 69,
+          "endLine": 71,
+          "params": []
+        },
+        {
+          "name": "getResolution",
+          "startLine": 73,
+          "endLine": 75,
+          "params": []
+        },
+        {
+          "name": "getMarkAt",
+          "startLine": 77,
+          "endLine": 79,
+          "params": []
+        },
+        {
+          "name": "getColor",
+          "startLine": 81,
+          "endLine": 83,
+          "params": []
+        },
+        {
+          "name": "getLabel",
+          "startLine": 85,
+          "endLine": 87,
+          "params": []
+        },
+        {
+          "name": "getMarkText",
+          "startLine": 89,
+          "endLine": 91,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "TvMark",
+          "startLine": 36,
+          "endLine": 92,
+          "methods": [
+            "TvMark",
+            "getId",
+            "getCcypairCd",
+            "getResolution",
+            "getMarkAt",
+            "getColor",
+            "getLabel",
+            "getMarkText"
+          ],
+          "properties": [
+            "id",
+            "ccypairCd",
+            "resolution",
+            "markAt",
+            "color",
+            "label",
+            "markText"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "getId",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "getCcypairCd",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "getResolution",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "getMarkAt",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "getColor",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "getLabel",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "getMarkText",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "TvMark",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 92,
+      "nonEmptyLines": 74,
+      "functions": [
+        {
+          "name": "TvTimescaleMark",
+          "startLine": 62,
+          "endLine": 63,
+          "params": []
+        },
+        {
+          "name": "getId",
+          "startLine": 65,
+          "endLine": 67,
+          "params": []
+        },
+        {
+          "name": "getCcypairCd",
+          "startLine": 69,
+          "endLine": 71,
+          "params": []
+        },
+        {
+          "name": "getResolution",
+          "startLine": 73,
+          "endLine": 75,
+          "params": []
+        },
+        {
+          "name": "getTimescaleMarkAt",
+          "startLine": 77,
+          "endLine": 79,
+          "params": []
+        },
+        {
+          "name": "getColor",
+          "startLine": 81,
+          "endLine": 83,
+          "params": []
+        },
+        {
+          "name": "getLabel",
+          "startLine": 85,
+          "endLine": 87,
+          "params": []
+        },
+        {
+          "name": "getTooltip",
+          "startLine": 89,
+          "endLine": 91,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "TvTimescaleMark",
+          "startLine": 36,
+          "endLine": 92,
+          "methods": [
+            "TvTimescaleMark",
+            "getId",
+            "getCcypairCd",
+            "getResolution",
+            "getTimescaleMarkAt",
+            "getColor",
+            "getLabel",
+            "getTooltip"
+          ],
+          "properties": [
+            "id",
+            "ccypairCd",
+            "resolution",
+            "timescaleMarkAt",
+            "color",
+            "label",
+            "tooltip"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "getId",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "getCcypairCd",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "getResolution",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "getTimescaleMarkAt",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "getColor",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "getLabel",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "getTooltip",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "TvTimescaleMark",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 46,
+      "classes": [
+        {
+          "name": "SeasonRepository",
+          "startLine": 36,
+          "endLine": 50,
+          "methods": [
+            "findBySeasonCdInAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByStartAtDesc"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SeasonRepository",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 46,
+      "classes": [
+        {
+          "name": "TvMarkRepository",
+          "startLine": 34,
+          "endLine": 50,
+          "methods": [
+            "findByCcypairCdAndResolutionAndMarkAtGreaterThanEqualAndMarkAtLessThanEqualOrderByMarkAtAsc"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvMarkRepository",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 48,
+      "classes": [
+        {
+          "name": "TvTimescaleMarkRepository",
+          "startLine": 34,
+          "endLine": 52,
+          "methods": [
+            "findByCcypairCdAndResolutionAndTimescaleMarkAtGreaterThanEqualAndTimescaleMarkAtLessThanEqualOrderByTimescaleMarkAtAsc"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvTimescaleMarkRepository",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartDataService.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 119,
+      "nonEmptyLines": 109,
+      "classes": [
+        {
+          "name": "ChartDataService",
+          "startLine": 42,
+          "endLine": 119,
+          "methods": [
+            "config",
+            "serverTimeSeconds",
+            "search",
+            "marks",
+            "timescaleMarks",
+            "resolve",
+            "history"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartDataService",
+          "line": 42,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 478,
+      "nonEmptyLines": 429,
+      "functions": [
+        {
+          "name": "ChartDataServiceImpl",
+          "startLine": 93,
+          "endLine": 108,
+          "params": [
+            "symbolCatalog",
+            "chartCacheStore",
+            "appProperties",
+            "ccypairRepository",
+            "seasonRepository",
+            "tvMarkRepository",
+            "tvTimescaleMarkRepository"
+          ]
+        },
+        {
+          "name": "config",
+          "startLine": 110,
+          "endLine": 124,
+          "params": []
+        },
+        {
+          "name": "serverTimeSeconds",
+          "startLine": 126,
+          "endLine": 129,
+          "params": []
+        },
+        {
+          "name": "search",
+          "startLine": 131,
+          "endLine": 160,
+          "params": [
+            "query",
+            "exchange",
+            "type",
+            "limit"
+          ]
+        },
+        {
+          "name": "marks",
+          "startLine": 162,
+          "endLine": 173,
+          "params": [
+            "symbol",
+            "resolution",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "name": "timescaleMarks",
+          "startLine": 175,
+          "endLine": 186,
+          "params": [
+            "symbol",
+            "resolution",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "name": "validateMarksRequest",
+          "startLine": 188,
+          "endLine": 201,
+          "params": [
+            "symbol",
+            "resolution",
+            "from",
+            "to"
+          ]
+        },
+        {
+          "name": "toMarkDto",
+          "startLine": 203,
+          "endLine": 212,
+          "params": [
+            "mark"
+          ]
+        },
+        {
+          "name": "toTimescaleMarkDto",
+          "startLine": 214,
+          "endLine": 222,
+          "params": [
+            "mark"
+          ]
+        },
+        {
+          "name": "resolveSearchLimit",
+          "startLine": 224,
+          "endLine": 234,
+          "params": [
+            "limit",
+            "tradingView"
+          ]
+        },
+        {
+          "name": "matchesConfiguredFilter",
+          "startLine": 236,
+          "endLine": 242,
+          "params": [
+            "requested",
+            "configured"
+          ]
+        },
+        {
+          "name": "toSearchSymbol",
+          "startLine": 244,
+          "endLine": 254,
+          "params": [
+            "pair",
+            "exchange",
+            "type"
+          ]
+        },
+        {
+          "name": "resolve",
+          "startLine": 256,
+          "endLine": 266,
+          "params": [
+            "symbolName"
+          ]
+        },
+        {
+          "name": "requireCcypairCd",
+          "startLine": 268,
+          "endLine": 279,
+          "params": [
+            "symbolName"
+          ]
+        },
+        {
+          "name": "normalizeCcypairCd",
+          "startLine": 281,
+          "endLine": 290,
+          "params": [
+            "symbolName"
+          ]
+        },
+        {
+          "name": "currentSession",
+          "startLine": 292,
+          "endLine": 314,
+          "params": []
+        },
+        {
+          "name": "toSymbolInfo",
+          "startLine": 316,
+          "endLine": 345,
+          "params": [
+            "pair",
+            "session"
+          ]
+        },
+        {
+          "name": "displayTicker",
+          "startLine": 347,
+          "endLine": 353,
+          "params": [
+            "ccypairCd"
+          ]
+        },
+        {
+          "name": "priceScale",
+          "startLine": 355,
+          "endLine": 357,
+          "params": [
+            "rateUnit"
+          ]
+        },
+        {
+          "name": "history",
+          "startLine": 359,
+          "endLine": 379,
+          "params": [
+            "symbolName",
+            "resolution",
+            "from",
+            "to",
+            "countBack",
+            "price",
+            "bidAsk"
+          ]
+        },
+        {
+          "name": "history",
+          "startLine": 381,
+          "endLine": 433,
+          "params": [
+            "symbolName",
+            "resolution",
+            "from",
+            "to",
+            "countBack",
+            "price"
+          ]
+        },
+        {
+          "name": "validateHistoryRequest",
+          "startLine": 435,
+          "endLine": 467,
+          "params": [
+            "symbolName",
+            "resolution",
+            "from",
+            "to",
+            "bidAsk"
+          ]
+        },
+        {
+          "name": "normalizeSymbolCd",
+          "startLine": 475,
+          "endLine": 477,
+          "params": [
+            "symbolName"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartDataServiceImpl",
+          "startLine": 71,
+          "endLine": 478,
+          "methods": [
+            "ChartDataServiceImpl",
+            "config",
+            "serverTimeSeconds",
+            "search",
+            "marks",
+            "timescaleMarks",
+            "validateMarksRequest",
+            "toMarkDto",
+            "toTimescaleMarkDto",
+            "resolveSearchLimit",
+            "matchesConfiguredFilter",
+            "toSearchSymbol",
+            "resolve",
+            "requireCcypairCd",
+            "normalizeCcypairCd",
+            "currentSession",
+            "toSymbolInfo",
+            "displayTicker",
+            "priceScale",
+            "history",
+            "history",
+            "validateHistoryRequest",
+            "normalizeSymbolCd"
+          ],
+          "properties": [
+            "symbolCatalog",
+            "chartCacheStore",
+            "appProperties",
+            "ccypairRepository",
+            "seasonRepository",
+            "tvMarkRepository",
+            "tvTimescaleMarkRepository"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartDataServiceImpl",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "config",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "serverTimeSeconds",
+          "line": 126,
+          "isDefault": false
+        },
+        {
+          "name": "search",
+          "line": 131,
+          "isDefault": false
+        },
+        {
+          "name": "marks",
+          "line": 162,
+          "isDefault": false
+        },
+        {
+          "name": "timescaleMarks",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "resolve",
+          "line": 256,
+          "isDefault": false
+        },
+        {
+          "name": "history",
+          "line": 359,
+          "isDefault": false
+        },
+        {
+          "name": "ChartDataServiceImpl",
+          "line": 71,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "config",
+          "callee": "appProperties.getTradingView",
+          "lineNumber": 112
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.getExchanges",
+          "lineNumber": 113
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.getSymbolsTypes",
+          "lineNumber": 114
+        },
+        {
+          "caller": "config",
+          "callee": "new DatafeedConfigResponse",
+          "lineNumber": 115
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.isSupportsSearch",
+          "lineNumber": 116
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.isSupportsMarks",
+          "lineNumber": 118
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.isSupportsTimescaleMarks",
+          "lineNumber": 119
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.isSupportsTime",
+          "lineNumber": 120
+        },
+        {
+          "caller": "config",
+          "callee": "List.copyOf",
+          "lineNumber": 121
+        },
+        {
+          "caller": "config",
+          "callee": "tradingView.getSupportedResolutions",
+          "lineNumber": 121
+        },
+        {
+          "caller": "config",
+          "callee": "List.of",
+          "lineNumber": 122
+        },
+        {
+          "caller": "config",
+          "callee": "new ExchangeDto",
+          "lineNumber": 122
+        },
+        {
+          "caller": "config",
+          "callee": "List.of",
+          "lineNumber": 123
+        },
+        {
+          "caller": "config",
+          "callee": "new SymbolTypeDto",
+          "lineNumber": 123
+        },
+        {
+          "caller": "serverTimeSeconds",
+          "callee": "Instant.now().getEpochSecond",
+          "lineNumber": 128
+        },
+        {
+          "caller": "serverTimeSeconds",
+          "callee": "Instant.now",
+          "lineNumber": 128
+        },
+        {
+          "caller": "search",
+          "callee": "appProperties.getTradingView",
+          "lineNumber": 133
+        },
+        {
+          "caller": "search",
+          "callee": "query.trim",
+          "lineNumber": 134
+        },
+        {
+          "caller": "search",
+          "callee": "needle.length",
+          "lineNumber": 135
+        },
+        {
+          "caller": "search",
+          "callee": "new ValidationException",
+          "lineNumber": 136
+        },
+        {
+          "caller": "search",
+          "callee": "resolveSearchLimit",
+          "lineNumber": 139
+        },
+        {
+          "caller": "search",
+          "callee": "matchesConfiguredFilter",
+          "lineNumber": 140
+        },
+        {
+          "caller": "search",
+          "callee": "tradingView.getExchanges",
+          "lineNumber": 140
+        },
+        {
+          "caller": "search",
+          "callee": "matchesConfiguredFilter",
+          "lineNumber": 141
+        },
+        {
+          "caller": "search",
+          "callee": "tradingView.getSymbolsTypes",
+          "lineNumber": 141
+        },
+        {
+          "caller": "search",
+          "callee": "List.of",
+          "lineNumber": 142
+        },
+        {
+          "caller": "search",
+          "callee": "needle.isEmpty",
+          "lineNumber": 146
+        },
+        {
+          "caller": "search",
+          "callee": "needle.replace",
+          "lineNumber": 147
+        },
+        {
+          "caller": "search",
+          "callee": "ccypairRepository.searchActive",
+          "lineNumber": 148
+        },
+        {
+          "caller": "search",
+          "callee": "PageRequest.of",
+          "lineNumber": 153
+        },
+        {
+          "caller": "search",
+          "callee": "tradingView.getExchanges",
+          "lineNumber": 155
+        },
+        {
+          "caller": "search",
+          "callee": "tradingView.getSymbolsTypes",
+          "lineNumber": 156
+        },
+        {
+          "caller": "search",
+          "callee": "pairs.stream()\n\t\t\t\t.map(pair -> toSearchSymbol(pair, exchangeValue, typeValue)).toList",
+          "lineNumber": 157
+        },
+        {
+          "caller": "search",
+          "callee": "pairs.stream().map",
+          "lineNumber": 157
+        },
+        {
+          "caller": "search",
+          "callee": "pairs.stream",
+          "lineNumber": 157
+        },
+        {
+          "caller": "search",
+          "callee": "toSearchSymbol",
+          "lineNumber": 158
+        },
+        {
+          "caller": "marks",
+          "callee": "validateMarksRequest",
+          "lineNumber": 164
+        },
+        {
+          "caller": "marks",
+          "callee": "normalizeCcypairCd",
+          "lineNumber": 165
+        },
+        {
+          "caller": "marks",
+          "callee": "tvMarkRepository.findByCcypairCdAndResolutionAndMarkAtGreaterThanEqualAndMarkAtLessThanEqualOrderByMarkAtAsc",
+          "lineNumber": 166
+        },
+        {
+          "caller": "marks",
+          "callee": "marks.stream().map(ChartDataServiceImpl::toMarkDto).toList",
+          "lineNumber": 172
+        },
+        {
+          "caller": "marks",
+          "callee": "marks.stream().map",
+          "lineNumber": 172
+        },
+        {
+          "caller": "marks",
+          "callee": "marks.stream",
+          "lineNumber": 172
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "validateMarksRequest",
+          "lineNumber": 177
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "normalizeCcypairCd",
+          "lineNumber": 178
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "tvTimescaleMarkRepository.findByCcypairCdAndResolutionAndTimescaleMarkAtGreaterThanEqualAndTimescaleMarkAtLessThanEqualOrderByTimescaleMarkAtAsc",
+          "lineNumber": 179
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "marks.stream().map(ChartDataServiceImpl::toTimescaleMarkDto).toList",
+          "lineNumber": 185
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "marks.stream().map",
+          "lineNumber": 185
+        },
+        {
+          "caller": "timescaleMarks",
+          "callee": "marks.stream",
+          "lineNumber": 185
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "symbol.isBlank",
+          "lineNumber": 189
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 190
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "resolution.isBlank",
+          "lineNumber": 192
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "ResolutionMapper.isMarksResolution",
+          "lineNumber": 192
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 193
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 196
+        },
+        {
+          "caller": "validateMarksRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 199
+        },
+        {
+          "caller": "toMarkDto",
+          "callee": "new MarkDto",
+          "lineNumber": 204
+        },
+        {
+          "caller": "toMarkDto",
+          "callee": "mark.getId",
+          "lineNumber": 205
+        },
+        {
+          "caller": "toMarkDto",
+          "callee": "mark.getMarkAt",
+          "lineNumber": 206
+        },
+        {
+          "caller": "toMarkDto",
+          "callee": "mark.getColor",
+          "lineNumber": 207
+        },
+        {
+          "caller": "toMarkDto",
+          "callee": "mark.getMarkText",
+          "lineNumber": 208
+        },
+        {
+          "caller": "toMarkDto",
+          "callee": "mark.getLabel",
+          "lineNumber": 209
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "new TimescaleMarkDto",
+          "lineNumber": 215
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "mark.getId",
+          "lineNumber": 216
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "mark.getTimescaleMarkAt",
+          "lineNumber": 217
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "mark.getColor",
+          "lineNumber": 218
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "mark.getLabel",
+          "lineNumber": 219
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "List.of",
+          "lineNumber": 220
+        },
+        {
+          "caller": "toTimescaleMarkDto",
+          "callee": "mark.getTooltip",
+          "lineNumber": 220
+        },
+        {
+          "caller": "resolveSearchLimit",
+          "callee": "tradingView.getSearchMaxLimit",
+          "lineNumber": 225
+        },
+        {
+          "caller": "resolveSearchLimit",
+          "callee": "tradingView.getSearchDefaultLimit",
+          "lineNumber": 227
+        },
+        {
+          "caller": "resolveSearchLimit",
+          "callee": "new ValidationException",
+          "lineNumber": 230
+        },
+        {
+          "caller": "matchesConfiguredFilter",
+          "callee": "requested.isBlank",
+          "lineNumber": 237
+        },
+        {
+          "caller": "matchesConfiguredFilter",
+          "callee": "configured.equalsIgnoreCase",
+          "lineNumber": 241
+        },
+        {
+          "caller": "matchesConfiguredFilter",
+          "callee": "requested.trim",
+          "lineNumber": 241
+        },
+        {
+          "caller": "toSearchSymbol",
+          "callee": "pair.getCcypairCd",
+          "lineNumber": 245
+        },
+        {
+          "caller": "toSearchSymbol",
+          "callee": "displayTicker",
+          "lineNumber": 246
+        },
+        {
+          "caller": "toSearchSymbol",
+          "callee": "new SearchSymbolDto",
+          "lineNumber": 247
+        },
+        {
+          "caller": "toSearchSymbol",
+          "callee": "pair.getCcypairJp",
+          "lineNumber": 251
+        },
+        {
+          "caller": "resolve",
+          "callee": "requireCcypairCd",
+          "lineNumber": 258
+        },
+        {
+          "caller": "resolve",
+          "callee": "ccypairRepository.findByCcypairCdAndIsDeleted",
+          "lineNumber": 259
+        },
+        {
+          "caller": "resolve",
+          "callee": "found.orElse",
+          "lineNumber": 260
+        },
+        {
+          "caller": "resolve",
+          "callee": "new ResourceNotFoundException",
+          "lineNumber": 262
+        },
+        {
+          "caller": "resolve",
+          "callee": "toSymbolInfo",
+          "lineNumber": 265
+        },
+        {
+          "caller": "resolve",
+          "callee": "currentSession",
+          "lineNumber": 265
+        },
+        {
+          "caller": "requireCcypairCd",
+          "callee": "symbolName.isBlank",
+          "lineNumber": 269
+        },
+        {
+          "caller": "requireCcypairCd",
+          "callee": "new ValidationException",
+          "lineNumber": 270
+        },
+        {
+          "caller": "requireCcypairCd",
+          "callee": "normalizeCcypairCd",
+          "lineNumber": 273
+        },
+        {
+          "caller": "requireCcypairCd",
+          "callee": "ccypairCd.length",
+          "lineNumber": 274
+        },
+        {
+          "caller": "requireCcypairCd",
+          "callee": "new ValidationException",
+          "lineNumber": 275
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "symbolName.trim().toUpperCase",
+          "lineNumber": 282
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "symbolName.trim",
+          "lineNumber": 282
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "upper.startsWith",
+          "lineNumber": 285
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "upper.substring",
+          "lineNumber": 286
+        },
+        {
+          "caller": "normalizeCcypairCd",
+          "callee": "upper.replace",
+          "lineNumber": 289
+        },
+        {
+          "caller": "currentSession",
+          "callee": "Instant.now",
+          "lineNumber": 293
+        },
+        {
+          "caller": "currentSession",
+          "callee": "List.of",
+          "lineNumber": 294
+        },
+        {
+          "caller": "currentSession",
+          "callee": "seasonRepository.findBySeasonCdInAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByStartAtDesc",
+          "lineNumber": 295
+        },
+        {
+          "caller": "currentSession",
+          "callee": "seasons.isEmpty",
+          "lineNumber": 300
+        },
+        {
+          "caller": "currentSession",
+          "callee": "new ServerErrorException",
+          "lineNumber": 301
+        },
+        {
+          "caller": "currentSession",
+          "callee": "seasons.get",
+          "lineNumber": 304
+        },
+        {
+          "caller": "currentSession",
+          "callee": "season.getSeasonCd",
+          "lineNumber": 305
+        },
+        {
+          "caller": "currentSession",
+          "callee": "appProperties.getTradingView",
+          "lineNumber": 306
+        },
+        {
+          "caller": "currentSession",
+          "callee": "tradingView.getTimeSummer",
+          "lineNumber": 310
+        },
+        {
+          "caller": "currentSession",
+          "callee": "tradingView.getTimeWinter",
+          "lineNumber": 313
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "appProperties.getTradingView",
+          "lineNumber": 317
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "pair.getCcypairCd",
+          "lineNumber": 318
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "displayTicker",
+          "lineNumber": 319
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "new SymbolInfoDto",
+          "lineNumber": 320
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "pair.getCcypairJp",
+          "lineNumber": 323
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getSymbolsTypes",
+          "lineNumber": 324
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getExchanges",
+          "lineNumber": 325
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getExchanges",
+          "lineNumber": 326
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getTimezone",
+          "lineNumber": 328
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "priceScale",
+          "lineNumber": 330
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "pair.getRateUnit",
+          "lineNumber": 330
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.isHasSeconds",
+          "lineNumber": 332
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.isHasIntraday",
+          "lineNumber": 334
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "List.copyOf",
+          "lineNumber": 335
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getIntradayMultipliers",
+          "lineNumber": 335
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getVisiblePlotsSet",
+          "lineNumber": 341
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "List.copyOf",
+          "lineNumber": 342
+        },
+        {
+          "caller": "toSymbolInfo",
+          "callee": "tradingView.getSupportedResolutions",
+          "lineNumber": 342
+        },
+        {
+          "caller": "displayTicker",
+          "callee": "ccypairCd.length",
+          "lineNumber": 348
+        },
+        {
+          "caller": "displayTicker",
+          "callee": "ccypairCd.substring",
+          "lineNumber": 352
+        },
+        {
+          "caller": "displayTicker",
+          "callee": "ccypairCd.substring",
+          "lineNumber": 352
+        },
+        {
+          "caller": "priceScale",
+          "callee": "BigDecimal.TEN.pow(rateUnit).intValueExact",
+          "lineNumber": 356
+        },
+        {
+          "caller": "priceScale",
+          "callee": "BigDecimal.TEN.pow",
+          "lineNumber": 356
+        },
+        {
+          "caller": "history",
+          "callee": "effectiveBidAsk.isBlank",
+          "lineNumber": 369
+        },
+        {
+          "caller": "history",
+          "callee": "price.isBlank",
+          "lineNumber": 371
+        },
+        {
+          "caller": "history",
+          "callee": "PriceComponent.from(price).name",
+          "lineNumber": 374
+        },
+        {
+          "caller": "history",
+          "callee": "PriceComponent.from",
+          "lineNumber": 374
+        },
+        {
+          "caller": "history",
+          "callee": "validateHistoryRequest",
+          "lineNumber": 376
+        },
+        {
+          "caller": "history",
+          "callee": "PriceComponent.fromBidAsk",
+          "lineNumber": 377
+        },
+        {
+          "caller": "history",
+          "callee": "history",
+          "lineNumber": 378
+        },
+        {
+          "caller": "history",
+          "callee": "symbolCatalog.find",
+          "lineNumber": 388
+        },
+        {
+          "caller": "history",
+          "callee": "new ValidationException",
+          "lineNumber": 390
+        },
+        {
+          "caller": "history",
+          "callee": "CacheNamespace.fromTvResolution",
+          "lineNumber": 393
+        },
+        {
+          "caller": "history",
+          "callee": "new ValidationException",
+          "lineNumber": 395
+        },
+        {
+          "caller": "history",
+          "callee": "Instant.now().getEpochSecond",
+          "lineNumber": 399
+        },
+        {
+          "caller": "history",
+          "callee": "Instant.now",
+          "lineNumber": 399
+        },
+        {
+          "caller": "history",
+          "callee": "Math.min",
+          "lineNumber": 403
+        },
+        {
+          "caller": "history",
+          "callee": "chartCacheStore.query",
+          "lineNumber": 407
+        },
+        {
+          "caller": "history",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 409
+        },
+        {
+          "caller": "history",
+          "callee": "cached.size",
+          "lineNumber": 413
+        },
+        {
+          "caller": "history",
+          "callee": "cached.subList",
+          "lineNumber": 414
+        },
+        {
+          "caller": "history",
+          "callee": "cached.size",
+          "lineNumber": 414
+        },
+        {
+          "caller": "history",
+          "callee": "cached.size",
+          "lineNumber": 414
+        },
+        {
+          "caller": "history",
+          "callee": "cached.isEmpty",
+          "lineNumber": 417
+        },
+        {
+          "caller": "history",
+          "callee": "chartCacheStore.nextTimeBefore",
+          "lineNumber": 420
+        },
+        {
+          "caller": "history",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 422
+        },
+        {
+          "caller": "history",
+          "callee": "HistoryResponse.empty",
+          "lineNumber": 425
+        },
+        {
+          "caller": "history",
+          "callee": "new ArrayList<>",
+          "lineNumber": 428
+        },
+        {
+          "caller": "history",
+          "callee": "cached.size",
+          "lineNumber": 428
+        },
+        {
+          "caller": "history",
+          "callee": "bars.add",
+          "lineNumber": 430
+        },
+        {
+          "caller": "history",
+          "callee": "row.toBarDto",
+          "lineNumber": 430
+        },
+        {
+          "caller": "history",
+          "callee": "HistoryResponse.ok",
+          "lineNumber": 432
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "symbolName.isBlank",
+          "lineNumber": 441
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 442
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "normalizeSymbolCd",
+          "lineNumber": 444
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "normalizedCd.length",
+          "lineNumber": 445
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 446
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "resolution.isBlank",
+          "lineNumber": 448
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "ResolutionMapper.isHistoryResolution",
+          "lineNumber": 448
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 449
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "bidAsk.isBlank",
+          "lineNumber": 451
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 452
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "PriceComponent.fromBidAsk",
+          "lineNumber": 455
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 457
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 462
+        },
+        {
+          "caller": "validateHistoryRequest",
+          "callee": "new ValidationException",
+          "lineNumber": 465
+        },
+        {
+          "caller": "normalizeSymbolCd",
+          "callee": "symbolName.replaceAll(\"[^A-Za-z]\", \"\").toUpperCase",
+          "lineNumber": 476
+        },
+        {
+          "caller": "normalizeSymbolCd",
+          "callee": "symbolName.replaceAll",
+          "lineNumber": 476
+        }
+      ],
+      "metrics": {
+        "importCount": 26,
+        "exportCount": 9,
+        "functionCount": 23,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 142,
+      "nonEmptyLines": 127,
+      "functions": [
+        {
+          "name": "ResolutionMapper",
+          "startLine": 79,
+          "endLine": 80,
+          "params": []
+        },
+        {
+          "name": "periodMillis",
+          "startLine": 88,
+          "endLine": 94,
+          "params": [
+            "resolution"
+          ]
+        },
+        {
+          "name": "isHistoryResolution",
+          "startLine": 100,
+          "endLine": 102,
+          "params": [
+            "resolution"
+          ]
+        },
+        {
+          "name": "isMarksResolution",
+          "startLine": 108,
+          "endLine": 110,
+          "params": [
+            "resolution"
+          ]
+        },
+        {
+          "name": "toPeachChartType",
+          "startLine": 119,
+          "endLine": 141,
+          "params": [
+            "resolution"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ResolutionMapper",
+          "startLine": 36,
+          "endLine": 142,
+          "methods": [
+            "ResolutionMapper",
+            "periodMillis",
+            "isHistoryResolution",
+            "isMarksResolution",
+            "toPeachChartType"
+          ],
+          "properties": [
+            "HISTORY_RESOLUTIONS",
+            "MARKS_RESOLUTIONS",
+            "SECONDS_MULTIPLIERS",
+            "DAILY_MULTIPLIERS",
+            "WEEKLY_MULTIPLIERS",
+            "MONTHLY_MULTIPLIERS",
+            "SECOND",
+            "MINUTE",
+            "HOUR",
+            "DAY",
+            "PERIOD_MS"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "HISTORY_RESOLUTIONS",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "MARKS_RESOLUTIONS",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "SECONDS_MULTIPLIERS",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "DAILY_MULTIPLIERS",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "WEEKLY_MULTIPLIERS",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "MONTHLY_MULTIPLIERS",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "periodMillis",
+          "line": 88,
+          "isDefault": false
+        },
+        {
+          "name": "isHistoryResolution",
+          "line": 100,
+          "isDefault": false
+        },
+        {
+          "name": "isMarksResolution",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "toPeachChartType",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "ResolutionMapper",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "periodMillis",
+          "callee": "PERIOD_MS.get",
+          "lineNumber": 93
+        },
+        {
+          "caller": "isHistoryResolution",
+          "callee": "HISTORY_RESOLUTIONS.contains",
+          "lineNumber": 101
+        },
+        {
+          "caller": "isMarksResolution",
+          "callee": "MARKS_RESOLUTIONS.contains",
+          "lineNumber": 109
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 11,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    }
+  ]
+}

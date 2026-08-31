@@ -13,8 +13,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * <p>Spring Data JPA for {@code m_tv_chart_layout} (design docs 127–131).
  * {@code ChartLayoutServiceImpl} lists by JWT {@code customer_no} and uses inherited
- * {@code findById} / {@code save} / {@code delete} for the other verbs. It is not a chart-template
- * repository and not JDBC bars.
+ * {@code findById} / {@code save} / {@code delete} for the other verbs. Get/update/delete use
+ * inherited {@code findById}; the service then checks {@code customer_no} so another tenant's
+ * id is 404. Do not add an unscoped finder that returns layout content.
+ *
+ * <p>Not a chart-template repository and not JDBC bars.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

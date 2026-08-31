@@ -4,13 +4,18 @@
 
 package com.task.chart.security;
 
+import com.task.chart.exception.ServerErrorException;
 /**
  * Holds the customer number for the current request (from JWT claim).
  *
  * <p>Request-scoped {@code ThreadLocal}: {@link JwtAuthenticationFilter} sets it from the access JWT
  * and always {@link #clear()}s in {@code finally}. Layout and template services read {@link #get()}
  * to scope {@code m_tv_chart_layout}, {@code m_tv_indicator_template}, and {@code m_tv_chart_templates}
- * by tenant. This is NOT an HTTP session, NOT Peach S-01, and NOT shared with the Python WS.
+ * by tenant.
+ *
+ * <p><strong>NOT:</strong> not an HTTP session; not Peach S-01; not shared with the Python WS.
+ * Tenant-scoped services must call {@link #requireCustomerNo()} here, not
+ * {@code SecurityContextHolder} — a new table filtered only by principal is a review miss.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -50,6 +55,20 @@ public final class CustomerContext {
 	 */
 	public static Long get() {
 		return CUSTOMER_NO.get();
+	}
+
+	/**
+	 * Tenant id for layout/template APIs. Missing context is a server bug, not 401.
+	 *
+	 * @return JWT {@code customer_no}
+	 */
+	public static long requireCustomerNo() {
+		Long customerNo = CUSTOMER_NO.get();
+		if (customerNo == null) {
+			throw new ServerErrorException();
+		}
+
+		return customerNo;
 	}
 
 	/**

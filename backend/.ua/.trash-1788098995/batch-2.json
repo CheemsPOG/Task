@@ -1,0 +1,1175 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "type": "file",
+      "name": "ChartBackendApplication.java",
+      "filePath": "src/main/java/com/task/chart/ChartBackendApplication.java",
+      "summary": "Spring Boot entry point that starts the TradingView chart backend and enables AppProperties configuration binding.",
+      "tags": ["entry-point", "spring-boot", "bootstrap"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/ChartBackendApplication.java:ChartBackendApplication",
+      "type": "class",
+      "name": "ChartBackendApplication",
+      "filePath": "src/main/java/com/task/chart/ChartBackendApplication.java",
+      "lineRange": [38, 53],
+      "summary": "Application class whose main method launches SpringApplication with nested JWT and TradingView property binding enabled.",
+      "tags": ["entry-point", "spring-boot", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "file",
+      "name": "AppProperties.java",
+      "filePath": "src/main/java/com/task/chart/config/AppProperties.java",
+      "summary": "Binds the app prefix from application.yml: CORS origins, JWT secret/TTLs, and TradingView datafeed flags used by auth and chart config.",
+      "tags": ["configuration", "jwt", "tradingview"],
+      "complexity": "complex",
+      "languageNotes": "Spring @ConfigurationProperties with nested static Jwt and TradingView classes bound via @NestedConfigurationProperty."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/config/AppProperties.java:AppProperties",
+      "type": "class",
+      "name": "AppProperties",
+      "filePath": "src/main/java/com/task/chart/config/AppProperties.java",
+      "lineRange": [39, 264],
+      "summary": "Typed configuration bean exposing CORS origins plus nested Jwt (secret, access/refresh TTLs) and TradingView datafeed support flags.",
+      "tags": ["configuration", "properties", "jwt"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "type": "file",
+      "name": "AppUserSeedRunner.java",
+      "filePath": "src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "summary": "Boot-time ApplicationRunner that inserts demo and demo2 local users into m_app_user with BCrypt passwords when those usernames are missing.",
+      "tags": ["seed", "bootstrap", "authentication"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/config/AppUserSeedRunner.java:AppUserSeedRunner",
+      "type": "class",
+      "name": "AppUserSeedRunner",
+      "filePath": "src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "lineRange": [41, 82],
+      "summary": "Seeds customer_no 1 and 2 demo accounts on startup using AppUserRepository.existsByUsername before insert.",
+      "tags": ["seed", "application-runner", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/config/AppUserSeedRunner.java:seedIfMissing",
+      "type": "function",
+      "name": "seedIfMissing",
+      "filePath": "src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "lineRange": [71, 81],
+      "summary": "Creates an enabled AppUser with a BCrypt hash and current timestamp when the username does not already exist.",
+      "tags": ["seed", "persistence", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "type": "file",
+      "name": "AuthController.java",
+      "filePath": "src/main/java/com/task/chart/controller/AuthController.java",
+      "summary": "REST controller for POST /api/auth/login, refresh, and logout; delegates JWT and cookie handling to AuthService.",
+      "tags": ["api-handler", "authentication", "controller"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/controller/AuthController.java:AuthController",
+      "type": "class",
+      "name": "AuthController",
+      "filePath": "src/main/java/com/task/chart/controller/AuthController.java",
+      "lineRange": [47, 129],
+      "summary": "Maps login, refresh, and logout HTTP endpoints onto AuthService while passing the servlet response for Set-Cookie.",
+      "tags": ["api-handler", "authentication", "rest"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/AuthController.java:login",
+      "type": "function",
+      "name": "login",
+      "filePath": "src/main/java/com/task/chart/controller/AuthController.java",
+      "lineRange": [72, 90],
+      "summary": "Accepts LoginRequest JSON and returns a LoginResponse with a Bearer access token and HttpOnly refresh cookie.",
+      "tags": ["api-handler", "authentication", "login"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/AuthController.java:refresh",
+      "type": "function",
+      "name": "refresh",
+      "filePath": "src/main/java/com/task/chart/controller/AuthController.java",
+      "lineRange": [99, 110],
+      "summary": "Rotates the refresh cookie and returns a new access token via AuthService.refresh.",
+      "tags": ["api-handler", "authentication", "refresh"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/AuthController.java:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "src/main/java/com/task/chart/controller/AuthController.java",
+      "lineRange": [118, 128],
+      "summary": "Revokes the refresh token and clears the chart_refresh_token cookie through AuthService.logout.",
+      "tags": ["api-handler", "authentication", "logout"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "type": "file",
+      "name": "LoginRequest.java",
+      "filePath": "src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "summary": "JSON body for POST /api/auth/login carrying the demo username and password used to mint a local JWT.",
+      "tags": ["type-definition", "dto", "authentication"],
+      "complexity": "simple",
+      "languageNotes": "Java record DTO with OpenAPI @Schema examples."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/request/LoginRequest.java:LoginRequest",
+      "type": "class",
+      "name": "LoginRequest",
+      "filePath": "src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "lineRange": [33, 36],
+      "summary": "Record of username and password deserialized by AuthController and checked by AuthServiceImpl against m_app_user.",
+      "tags": ["dto", "request", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "type": "file",
+      "name": "LoginResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "summary": "Successful login payload with Bearer access token, token type, and access/refresh expiry seconds; refresh token stays in a cookie.",
+      "tags": ["type-definition", "dto", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/LoginResponse.java:LoginResponse",
+      "type": "class",
+      "name": "LoginResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "lineRange": [32, 37],
+      "summary": "Record returned from login: accessToken, tokenType, expiresIn, and refreshExpiresIn in seconds.",
+      "tags": ["dto", "response", "jwt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "type": "file",
+      "name": "RefreshResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "summary": "Refresh-endpoint body with a new Bearer access token and expiry seconds after cookie rotation.",
+      "tags": ["type-definition", "dto", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/RefreshResponse.java:RefreshResponse",
+      "type": "class",
+      "name": "RefreshResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "lineRange": [31, 32],
+      "summary": "Record returned from POST /api/auth/refresh containing the rotated access token and expiresIn.",
+      "tags": ["dto", "response", "refresh"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "type": "file",
+      "name": "AppUser.java",
+      "filePath": "src/main/java/com/task/chart/entity/AppUser.java",
+      "summary": "JPA entity for local demo logins mapped to m_app_user, including BCrypt hash, enabled flag, and tenant customer_no.",
+      "tags": ["data-model", "jpa", "authentication"],
+      "complexity": "moderate",
+      "languageNotes": "Jakarta Persistence entity with IDENTITY id mapped to table m_app_user."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/AppUser.java:AppUser",
+      "type": "class",
+      "name": "AppUser",
+      "filePath": "src/main/java/com/task/chart/entity/AppUser.java",
+      "lineRange": [39, 105],
+      "summary": "Persistent user row used by AuthServiceImpl and AppUserSeedRunner; customer_no is the tenant key for layouts and templates.",
+      "tags": ["data-model", "entity", "authentication"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "type": "file",
+      "name": "BadCredentialsAppException.java",
+      "filePath": "src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "summary": "Runtime exception thrown on failed login when the user is missing, disabled, or the BCrypt password does not match.",
+      "tags": ["exception", "authentication", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/exception/BadCredentialsAppException.java:BadCredentialsAppException",
+      "type": "class",
+      "name": "BadCredentialsAppException",
+      "filePath": "src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "lineRange": [31, 41],
+      "summary": "Mapped by GlobalExceptionHandler to HTTP 401 E_BAD_CREDENTIALS for invalid username or password.",
+      "tags": ["exception", "authentication", "http-401"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "type": "file",
+      "name": "UnauthorizedAppException.java",
+      "filePath": "src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "summary": "Runtime exception for missing or invalid refresh cookies during token rotation, distinct from bad-password login failures.",
+      "tags": ["exception", "authentication", "refresh"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/exception/UnauthorizedAppException.java:UnauthorizedAppException",
+      "type": "class",
+      "name": "UnauthorizedAppException",
+      "filePath": "src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "lineRange": [32, 42],
+      "summary": "Thrown by AuthServiceImpl.refresh when the refresh cookie is absent or the Redis session cannot be rotated.",
+      "tags": ["exception", "authentication", "http-401"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "type": "file",
+      "name": "AppUserRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "summary": "Spring Data JPA repository for m_app_user lookups by username used on login and demo-user seeding.",
+      "tags": ["repository", "jpa", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/AppUserRepository.java:AppUserRepository",
+      "type": "class",
+      "name": "AppUserRepository",
+      "filePath": "src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "lineRange": [35, 52],
+      "summary": "JpaRepository of AppUser exposing findByUsername and existsByUsername for auth and seed paths.",
+      "tags": ["repository", "spring-data", "authentication"],
+      "complexity": "simple",
+      "languageNotes": "Spring Data derived-query interface; no custom implementation class."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "type": "file",
+      "name": "AuthCookieSupport.java",
+      "filePath": "src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "summary": "Helpers that set, clear, and read the HttpOnly Lax chart_refresh_token cookie on servlet responses and requests.",
+      "tags": ["security", "cookie", "authentication"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/AuthCookieSupport.java:AuthCookieSupport",
+      "type": "class",
+      "name": "AuthCookieSupport",
+      "filePath": "src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "lineRange": [38, 95],
+      "summary": "Builds Set-Cookie headers for the opaque refresh UUID and extracts that cookie value from incoming requests.",
+      "tags": ["security", "cookie", "http"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/AuthCookieSupport.java:readRefreshToken",
+      "type": "function",
+      "name": "readRefreshToken",
+      "filePath": "src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "lineRange": [76, 94],
+      "summary": "Scans request cookies for chart_refresh_token and returns a non-blank value, otherwise empty.",
+      "tags": ["security", "cookie", "parsing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "type": "file",
+      "name": "JwtService.java",
+      "filePath": "src/main/java/com/task/chart/security/JwtService.java",
+      "summary": "Creates and parses HS256 access JWTs using AppProperties.jwt secret and access TTL, embedding username and customer_no.",
+      "tags": ["security", "jwt", "authentication"],
+      "complexity": "moderate",
+      "languageNotes": "JJWT library with HMAC-SHA key derived from the configured secret string."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/JwtService.java:JwtService",
+      "type": "class",
+      "name": "JwtService",
+      "filePath": "src/main/java/com/task/chart/security/JwtService.java",
+      "lineRange": [41, 109],
+      "summary": "Local S-01 stand-in that issues 1h access tokens and verifies them into a ChartPrincipal.",
+      "tags": ["security", "jwt", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/JwtService.java:createToken",
+      "type": "function",
+      "name": "createToken",
+      "filePath": "src/main/java/com/task/chart/security/JwtService.java",
+      "lineRange": [67, 77],
+      "summary": "Builds a signed JWT with subject username, customer_no claim, issued-at, and access expiration.",
+      "tags": ["jwt", "token-issue", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/JwtService.java:parseToken",
+      "type": "function",
+      "name": "parseToken",
+      "filePath": "src/main/java/com/task/chart/security/JwtService.java",
+      "lineRange": [93, 108],
+      "summary": "Verifies signature and claims, then returns a ChartPrincipal; rejects blank subjects.",
+      "tags": ["jwt", "token-parse", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "type": "file",
+      "name": "RefreshTokenSession.java",
+      "filePath": "src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "summary": "In-memory identity parsed from a Redis refresh key (username plus customerNo) used only to mint a new access JWT.",
+      "tags": ["type-definition", "security", "session"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/RefreshTokenSession.java:RefreshTokenSession",
+      "type": "class",
+      "name": "RefreshTokenSession",
+      "filePath": "src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "lineRange": [31, 32],
+      "summary": "Record holding username and customerNo stored against peach:auth:refresh:{uuid} in Redis.",
+      "tags": ["dto", "session", "refresh"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "type": "file",
+      "name": "RefreshTokenStore.java",
+      "filePath": "src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "summary": "Redis store for opaque refresh UUIDs: issue, find, revoke, and rotate keys under peach:auth:refresh with JWT refresh TTL.",
+      "tags": ["security", "redis", "session"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/RefreshTokenStore.java:RefreshTokenStore",
+      "type": "class",
+      "name": "RefreshTokenStore",
+      "filePath": "src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "lineRange": [38, 131],
+      "summary": "Persists username|customerNo values in Redis StringRedisTemplate and rotates tokens by revoke-then-issue.",
+      "tags": ["security", "redis", "token-store"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:find",
+      "type": "function",
+      "name": "find",
+      "filePath": "src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "lineRange": [78, 96],
+      "summary": "Loads a Redis refresh value, splits username and customerNo, and returns a RefreshTokenSession or empty.",
+      "tags": ["redis", "session", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:rotate",
+      "type": "function",
+      "name": "rotate",
+      "filePath": "src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "lineRange": [116, 126],
+      "summary": "Looks up the old token, revokes it, and issues a new UUID for the same username and customerNo.",
+      "tags": ["redis", "rotation", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "type": "file",
+      "name": "AuthService.java",
+      "filePath": "src/main/java/com/task/chart/service/AuthService.java",
+      "summary": "Service contract for local username/password login, refresh-cookie rotation, and logout used by AuthController.",
+      "tags": ["service", "authentication", "interface"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/AuthService.java:AuthService",
+      "type": "class",
+      "name": "AuthService",
+      "filePath": "src/main/java/com/task/chart/service/AuthService.java",
+      "lineRange": [38, 65],
+      "summary": "Interface declaring login, refresh, and logout; implemented by AuthServiceImpl as a JWT stand-in for Peach S-01.",
+      "tags": ["service", "interface", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "type": "file",
+      "name": "AuthServiceImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "summary": "Authenticates against m_app_user with BCrypt, issues HS256 access JWTs, and manages Redis refresh cookies for login, refresh, and logout.",
+      "tags": ["service", "authentication", "jwt"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:AuthServiceImpl",
+      "type": "class",
+      "name": "AuthServiceImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "lineRange": [53, 154],
+      "summary": "Orchestrates AppUserRepository, PasswordEncoder, JwtService, RefreshTokenStore, and AuthCookieSupport for the local auth flow.",
+      "tags": ["service", "authentication", "orchestration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "type": "function",
+      "name": "login",
+      "filePath": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "lineRange": [88, 98],
+      "summary": "Authenticates the user, creates an access JWT, issues a Redis refresh UUID, sets the HttpOnly cookie, and returns LoginResponse.",
+      "tags": ["authentication", "login", "jwt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "type": "function",
+      "name": "refresh",
+      "filePath": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "lineRange": [100, 113],
+      "summary": "Reads the refresh cookie, rotates the Redis session, mints a new access JWT, and returns RefreshResponse or UnauthorizedAppException.",
+      "tags": ["authentication", "refresh", "jwt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:authenticate",
+      "type": "function",
+      "name": "authenticate",
+      "filePath": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "lineRange": [121, 143],
+      "summary": "Validates non-blank credentials, loads AppUser by username, checks enabled and BCrypt match, then returns the user or throws.",
+      "tags": ["authentication", "validation", "bcrypt"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "target": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "target": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "target": "file:src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "target": "class:src/main/java/com/task/chart/ChartBackendApplication.java:ChartBackendApplication",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "target": "class:src/main/java/com/task/chart/config/AppProperties.java:AppProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "target": "class:src/main/java/com/task/chart/config/AppUserSeedRunner.java:AppUserSeedRunner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "target": "function:src/main/java/com/task/chart/config/AppUserSeedRunner.java:seedIfMissing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "class:src/main/java/com/task/chart/controller/AuthController.java:AuthController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "function:src/main/java/com/task/chart/controller/AuthController.java:login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "function:src/main/java/com/task/chart/controller/AuthController.java:refresh",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "function:src/main/java/com/task/chart/controller/AuthController.java:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "target": "class:src/main/java/com/task/chart/dto/request/LoginRequest.java:LoginRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/LoginResponse.java:LoginResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/RefreshResponse.java:RefreshResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "target": "class:src/main/java/com/task/chart/entity/AppUser.java:AppUser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "target": "class:src/main/java/com/task/chart/exception/BadCredentialsAppException.java:BadCredentialsAppException",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "target": "class:src/main/java/com/task/chart/exception/UnauthorizedAppException.java:UnauthorizedAppException",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/AppUserRepository.java:AppUserRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "target": "class:src/main/java/com/task/chart/security/AuthCookieSupport.java:AuthCookieSupport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "target": "function:src/main/java/com/task/chart/security/AuthCookieSupport.java:readRefreshToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "class:src/main/java/com/task/chart/security/JwtService.java:JwtService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "function:src/main/java/com/task/chart/security/JwtService.java:createToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "function:src/main/java/com/task/chart/security/JwtService.java:parseToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "target": "class:src/main/java/com/task/chart/security/RefreshTokenSession.java:RefreshTokenSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "class:src/main/java/com/task/chart/security/RefreshTokenStore.java:RefreshTokenStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:find",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:rotate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "target": "class:src/main/java/com/task/chart/service/AuthService.java:AuthService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:AuthServiceImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:authenticate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "target": "class:src/main/java/com/task/chart/ChartBackendApplication.java:ChartBackendApplication",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "target": "class:src/main/java/com/task/chart/config/AppProperties.java:AppProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "target": "class:src/main/java/com/task/chart/config/AppUserSeedRunner.java:AppUserSeedRunner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "class:src/main/java/com/task/chart/controller/AuthController.java:AuthController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "function:src/main/java/com/task/chart/controller/AuthController.java:login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "function:src/main/java/com/task/chart/controller/AuthController.java:refresh",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "target": "function:src/main/java/com/task/chart/controller/AuthController.java:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "target": "class:src/main/java/com/task/chart/dto/request/LoginRequest.java:LoginRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/LoginResponse.java:LoginResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/RefreshResponse.java:RefreshResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "target": "class:src/main/java/com/task/chart/entity/AppUser.java:AppUser",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "target": "class:src/main/java/com/task/chart/exception/BadCredentialsAppException.java:BadCredentialsAppException",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "target": "class:src/main/java/com/task/chart/exception/UnauthorizedAppException.java:UnauthorizedAppException",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/AppUserRepository.java:AppUserRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "target": "class:src/main/java/com/task/chart/security/AuthCookieSupport.java:AuthCookieSupport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "target": "function:src/main/java/com/task/chart/security/AuthCookieSupport.java:readRefreshToken",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "class:src/main/java/com/task/chart/security/JwtService.java:JwtService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "function:src/main/java/com/task/chart/security/JwtService.java:createToken",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtService.java",
+      "target": "function:src/main/java/com/task/chart/security/JwtService.java:parseToken",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "target": "class:src/main/java/com/task/chart/security/RefreshTokenSession.java:RefreshTokenSession",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "class:src/main/java/com/task/chart/security/RefreshTokenStore.java:RefreshTokenStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:find",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "target": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:rotate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/AuthService.java",
+      "target": "class:src/main/java/com/task/chart/service/AuthService.java:AuthService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:AuthServiceImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:AuthServiceImpl",
+      "target": "class:src/main/java/com/task/chart/service/AuthService.java:AuthService",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/AuthController.java:login",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/AuthController.java:refresh",
+      "target": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/AuthController.java:logout",
+      "target": "class:src/main/java/com/task/chart/service/AuthService.java:AuthService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/config/AppUserSeedRunner.java:seedIfMissing",
+      "target": "class:src/main/java/com/task/chart/repository/AppUserRepository.java:AppUserRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/config/AppUserSeedRunner.java:seedIfMissing",
+      "target": "class:src/main/java/com/task/chart/entity/AppUser.java:AppUser",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:find",
+      "target": "class:src/main/java/com/task/chart/security/RefreshTokenSession.java:RefreshTokenSession",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "target": "function:src/main/java/com/task/chart/security/JwtService.java:createToken",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "target": "class:src/main/java/com/task/chart/security/RefreshTokenStore.java:RefreshTokenStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "target": "class:src/main/java/com/task/chart/security/AuthCookieSupport.java:AuthCookieSupport",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:login",
+      "target": "class:src/main/java/com/task/chart/entity/AppUser.java:AppUser",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "target": "function:src/main/java/com/task/chart/security/AuthCookieSupport.java:readRefreshToken",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "target": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:rotate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "target": "function:src/main/java/com/task/chart/security/RefreshTokenStore.java:find",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "target": "function:src/main/java/com/task/chart/security/JwtService.java:createToken",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:refresh",
+      "target": "class:src/main/java/com/task/chart/exception/UnauthorizedAppException.java:UnauthorizedAppException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:authenticate",
+      "target": "class:src/main/java/com/task/chart/repository/AppUserRepository.java:AppUserRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:authenticate",
+      "target": "class:src/main/java/com/task/chart/entity/AppUser.java:AppUser",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:authenticate",
+      "target": "class:src/main/java/com/task/chart/exception/BadCredentialsAppException.java:BadCredentialsAppException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java:authenticate",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

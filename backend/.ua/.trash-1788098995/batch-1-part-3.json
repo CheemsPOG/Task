@@ -1,0 +1,1325 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "type": "file",
+      "name": "SeasonRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "summary": "Spring Data repository that finds the current season overlapping a given instant among daylight-saving and standard codes.",
+      "tags": [
+        "repository",
+        "jpa",
+        "data-access",
+        "session"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "type": "file",
+      "name": "TvMarkRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "summary": "Spring Data repository querying chart marks for a pair and resolution within a time window, ordered by mark time.",
+      "tags": [
+        "repository",
+        "jpa",
+        "data-access",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "type": "file",
+      "name": "TvTimescaleMarkRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "summary": "Spring Data repository querying timescale marks for a pair and resolution within a time window, ordered by mark time.",
+      "tags": [
+        "repository",
+        "jpa",
+        "data-access",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "type": "file",
+      "name": "ChartDataService.java",
+      "filePath": "src/main/java/com/task/chart/service/ChartDataService.java",
+      "summary": "Service interface for the TradingView datafeed: config, server time, symbol search/resolve, marks, timescale marks, and OHLC history.",
+      "tags": [
+        "service",
+        "interface",
+        "datafeed",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "type": "file",
+      "name": "ChartDataServiceImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "summary": "Implements the UDF datafeed: validates requests, resolves FX pairs and sessions, loads marks from the database, and serves history bars from the Redis cache.",
+      "tags": [
+        "service",
+        "datafeed",
+        "validation",
+        "cache"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "type": "file",
+      "name": "ResolutionMapper.java",
+      "filePath": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "summary": "Maps TradingView resolution strings to Peach chart types and period milliseconds, and validates history versus marks resolution sets.",
+      "tags": [
+        "utility",
+        "resolution",
+        "mapping",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/SeasonRepository.java:SeasonRepository",
+      "type": "class",
+      "name": "SeasonRepository",
+      "filePath": "src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "lineRange": [
+        36,
+        50
+      ],
+      "summary": "JpaRepository for Season with a derived query for seasons covering a given instant among selected codes.",
+      "tags": [
+        "repository",
+        "jpa",
+        "interface"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/TvMarkRepository.java:TvMarkRepository",
+      "type": "class",
+      "name": "TvMarkRepository",
+      "filePath": "src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "lineRange": [
+        34,
+        50
+      ],
+      "summary": "JpaRepository for TvMark with a range query by pair, resolution, and mark time.",
+      "tags": [
+        "repository",
+        "jpa",
+        "interface"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java:TvTimescaleMarkRepository",
+      "type": "class",
+      "name": "TvTimescaleMarkRepository",
+      "filePath": "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "lineRange": [
+        34,
+        52
+      ],
+      "summary": "JpaRepository for TvTimescaleMark with a range query by pair, resolution, and timescale mark time.",
+      "tags": [
+        "repository",
+        "jpa",
+        "interface"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/ChartDataService.java:ChartDataService",
+      "type": "class",
+      "name": "ChartDataService",
+      "filePath": "src/main/java/com/task/chart/service/ChartDataService.java",
+      "lineRange": [
+        42,
+        119
+      ],
+      "summary": "Contract for UDF datafeed operations consumed by ChartDataController.",
+      "tags": [
+        "service",
+        "interface",
+        "datafeed"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:ChartDataServiceImpl",
+      "type": "class",
+      "name": "ChartDataServiceImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        71,
+        478
+      ],
+      "summary": "Production ChartDataService: catalog/cache/history path plus DB-backed marks, seasons, and symbol resolve/search.",
+      "tags": [
+        "service",
+        "datafeed",
+        "validation",
+        "cache"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/util/ResolutionMapper.java:ResolutionMapper",
+      "type": "class",
+      "name": "ResolutionMapper",
+      "filePath": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "lineRange": [
+        36,
+        142
+      ],
+      "summary": "Static utility holding allowed resolutions, period lookup, and Peach chart-type mapping from TV strings.",
+      "tags": [
+        "utility",
+        "mapping",
+        "validation"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Utility class with a private constructor and static lookup tables for period milliseconds."
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:config",
+      "type": "function",
+      "name": "config",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        110,
+        124
+      ],
+      "summary": "Assembles DatafeedConfigResponse from AppProperties TradingView settings.",
+      "tags": [
+        "service",
+        "datafeed",
+        "config"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "type": "function",
+      "name": "search",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        131,
+        160
+      ],
+      "summary": "Validates search filters and queries active currency pairs, mapping them to SearchSymbolDto.",
+      "tags": [
+        "service",
+        "search",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "type": "function",
+      "name": "marks",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        162,
+        173
+      ],
+      "summary": "Loads TvMark rows for a pair/resolution window and maps them to MarkDto.",
+      "tags": [
+        "service",
+        "marks",
+        "data-access"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:timescaleMarks",
+      "type": "function",
+      "name": "timescaleMarks",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        175,
+        186
+      ],
+      "summary": "Loads TvTimescaleMark rows for a pair/resolution window and maps them to TimescaleMarkDto.",
+      "tags": [
+        "service",
+        "marks",
+        "data-access"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateMarksRequest",
+      "type": "function",
+      "name": "validateMarksRequest",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        188,
+        201
+      ],
+      "summary": "Rejects blank symbol/resolution or invalid from/to windows for marks endpoints.",
+      "tags": [
+        "validation",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toMarkDto",
+      "type": "function",
+      "name": "toMarkDto",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        203,
+        212
+      ],
+      "summary": "Maps a TvMark entity to MarkDto for the UDF marks payload.",
+      "tags": [
+        "mapping",
+        "dto",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolveSearchLimit",
+      "type": "function",
+      "name": "resolveSearchLimit",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        224,
+        234
+      ],
+      "summary": "Clamps or defaults the search page size using TradingView max/default limit settings.",
+      "tags": [
+        "validation",
+        "search"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSearchSymbol",
+      "type": "function",
+      "name": "toSearchSymbol",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        244,
+        254
+      ],
+      "summary": "Maps a Ccypair to SearchSymbolDto with display ticker and Japanese description.",
+      "tags": [
+        "mapping",
+        "dto",
+        "search"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "type": "function",
+      "name": "resolve",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        256,
+        266
+      ],
+      "summary": "Looks up an active currency pair and returns SymbolInfoDto for the current session.",
+      "tags": [
+        "service",
+        "symbol",
+        "data-access"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:requireCcypairCd",
+      "type": "function",
+      "name": "requireCcypairCd",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        268,
+        279
+      ],
+      "summary": "Normalizes a symbol name to a currency-pair code and rejects blank or over-length values.",
+      "tags": [
+        "validation",
+        "symbol"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:normalizeCcypairCd",
+      "type": "function",
+      "name": "normalizeCcypairCd",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        281,
+        290
+      ],
+      "summary": "Uppercases and strips exchange prefixes/separators from a symbol name to a pair code.",
+      "tags": [
+        "normalization",
+        "symbol"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:currentSession",
+      "type": "function",
+      "name": "currentSession",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        292,
+        314
+      ],
+      "summary": "Selects summer or winter TradingView session hours from the overlapping Season row.",
+      "tags": [
+        "session",
+        "data-access",
+        "timezone"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSymbolInfo",
+      "type": "function",
+      "name": "toSymbolInfo",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        316,
+        345
+      ],
+      "summary": "Builds SymbolInfoDto from a Ccypair, session string, and TradingView configuration.",
+      "tags": [
+        "mapping",
+        "dto",
+        "symbol"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "type": "function",
+      "name": "history",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        359,
+        433
+      ],
+      "summary": "Validates history params, maps resolution to a cache namespace, queries Redis bars, and returns columnar HistoryResponse or nextTime.",
+      "tags": [
+        "service",
+        "history",
+        "cache",
+        "validation"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateHistoryRequest",
+      "type": "function",
+      "name": "validateHistoryRequest",
+      "filePath": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "lineRange": [
+        435,
+        467
+      ],
+      "summary": "Validates symbol, resolution, time window, and bid/ask price component for history requests.",
+      "tags": [
+        "validation",
+        "history"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:periodMillis",
+      "type": "function",
+      "name": "periodMillis",
+      "filePath": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "lineRange": [
+        88,
+        94
+      ],
+      "summary": "Looks up bar period in milliseconds for a TradingView resolution string.",
+      "tags": [
+        "utility",
+        "resolution",
+        "lookup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isHistoryResolution",
+      "type": "function",
+      "name": "isHistoryResolution",
+      "filePath": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "lineRange": [
+        100,
+        102
+      ],
+      "summary": "Returns whether the resolution is allowed on the history endpoint.",
+      "tags": [
+        "utility",
+        "validation",
+        "resolution"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isMarksResolution",
+      "type": "function",
+      "name": "isMarksResolution",
+      "filePath": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "lineRange": [
+        108,
+        110
+      ],
+      "summary": "Returns whether the resolution is allowed on marks endpoints.",
+      "tags": [
+        "utility",
+        "validation",
+        "resolution"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:toPeachChartType",
+      "type": "function",
+      "name": "toPeachChartType",
+      "filePath": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "lineRange": [
+        119,
+        141
+      ],
+      "summary": "Converts a TradingView resolution into the Peach warehouse chart-type code used by CacheNamespace.",
+      "tags": [
+        "utility",
+        "mapping",
+        "resolution"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/SeasonRepository.java:SeasonRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/SeasonRepository.java:SeasonRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvMarkRepository.java:TvMarkRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvMarkRepository.java:TvMarkRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java:TvTimescaleMarkRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java:TvTimescaleMarkRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "class:src/main/java/com/task/chart/service/ChartDataService.java:ChartDataService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "class:src/main/java/com/task/chart/service/ChartDataService.java:ChartDataService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:ChartDataServiceImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:ChartDataServiceImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:timescaleMarks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:timescaleMarks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateMarksRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toMarkDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolveSearchLimit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSearchSymbol",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:requireCcypairCd",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:normalizeCcypairCd",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:currentSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSymbolInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateHistoryRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "class:src/main/java/com/task/chart/util/ResolutionMapper.java:ResolutionMapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "class:src/main/java/com/task/chart/util/ResolutionMapper.java:ResolutionMapper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:periodMillis",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:periodMillis",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isHistoryResolution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isHistoryResolution",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isMarksResolution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isMarksResolution",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:toPeachChartType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:toPeachChartType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/Season.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvMark.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/Season.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvMark.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:ChartDataServiceImpl",
+      "target": "class:src/main/java/com/task/chart/service/ChartDataService.java:ChartDataService",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:config",
+      "target": "class:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java:DatafeedConfigResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:config",
+      "target": "class:src/main/java/com/task/chart/config/AppProperties.java:AppProperties",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "target": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSearchSymbol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "target": "class:src/main/java/com/task/chart/repository/TvMarkRepository.java:TvMarkRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateMarksRequest",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toMarkDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:timescaleMarks",
+      "target": "class:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java:TvTimescaleMarkRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:timescaleMarks",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateMarksRequest",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateMarksRequest",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isMarksResolution",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateMarksRequest",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toMarkDto",
+      "target": "class:src/main/java/com/task/chart/dto/response/MarkDto.java:MarkDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSearchSymbol",
+      "target": "class:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java:SearchSymbolDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSearchSymbol",
+      "target": "class:src/main/java/com/task/chart/entity/Ccypair.java:Ccypair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "target": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "target": "class:src/main/java/com/task/chart/exception/ResourceNotFoundException.java:ResourceNotFoundException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSymbolInfo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:currentSession",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:requireCcypairCd",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:currentSession",
+      "target": "class:src/main/java/com/task/chart/repository/SeasonRepository.java:SeasonRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:currentSession",
+      "target": "class:src/main/java/com/task/chart/entity/Season.java:Season",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:currentSession",
+      "target": "class:src/main/java/com/task/chart/exception/ServerErrorException.java:ServerErrorException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSymbolInfo",
+      "target": "class:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java:SymbolInfoDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSymbolInfo",
+      "target": "class:src/main/java/com/task/chart/entity/Ccypair.java:Ccypair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:toSymbolInfo",
+      "target": "function:src/main/java/com/task/chart/config/AppProperties.java:getTradingView",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/cache/CacheNamespace.java:fromTvResolution",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:query",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:nextTimeBefore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:empty",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:toBarDto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:fromBidAsk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:SymbolCatalog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateHistoryRequest",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateHistoryRequest",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:isHistoryResolution",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateHistoryRequest",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:fromBidAsk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:validateHistoryRequest",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

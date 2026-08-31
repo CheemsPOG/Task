@@ -4,14 +4,12 @@
 
 package com.task.chart.service;
 
-import com.task.chart.constants.PriceComponent;
 import com.task.chart.dto.response.DatafeedConfigResponse;
 import com.task.chart.dto.response.HistoryResponse;
 import com.task.chart.dto.response.MarkDto;
 import com.task.chart.dto.response.SearchSymbolDto;
 import com.task.chart.dto.response.SymbolInfoDto;
 import com.task.chart.dto.response.TimescaleMarkDto;
-import com.task.chart.service.SymbolCatalog.CachedSymbol;
 import java.util.List;
 
 /**
@@ -99,43 +97,15 @@ public interface ChartDataService {
 	SymbolInfoDto resolve(String symbolName);
 
 	/**
-	 * Doc 121 history using MID.
-	 *
-	 * @param symbolName ticker
-	 * @param resolution TV resolution
-	 * @param to unix seconds
-	 * @param countBack bar count
-	 * @return UDF history
-	 */
-	HistoryResponse history(String symbolName, String resolution, Long to, Integer countBack);
-
-	/**
-	 * Doc 121 history with a free-form {@code price} (blank → MID).
-	 *
-	 * @param symbolName ticker
-	 * @param resolution TV resolution
-	 * @param to unix seconds
-	 * @param countBack bar count
-	 * @param price bid / ask / mid
-	 * @return UDF history
-	 */
-	HistoryResponse history(
-			String symbolName,
-			String resolution,
-			Long to,
-			Integer countBack,
-			String price);
-
-	/**
-	 * Doc 121 history with explicit {@code from}/{@code to} and {@code bid_ask}.
+	 * Doc 121 history from Redis / warehouse.
 	 *
 	 * @param symbolName ticker
 	 * @param resolution TV resolution
 	 * @param from unix seconds
 	 * @param to unix seconds
 	 * @param countBack optional trim
-	 * @param price fallback side
-	 * @param bidAsk design-doc BID / ASK / MID
+	 * @param price fallback side when {@code bidAsk} is blank ({@code bid}/{@code ask}/{@code mid})
+	 * @param bidAsk design-doc {@code BID} / {@code ASK} / {@code MID}
 	 * @return UDF history
 	 */
 	HistoryResponse history(
@@ -146,37 +116,4 @@ public interface ChartDataService {
 			Integer countBack,
 			String price,
 			String bidAsk);
-
-	/**
-	 * Doc 121 history with an enum price side.
-	 *
-	 * @param symbolName ticker
-	 * @param resolution TV resolution
-	 * @param to unix seconds
-	 * @param countBack bar count
-	 * @param price BID, ASK, or MID
-	 * @return UDF history
-	 */
-	HistoryResponse history(
-			String symbolName,
-			String resolution,
-			Long to,
-			Integer countBack,
-			PriceComponent price);
-
-	/**
-	 * Catalog lookup used by history and ingest.
-	 *
-	 * @param symbolName ticker
-	 * @return symbol, or {@code null}
-	 */
-	CachedSymbol findSymbol(String symbolName);
-
-	/**
-	 * Peach pair CD ({@code USDJPY}) for Redis keys.
-	 *
-	 * @param symbolName ticker
-	 * @return provider symbol, or {@code null}
-	 */
-	String providerSymbol(String symbolName);
 }

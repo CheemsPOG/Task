@@ -1,0 +1,2172 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 13,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 13,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 13,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 293,
+      "nonEmptyLines": 248,
+      "functions": [
+        {
+          "name": "DemoTickEngine",
+          "startLine": 57,
+          "endLine": 60,
+          "params": [
+            "currencyPairService",
+            "chartCacheStore"
+          ]
+        },
+        {
+          "name": "loadFromWarehouse",
+          "startLine": 65,
+          "endLine": 72,
+          "params": []
+        },
+        {
+          "name": "stepAll",
+          "startLine": 79,
+          "endLine": 90,
+          "params": []
+        },
+        {
+          "name": "snapshot",
+          "startLine": 97,
+          "endLine": 107,
+          "params": []
+        },
+        {
+          "name": "ensureLoaded",
+          "startLine": 112,
+          "endLine": 117,
+          "params": []
+        },
+        {
+          "name": "lastOneSecondBar",
+          "startLine": 125,
+          "endLine": 138,
+          "params": [
+            "pair"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "DemoTickEngine",
+          "startLine": 44,
+          "endLine": 293,
+          "methods": [
+            "DemoTickEngine",
+            "loadFromWarehouse",
+            "stepAll",
+            "snapshot",
+            "ensureLoaded",
+            "lastOneSecondBar"
+          ],
+          "properties": [
+            "currencyPairService",
+            "chartCacheStore",
+            "quotes"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DemoTickEngine",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "loadFromWarehouse",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "stepAll",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "snapshot",
+          "line": 97,
+          "isDefault": false
+        },
+        {
+          "name": "DemoTickEngine",
+          "line": 44,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "loadFromWarehouse",
+          "callee": "quotes.clear",
+          "lineNumber": 67
+        },
+        {
+          "caller": "loadFromWarehouse",
+          "callee": "currencyPairService.list",
+          "lineNumber": 69
+        },
+        {
+          "caller": "loadFromWarehouse",
+          "callee": "quotes.put",
+          "lineNumber": 70
+        },
+        {
+          "caller": "loadFromWarehouse",
+          "callee": "pair.curpairCd",
+          "lineNumber": 70
+        },
+        {
+          "caller": "loadFromWarehouse",
+          "callee": "SimulatedQuote.fromPair",
+          "lineNumber": 70
+        },
+        {
+          "caller": "loadFromWarehouse",
+          "callee": "lastOneSecondBar",
+          "lineNumber": 70
+        },
+        {
+          "caller": "stepAll",
+          "callee": "ensureLoaded",
+          "lineNumber": 81
+        },
+        {
+          "caller": "stepAll",
+          "callee": "new ArrayList<>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "stepAll",
+          "callee": "quotes.size",
+          "lineNumber": 82
+        },
+        {
+          "caller": "stepAll",
+          "callee": "quotes.values",
+          "lineNumber": 84
+        },
+        {
+          "caller": "stepAll",
+          "callee": "quote.step",
+          "lineNumber": 85
+        },
+        {
+          "caller": "stepAll",
+          "callee": "messages.add",
+          "lineNumber": 86
+        },
+        {
+          "caller": "stepAll",
+          "callee": "quote.toMessage",
+          "lineNumber": 86
+        },
+        {
+          "caller": "snapshot",
+          "callee": "ensureLoaded",
+          "lineNumber": 99
+        },
+        {
+          "caller": "snapshot",
+          "callee": "new ArrayList<>",
+          "lineNumber": 100
+        },
+        {
+          "caller": "snapshot",
+          "callee": "quotes.size",
+          "lineNumber": 100
+        },
+        {
+          "caller": "snapshot",
+          "callee": "quotes.values",
+          "lineNumber": 102
+        },
+        {
+          "caller": "snapshot",
+          "callee": "messages.add",
+          "lineNumber": 103
+        },
+        {
+          "caller": "snapshot",
+          "callee": "quote.toMessage",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ensureLoaded",
+          "callee": "quotes.isEmpty",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ensureLoaded",
+          "callee": "loadFromWarehouse",
+          "lineNumber": 115
+        },
+        {
+          "caller": "lastOneSecondBar",
+          "callee": "chartCacheStore.query",
+          "lineNumber": 127
+        },
+        {
+          "caller": "lastOneSecondBar",
+          "callee": "pair.curpairName",
+          "lineNumber": 129
+        },
+        {
+          "caller": "lastOneSecondBar",
+          "callee": "bars.isEmpty",
+          "lineNumber": 133
+        },
+        {
+          "caller": "lastOneSecondBar",
+          "callee": "bars.get",
+          "lineNumber": 137
+        },
+        {
+          "caller": "lastOneSecondBar",
+          "callee": "bars.size",
+          "lineNumber": 137
+        },
+        {
+          "caller": "SimulatedQuote",
+          "callee": "applyAskFromBid",
+          "lineNumber": 167
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairName().endsWith",
+          "lineNumber": 181
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairName",
+          "lineNumber": 181
+        },
+        {
+          "caller": "fromPair",
+          "callee": "BigDecimal.valueOf(DemoMarket.fullSpread(pair.curpairName())).setScale",
+          "lineNumber": 183
+        },
+        {
+          "caller": "fromPair",
+          "callee": "BigDecimal.valueOf",
+          "lineNumber": 183
+        },
+        {
+          "caller": "fromPair",
+          "callee": "DemoMarket.fullSpread",
+          "lineNumber": 183
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairName",
+          "lineNumber": 183
+        },
+        {
+          "caller": "fromPair",
+          "callee": "startingBid",
+          "lineNumber": 185
+        },
+        {
+          "caller": "fromPair",
+          "callee": "new SimulatedQuote",
+          "lineNumber": 187
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairCd",
+          "lineNumber": 187
+        },
+        {
+          "caller": "fromPair",
+          "callee": "maxStep",
+          "lineNumber": 187
+        },
+        {
+          "caller": "startingBid",
+          "callee": "BigDecimal.valueOf(lastBar.bidClose()).setScale",
+          "lineNumber": 201
+        },
+        {
+          "caller": "startingBid",
+          "callee": "BigDecimal.valueOf",
+          "lineNumber": 201
+        },
+        {
+          "caller": "startingBid",
+          "callee": "lastBar.bidClose",
+          "lineNumber": 201
+        },
+        {
+          "caller": "startingBid",
+          "callee": "BigDecimal.valueOf(DemoMarket.seedBid(pair.curpairName())).setScale",
+          "lineNumber": 204
+        },
+        {
+          "caller": "startingBid",
+          "callee": "BigDecimal.valueOf",
+          "lineNumber": 204
+        },
+        {
+          "caller": "startingBid",
+          "callee": "DemoMarket.seedBid",
+          "lineNumber": 204
+        },
+        {
+          "caller": "startingBid",
+          "callee": "pair.curpairName",
+          "lineNumber": 204
+        },
+        {
+          "caller": "maxStep",
+          "callee": "pair.curpairName",
+          "lineNumber": 218
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 219
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 220
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 221
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 222
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 223
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 224
+        },
+        {
+          "caller": "maxStep",
+          "callee": "bd",
+          "lineNumber": 224
+        },
+        {
+          "caller": "step",
+          "callee": "ThreadLocalRandom.current().nextGaussian",
+          "lineNumber": 233
+        },
+        {
+          "caller": "step",
+          "callee": "ThreadLocalRandom.current",
+          "lineNumber": 233
+        },
+        {
+          "caller": "step",
+          "callee": "maxStep.multiply",
+          "lineNumber": 234
+        },
+        {
+          "caller": "step",
+          "callee": "BigDecimal.valueOf",
+          "lineNumber": 234
+        },
+        {
+          "caller": "step",
+          "callee": "bid.add(delta).setScale",
+          "lineNumber": 235
+        },
+        {
+          "caller": "step",
+          "callee": "bid.add",
+          "lineNumber": 235
+        },
+        {
+          "caller": "step",
+          "callee": "bid.compareTo",
+          "lineNumber": 237
+        },
+        {
+          "caller": "step",
+          "callee": "applyAskFromBid",
+          "lineNumber": 241
+        },
+        {
+          "caller": "step",
+          "callee": "ask.compareTo",
+          "lineNumber": 243
+        },
+        {
+          "caller": "step",
+          "callee": "bid.compareTo",
+          "lineNumber": 247
+        },
+        {
+          "caller": "toMessage",
+          "callee": "new FxQuoteMessage",
+          "lineNumber": 258
+        },
+        {
+          "caller": "toMessage",
+          "callee": "String.valueOf",
+          "lineNumber": 259
+        },
+        {
+          "caller": "toMessage",
+          "callee": "System.currentTimeMillis",
+          "lineNumber": 260
+        },
+        {
+          "caller": "toMessage",
+          "callee": "bid.doubleValue",
+          "lineNumber": 261
+        },
+        {
+          "caller": "toMessage",
+          "callee": "ask.doubleValue",
+          "lineNumber": 262
+        },
+        {
+          "caller": "toMessage",
+          "callee": "mid.doubleValue",
+          "lineNumber": 263
+        },
+        {
+          "caller": "toMessage",
+          "callee": "high.doubleValue",
+          "lineNumber": 264
+        },
+        {
+          "caller": "toMessage",
+          "callee": "low.doubleValue",
+          "lineNumber": 265
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "bid.add(spread).setScale",
+          "lineNumber": 273
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "bid.add",
+          "lineNumber": 273
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "bid.compareTo",
+          "lineNumber": 275
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "bid.add",
+          "lineNumber": 276
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "BigDecimal.ONE.movePointLeft",
+          "lineNumber": 276
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "bid.add(ask).divide",
+          "lineNumber": 279
+        },
+        {
+          "caller": "applyAskFromBid",
+          "callee": "bid.add",
+          "lineNumber": 279
+        },
+        {
+          "caller": "bd",
+          "callee": "new BigDecimal(value).setScale",
+          "lineNumber": 290
+        },
+        {
+          "caller": "bd",
+          "callee": "new BigDecimal",
+          "lineNumber": 290
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 5,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 148,
+      "nonEmptyLines": 129,
+      "functions": [
+        {
+          "name": "QuoteBus",
+          "startLine": 64,
+          "endLine": 66,
+          "params": [
+            "redis"
+          ]
+        },
+        {
+          "name": "publish",
+          "startLine": 73,
+          "endLine": 80,
+          "params": [
+            "quote"
+          ]
+        },
+        {
+          "name": "publishForming",
+          "startLine": 89,
+          "endLine": 111,
+          "params": [
+            "numericCd",
+            "namespace",
+            "bar"
+          ]
+        },
+        {
+          "name": "key",
+          "startLine": 119,
+          "endLine": 121,
+          "params": [
+            "curpairCd"
+          ]
+        },
+        {
+          "name": "formingKey",
+          "startLine": 130,
+          "endLine": 132,
+          "params": [
+            "resolution",
+            "curpairName"
+          ]
+        },
+        {
+          "name": "toJson",
+          "startLine": 140,
+          "endLine": 147,
+          "params": [
+            "value"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "QuoteBus",
+          "startLine": 41,
+          "endLine": 148,
+          "methods": [
+            "QuoteBus",
+            "publish",
+            "publishForming",
+            "key",
+            "formingKey",
+            "toJson"
+          ],
+          "properties": [
+            "CHANNEL",
+            "KEY_PREFIX",
+            "BAR_CHANNEL",
+            "FORMING_KEY_PREFIX",
+            "redis",
+            "objectMapper"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CHANNEL",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "KEY_PREFIX",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "BAR_CHANNEL",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "FORMING_KEY_PREFIX",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "QuoteBus",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "publish",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "publishForming",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "key",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "formingKey",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "QuoteBus",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "publish",
+          "callee": "toJson",
+          "lineNumber": 75
+        },
+        {
+          "caller": "publish",
+          "callee": "redis.opsForValue().set",
+          "lineNumber": 78
+        },
+        {
+          "caller": "publish",
+          "callee": "redis.opsForValue",
+          "lineNumber": 78
+        },
+        {
+          "caller": "publish",
+          "callee": "key",
+          "lineNumber": 78
+        },
+        {
+          "caller": "publish",
+          "callee": "quote.curpairCd",
+          "lineNumber": 78
+        },
+        {
+          "caller": "publish",
+          "callee": "redis.convertAndSend",
+          "lineNumber": 79
+        },
+        {
+          "caller": "publishForming",
+          "callee": "new FormingBarMessage",
+          "lineNumber": 91
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.curpairCd",
+          "lineNumber": 93
+        },
+        {
+          "caller": "publishForming",
+          "callee": "namespace.tvResolution",
+          "lineNumber": 94
+        },
+        {
+          "caller": "publishForming",
+          "callee": "namespace.periodMillis",
+          "lineNumber": 95
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 96
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.bidOpen",
+          "lineNumber": 97
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.bidHigh",
+          "lineNumber": 98
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.bidLow",
+          "lineNumber": 99
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.bidClose",
+          "lineNumber": 100
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.askOpen",
+          "lineNumber": 101
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.askHigh",
+          "lineNumber": 102
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.askLow",
+          "lineNumber": 103
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.askClose",
+          "lineNumber": 104
+        },
+        {
+          "caller": "publishForming",
+          "callee": "bar.volume",
+          "lineNumber": 105
+        },
+        {
+          "caller": "publishForming",
+          "callee": "toJson",
+          "lineNumber": 106
+        },
+        {
+          "caller": "publishForming",
+          "callee": "redis.opsForValue().set",
+          "lineNumber": 109
+        },
+        {
+          "caller": "publishForming",
+          "callee": "redis.opsForValue",
+          "lineNumber": 109
+        },
+        {
+          "caller": "publishForming",
+          "callee": "formingKey",
+          "lineNumber": 109
+        },
+        {
+          "caller": "publishForming",
+          "callee": "message.resolution",
+          "lineNumber": 109
+        },
+        {
+          "caller": "publishForming",
+          "callee": "message.curpairName",
+          "lineNumber": 109
+        },
+        {
+          "caller": "publishForming",
+          "callee": "redis.convertAndSend",
+          "lineNumber": 110
+        },
+        {
+          "caller": "toJson",
+          "callee": "objectMapper.writeValueAsString",
+          "lineNumber": 143
+        },
+        {
+          "caller": "toJson",
+          "callee": "new IllegalStateException",
+          "lineNumber": 145
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 10,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 226,
+      "nonEmptyLines": 196,
+      "functions": [
+        {
+          "name": "TickIngestWorker",
+          "startLine": 73,
+          "endLine": 86,
+          "params": [
+            "demoTickEngine",
+            "quoteBus",
+            "chartCacheWriter",
+            "chartCacheStore",
+            "chartBarRepository",
+            "currencyPairService"
+          ]
+        },
+        {
+          "name": "run",
+          "startLine": 95,
+          "endLine": 101,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "tick",
+          "startLine": 108,
+          "endLine": 125,
+          "params": []
+        },
+        {
+          "name": "publishQuoteSnapshot",
+          "startLine": 130,
+          "endLine": 135,
+          "params": []
+        },
+        {
+          "name": "publishFormingSnapshot",
+          "startLine": 140,
+          "endLine": 145,
+          "params": []
+        },
+        {
+          "name": "publishFormingSnapshotForPair",
+          "startLine": 152,
+          "endLine": 171,
+          "params": [
+            "pair"
+          ]
+        },
+        {
+          "name": "upsertOpenBars",
+          "startLine": 178,
+          "endLine": 191,
+          "params": [
+            "quote"
+          ]
+        },
+        {
+          "name": "upsertOpenBar",
+          "startLine": 201,
+          "endLine": 225,
+          "params": [
+            "namespace",
+            "curpairName",
+            "quote",
+            "nowMs"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TickIngestWorker",
+          "startLine": 51,
+          "endLine": 226,
+          "methods": [
+            "TickIngestWorker",
+            "run",
+            "tick",
+            "publishQuoteSnapshot",
+            "publishFormingSnapshot",
+            "publishFormingSnapshotForPair",
+            "upsertOpenBars",
+            "upsertOpenBar"
+          ],
+          "properties": [
+            "demoTickEngine",
+            "quoteBus",
+            "chartCacheWriter",
+            "chartCacheStore",
+            "chartBarRepository",
+            "currencyPairService",
+            "formingBars"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TickIngestWorker",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "run",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "tick",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "TickIngestWorker",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "run",
+          "callee": "demoTickEngine.loadFromWarehouse",
+          "lineNumber": 98
+        },
+        {
+          "caller": "run",
+          "callee": "publishQuoteSnapshot",
+          "lineNumber": 99
+        },
+        {
+          "caller": "run",
+          "callee": "publishFormingSnapshot",
+          "lineNumber": 100
+        },
+        {
+          "caller": "tick",
+          "callee": "chartCacheWriter.isSeedComplete",
+          "lineNumber": 112
+        },
+        {
+          "caller": "tick",
+          "callee": "demoTickEngine.stepAll",
+          "lineNumber": 117
+        },
+        {
+          "caller": "tick",
+          "callee": "upsertOpenBars",
+          "lineNumber": 122
+        },
+        {
+          "caller": "tick",
+          "callee": "quoteBus.publish",
+          "lineNumber": 123
+        },
+        {
+          "caller": "publishQuoteSnapshot",
+          "callee": "demoTickEngine.snapshot",
+          "lineNumber": 132
+        },
+        {
+          "caller": "publishQuoteSnapshot",
+          "callee": "quoteBus.publish",
+          "lineNumber": 133
+        },
+        {
+          "caller": "publishFormingSnapshot",
+          "callee": "currencyPairService.list",
+          "lineNumber": 142
+        },
+        {
+          "caller": "publishFormingSnapshot",
+          "callee": "publishFormingSnapshotForPair",
+          "lineNumber": 143
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "String.valueOf",
+          "lineNumber": 154
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "pair.curpairCd",
+          "lineNumber": 154
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "CacheNamespace.values",
+          "lineNumber": 156
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "chartCacheStore.query",
+          "lineNumber": 157
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "pair.curpairName",
+          "lineNumber": 159
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "bars.isEmpty",
+          "lineNumber": 163
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "bars.get",
+          "lineNumber": 167
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "bars.size",
+          "lineNumber": 167
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "formingBars.put",
+          "lineNumber": 168
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "namespace.name",
+          "lineNumber": 168
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "pair.curpairName",
+          "lineNumber": 168
+        },
+        {
+          "caller": "publishFormingSnapshotForPair",
+          "callee": "quoteBus.publishForming",
+          "lineNumber": 169
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "currencyPairService.find",
+          "lineNumber": 180
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "Integer.parseInt",
+          "lineNumber": 180
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "quote.curpairCd",
+          "lineNumber": 180
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "Instant.now().toEpochMilli",
+          "lineNumber": 186
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "Instant.now",
+          "lineNumber": 186
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "CacheNamespace.values",
+          "lineNumber": 188
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "upsertOpenBar",
+          "lineNumber": 189
+        },
+        {
+          "caller": "upsertOpenBars",
+          "callee": "pair.curpairName",
+          "lineNumber": 189
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "namespace.periodMillis",
+          "lineNumber": 207
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "Math.floorDiv",
+          "lineNumber": 208
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "namespace.name",
+          "lineNumber": 210
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "formingBars.get",
+          "lineNumber": 211
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "previous.chartDatetimeSec",
+          "lineNumber": 214
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "CachedChartBar.openFromTick",
+          "lineNumber": 215
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "quote.bid",
+          "lineNumber": 215
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "quote.ask",
+          "lineNumber": 215
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "previous.applyTick",
+          "lineNumber": 217
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "quote.bid",
+          "lineNumber": 217
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "quote.ask",
+          "lineNumber": 217
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "formingBars.put",
+          "lineNumber": 221
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "chartBarRepository.upsert",
+          "lineNumber": 222
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "chartCacheStore.put",
+          "lineNumber": 223
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "quoteBus.publishForming",
+          "lineNumber": 224
+        },
+        {
+          "caller": "upsertOpenBar",
+          "callee": "quote.curpairCd",
+          "lineNumber": 224
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 4,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 71,
+      "nonEmptyLines": 64,
+      "functions": [
+        {
+          "name": "CurrencyPairController",
+          "startLine": 49,
+          "endLine": 51,
+          "params": [
+            "currencyPairService"
+          ]
+        },
+        {
+          "name": "curpairs",
+          "startLine": 59,
+          "endLine": 70,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "CurrencyPairController",
+          "startLine": 38,
+          "endLine": 71,
+          "methods": [
+            "CurrencyPairController",
+            "curpairs"
+          ],
+          "properties": [
+            "currencyPairService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CurrencyPairController",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "curpairs",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "CurrencyPairController",
+          "line": 38,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "curpairs",
+          "callee": "currencyPairService.list",
+          "lineNumber": 69
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 32,
+      "classes": [
+        {
+          "name": "CurrencyPairDto",
+          "startLine": 33,
+          "endLine": 34,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CurrencyPairDto",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 45,
+      "classes": [
+        {
+          "name": "FormingBarMessage",
+          "startLine": 32,
+          "endLine": 47,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "FormingBarMessage",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 38,
+      "classes": [
+        {
+          "name": "FxQuoteMessage",
+          "startLine": 32,
+          "endLine": 40,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "FxQuoteMessage",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/Ccypair.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 69,
+      "functions": [
+        {
+          "name": "Ccypair",
+          "startLine": 59,
+          "endLine": 60,
+          "params": []
+        },
+        {
+          "name": "getCcypairCd",
+          "startLine": 62,
+          "endLine": 64,
+          "params": []
+        },
+        {
+          "name": "getCcypairJp",
+          "startLine": 66,
+          "endLine": 68,
+          "params": []
+        },
+        {
+          "name": "getRateUnit",
+          "startLine": 70,
+          "endLine": 72,
+          "params": []
+        },
+        {
+          "name": "getIsDeleted",
+          "startLine": 74,
+          "endLine": 76,
+          "params": []
+        },
+        {
+          "name": "setIsDeleted",
+          "startLine": 78,
+          "endLine": 80,
+          "params": [
+            "isDeleted"
+          ]
+        },
+        {
+          "name": "getPriority",
+          "startLine": 82,
+          "endLine": 84,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "Ccypair",
+          "startLine": 36,
+          "endLine": 85,
+          "methods": [
+            "Ccypair",
+            "getCcypairCd",
+            "getCcypairJp",
+            "getRateUnit",
+            "getIsDeleted",
+            "setIsDeleted",
+            "getPriority"
+          ],
+          "properties": [
+            "ACTIVE",
+            "ccypairCd",
+            "ccypairJp",
+            "rateUnit",
+            "isDeleted",
+            "priority"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ACTIVE",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "getCcypairCd",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "getCcypairJp",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "getRateUnit",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "getIsDeleted",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "setIsDeleted",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "getPriority",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "Ccypair",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 7,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 96,
+      "nonEmptyLines": 89,
+      "classes": [
+        {
+          "name": "CcypairRepository",
+          "startLine": 41,
+          "endLine": 96,
+          "methods": [
+            "findByCcypairCdAndIsDeleted",
+            "findByIsDeletedOrderByPriorityAsc",
+            "findFirstByPriorityAndIsDeletedOrderByCcypairCdAsc",
+            "searchActive"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CcypairRepository",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 49,
+      "classes": [
+        {
+          "name": "CurrencyPairService",
+          "startLine": 37,
+          "endLine": 54,
+          "methods": [
+            "list",
+            "find"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CurrencyPairService",
+          "line": 37,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 94,
+      "nonEmptyLines": 84,
+      "functions": [
+        {
+          "name": "CurrencyPairServiceImpl",
+          "startLine": 51,
+          "endLine": 53,
+          "params": [
+            "ccypairRepository"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 60,
+          "endLine": 65,
+          "params": []
+        },
+        {
+          "name": "find",
+          "startLine": 73,
+          "endLine": 80,
+          "params": [
+            "curpairCd"
+          ]
+        },
+        {
+          "name": "toDto",
+          "startLine": 82,
+          "endLine": 85,
+          "params": [
+            "row"
+          ]
+        },
+        {
+          "name": "toDisplay",
+          "startLine": 87,
+          "endLine": 93,
+          "params": [
+            "ccypairCd"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "CurrencyPairServiceImpl",
+          "startLine": 41,
+          "endLine": 94,
+          "methods": [
+            "CurrencyPairServiceImpl",
+            "list",
+            "find",
+            "toDto",
+            "toDisplay"
+          ],
+          "properties": [
+            "ccypairRepository"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CurrencyPairServiceImpl",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "find",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "CurrencyPairServiceImpl",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "list",
+          "callee": "ccypairRepository.findByIsDeletedOrderByPriorityAsc",
+          "lineNumber": 63
+        },
+        {
+          "caller": "list",
+          "callee": "rows.stream().map(CurrencyPairServiceImpl::toDto).toList",
+          "lineNumber": 64
+        },
+        {
+          "caller": "list",
+          "callee": "rows.stream().map",
+          "lineNumber": 64
+        },
+        {
+          "caller": "list",
+          "callee": "rows.stream",
+          "lineNumber": 64
+        },
+        {
+          "caller": "find",
+          "callee": "ccypairRepository\n\t\t\t\t.findFirstByPriorityAndIsDeletedOrderByCcypairCdAsc(curpairCd, Ccypair.ACTIVE)\n\t\t\t\t.map(CurrencyPairServiceImpl::toDto).orElse",
+          "lineNumber": 76
+        },
+        {
+          "caller": "find",
+          "callee": "ccypairRepository\n\t\t\t\t.findFirstByPriorityAndIsDeletedOrderByCcypairCdAsc(curpairCd, Ccypair.ACTIVE).map",
+          "lineNumber": 76
+        },
+        {
+          "caller": "find",
+          "callee": "ccypairRepository.findFirstByPriorityAndIsDeletedOrderByCcypairCdAsc",
+          "lineNumber": 76
+        },
+        {
+          "caller": "toDto",
+          "callee": "row.getCcypairCd",
+          "lineNumber": 83
+        },
+        {
+          "caller": "toDto",
+          "callee": "new CurrencyPairDto",
+          "lineNumber": 84
+        },
+        {
+          "caller": "toDto",
+          "callee": "row.getPriority",
+          "lineNumber": 84
+        },
+        {
+          "caller": "toDto",
+          "callee": "toDisplay",
+          "lineNumber": 84
+        },
+        {
+          "caller": "toDisplay",
+          "callee": "ccypairCd.length",
+          "lineNumber": 88
+        },
+        {
+          "caller": "toDisplay",
+          "callee": "ccypairCd.substring",
+          "lineNumber": 92
+        },
+        {
+          "caller": "toDisplay",
+          "callee": "ccypairCd.substring",
+          "lineNumber": 92
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 4,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 100,
+      "nonEmptyLines": 90,
+      "functions": [
+        {
+          "name": "SymbolCatalogImpl",
+          "startLine": 52,
+          "endLine": 59,
+          "params": [
+            "currencyPairService",
+            "appProperties"
+          ]
+        },
+        {
+          "name": "getAll",
+          "startLine": 61,
+          "endLine": 64,
+          "params": []
+        },
+        {
+          "name": "find",
+          "startLine": 66,
+          "endLine": 77,
+          "params": [
+            "symbolName"
+          ]
+        },
+        {
+          "name": "fromPair",
+          "startLine": 79,
+          "endLine": 90,
+          "params": [
+            "pair",
+            "exchange",
+            "type"
+          ]
+        },
+        {
+          "name": "matches",
+          "startLine": 92,
+          "endLine": 99,
+          "params": [
+            "symbol",
+            "needle"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "SymbolCatalogImpl",
+          "startLine": 41,
+          "endLine": 100,
+          "methods": [
+            "SymbolCatalogImpl",
+            "getAll",
+            "find",
+            "fromPair",
+            "matches"
+          ],
+          "properties": [
+            "symbols"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SymbolCatalogImpl",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "getAll",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "find",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "SymbolCatalogImpl",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "appProperties.getTradingView",
+          "lineNumber": 53
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "tradingView.getExchanges",
+          "lineNumber": 54
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "tradingView.getSymbolsTypes",
+          "lineNumber": 55
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "currencyPairService.list().stream()\n\t\t\t\t.map(pair -> fromPair(pair, exchange, type)).toList",
+          "lineNumber": 56
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "currencyPairService.list().stream().map",
+          "lineNumber": 56
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "currencyPairService.list().stream",
+          "lineNumber": 56
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "currencyPairService.list",
+          "lineNumber": 56
+        },
+        {
+          "caller": "SymbolCatalogImpl",
+          "callee": "fromPair",
+          "lineNumber": 57
+        },
+        {
+          "caller": "find",
+          "callee": "symbolName.isBlank",
+          "lineNumber": 68
+        },
+        {
+          "caller": "find",
+          "callee": "symbolName.trim().toLowerCase",
+          "lineNumber": 72
+        },
+        {
+          "caller": "find",
+          "callee": "symbolName.trim",
+          "lineNumber": 72
+        },
+        {
+          "caller": "find",
+          "callee": "symbols.stream()\n\t\t\t\t.filter(symbol -> matches(symbol, needle))\n\t\t\t\t.findFirst().orElse",
+          "lineNumber": 73
+        },
+        {
+          "caller": "find",
+          "callee": "symbols.stream()\n\t\t\t\t.filter(symbol -> matches(symbol, needle)).findFirst",
+          "lineNumber": 73
+        },
+        {
+          "caller": "find",
+          "callee": "symbols.stream().filter",
+          "lineNumber": 73
+        },
+        {
+          "caller": "find",
+          "callee": "symbols.stream",
+          "lineNumber": 73
+        },
+        {
+          "caller": "find",
+          "callee": "matches",
+          "lineNumber": 74
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairDisplay",
+          "lineNumber": 80
+        },
+        {
+          "caller": "fromPair",
+          "callee": "new CachedSymbol",
+          "lineNumber": 81
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairName",
+          "lineNumber": 85
+        },
+        {
+          "caller": "fromPair",
+          "callee": "DemoMarket.priceScale",
+          "lineNumber": 88
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairName",
+          "lineNumber": 88
+        },
+        {
+          "caller": "fromPair",
+          "callee": "pair.curpairCd",
+          "lineNumber": 89
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.ticker().toLowerCase(Locale.ROOT).equals",
+          "lineNumber": 93
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.ticker().toLowerCase",
+          "lineNumber": 93
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.ticker",
+          "lineNumber": 93
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.fullName().toLowerCase(Locale.ROOT).equals",
+          "lineNumber": 94
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.fullName().toLowerCase",
+          "lineNumber": 94
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.fullName",
+          "lineNumber": 94
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.shortName().toLowerCase(Locale.ROOT).equals",
+          "lineNumber": 95
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.shortName().toLowerCase",
+          "lineNumber": 95
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.shortName",
+          "lineNumber": 95
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.providerSymbol().toLowerCase(Locale.ROOT).equals",
+          "lineNumber": 96
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.providerSymbol().toLowerCase",
+          "lineNumber": 96
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 96
+        },
+        {
+          "caller": "matches",
+          "callee": "String.valueOf(symbol.curpairCd()).equals",
+          "lineNumber": 97
+        },
+        {
+          "caller": "matches",
+          "callee": "String.valueOf",
+          "lineNumber": 97
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.curpairCd",
+          "lineNumber": 97
+        },
+        {
+          "caller": "matches",
+          "callee": "(\"fx:\" + symbol.shortName()).toLowerCase(Locale.ROOT).equals",
+          "lineNumber": 98
+        },
+        {
+          "caller": "matches",
+          "callee": "(\"fx:\" + symbol.shortName()).toLowerCase",
+          "lineNumber": 98
+        },
+        {
+          "caller": "matches",
+          "callee": "symbol.shortName",
+          "lineNumber": 98
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 4,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 116,
+      "nonEmptyLines": 105,
+      "functions": [
+        {
+          "name": "DemoMarket",
+          "startLine": 33,
+          "endLine": 34,
+          "params": []
+        },
+        {
+          "name": "priceScale",
+          "startLine": 42,
+          "endLine": 44,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "seedBid",
+          "startLine": 52,
+          "endLine": 54,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "seedMid",
+          "startLine": 62,
+          "endLine": 71,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "barAmplitude",
+          "startLine": 79,
+          "endLine": 81,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "halfSpread",
+          "startLine": 89,
+          "endLine": 91,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "fullSpread",
+          "startLine": 99,
+          "endLine": 101,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "outerWick",
+          "startLine": 109,
+          "endLine": 111,
+          "params": [
+            "curpairName"
+          ]
+        },
+        {
+          "name": "yenQuote",
+          "startLine": 113,
+          "endLine": 115,
+          "params": [
+            "curpairName"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "DemoMarket",
+          "startLine": 31,
+          "endLine": 116,
+          "methods": [
+            "DemoMarket",
+            "priceScale",
+            "seedBid",
+            "seedMid",
+            "barAmplitude",
+            "halfSpread",
+            "fullSpread",
+            "outerWick",
+            "yenQuote"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "priceScale",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "seedBid",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "seedMid",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "barAmplitude",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "halfSpread",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "fullSpread",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "outerWick",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "DemoMarket",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "priceScale",
+          "callee": "yenQuote",
+          "lineNumber": 43
+        },
+        {
+          "caller": "seedBid",
+          "callee": "seedMid",
+          "lineNumber": 53
+        },
+        {
+          "caller": "seedBid",
+          "callee": "halfSpread",
+          "lineNumber": 53
+        },
+        {
+          "caller": "seedMid",
+          "callee": "yenQuote",
+          "lineNumber": 69
+        },
+        {
+          "caller": "barAmplitude",
+          "callee": "yenQuote",
+          "lineNumber": 80
+        },
+        {
+          "caller": "halfSpread",
+          "callee": "yenQuote",
+          "lineNumber": 90
+        },
+        {
+          "caller": "fullSpread",
+          "callee": "halfSpread",
+          "lineNumber": 100
+        },
+        {
+          "caller": "outerWick",
+          "callee": "yenQuote",
+          "lineNumber": 110
+        },
+        {
+          "caller": "yenQuote",
+          "callee": "curpairName.endsWith",
+          "lineNumber": 114
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 9,
+        "classCount": 1
+      }
+    }
+  ]
+}

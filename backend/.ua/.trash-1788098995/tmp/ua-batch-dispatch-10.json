@@ -1,0 +1,30 @@
+{
+  "batchIndex": 10,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/resources/application.yml",
+      "language": "yaml",
+      "sizeLines": 88,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/main/resources/messages.properties",
+      "language": "properties",
+      "sizeLines": 8,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/main/resources/messages_ja.properties",
+      "language": "properties",
+      "sizeLines": 7,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    "src/main/resources/application.yml": [],
+    "src/main/resources/messages.properties": [],
+    "src/main/resources/messages_ja.properties": []
+  },
+  "neighborMap": {}
+}

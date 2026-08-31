@@ -14,6 +14,12 @@ import com.task.chart.dto.response.BarDto;
  * write the forming candle. {@code GET /api/history} maps this row to
  * {@link BarDto} via {@link #toBarDto}. MID is averaged at read time.
  *
+ * <p><strong>NOT:</strong> not a JPA entity; not returned as API JSON (controllers
+ * use {@link BarDto} / columnar {@code HistoryResponse}). {@link #toBarDto} is the
+ * same BID/ASK/MID projection Python {@code ws-python/market.py} {@code widget_bar()}
+ * duplicates — if header vs candle disagree across REST and WebSocket, diff those
+ * two methods.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

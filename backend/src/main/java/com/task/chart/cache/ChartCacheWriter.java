@@ -24,6 +24,10 @@ import org.springframework.stereotype.Component;
  * After seed, live open bars come only from {@link TickIngestWorker}. This class
  * has no scheduled refresh.
  *
+ * <p><strong>NOT:</strong> not the live last-bar writer (stale history after days
+ * of uptime is ingest, not this class); not a scheduled job; not Python.
+ * {@link TickIngestWorker} is {@code @Order(200)} and waits on {@link #isSeedComplete()}.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>
@@ -35,11 +39,12 @@ import org.springframework.stereotype.Component;
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>Phase 1 in-memory / Redis</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/26</td><td>Task</td><td>Boot seed only; live bars from ingest</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.4.0</td><td>2026/08/30</td><td>Task</td><td>Seed DWM bars 24/7</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.3.0
+ * @version 1.4.0
  */
 @Component
 @Order(100)
@@ -122,13 +127,13 @@ public class ChartCacheWriter implements ApplicationRunner {
 	}
 
 	/**
-	 * Walks backward from the current open, skipping weekend day/week/month bars.
+	 * Walks backward from the current open. Demo seed is 24/7 (no weekend gaps).
 	 *
 	 * @param symbol catalog pair
 	 * @param namespace Peach table / cache mapping
 	 * @param toMs seed-end wall clock
 	 * @param depth number of bars to keep
-	 * @return oldest-first series
+	 * @return series in walk order (newest first)
 	 */
 	private List<CachedChartBar> buildSeries(
 			CachedSymbol symbol,
@@ -140,17 +145,10 @@ public class ChartCacheWriter implements ApplicationRunner {
 		long lastOpen = Math.floorDiv(toMs - 1, periodMs) * periodMs;
 		java.util.LinkedHashMap<Long, CachedChartBar> bySec = new java.util.LinkedHashMap<>();
 		long cursor = lastOpen;
-		int guard = 0;
-		int maxGuard = depth * 4 + 64;
 
-		while (bySec.size() < depth && cursor >= 0 && guard < maxGuard) {
-			guard++;
-
-			if (!namespace.skipWeekend(cursor)) {
-				CachedChartBar bar = mockBarGenerator.peachBarAt(symbol, periodMs, cursor);
-				bySec.putIfAbsent(bar.chartDatetimeSec(), bar);
-			}
-
+		while (bySec.size() < depth && cursor >= 0) {
+			CachedChartBar bar = mockBarGenerator.peachBarAt(symbol, periodMs, cursor);
+			bySec.putIfAbsent(bar.chartDatetimeSec(), bar);
 			cursor -= periodMs;
 		}
 

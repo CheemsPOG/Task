@@ -32,6 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
  * {@code cache_set_*} / warehouse {@code t_chart_*}). Live last bars are written
  * only by {@code TickIngestWorker}; this controller does not compute OHLC.
  *
+ * <p><strong>NOT:</strong> no SQL, no Redis, no inline validation beyond query-param
+ * binding — any of those here is a layering violation. Unknown symbol on
+ * {@code /history} is 422; on {@code /symbols} it is 404 (service, not this class).
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

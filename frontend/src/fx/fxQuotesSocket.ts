@@ -91,7 +91,7 @@ function ensureSocket(): void {
 		if (event.target !== socket) {
 			return;
 		}
-		socket.close();
+		socket?.close();
 	});
 }
 

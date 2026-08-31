@@ -1,0 +1,144 @@
+{
+  "batchIndex": 7,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "language": "java",
+      "sizeLines": 145,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "language": "java",
+      "sizeLines": 113,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "language": "java",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "language": "java",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "language": "java",
+      "sizeLines": 144,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/controller/ChartTemplateController.java": [
+      "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "src/main/java/com/task/chart/service/ChartTemplateService.java"
+    ],
+    "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java": [],
+    "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java": [],
+    "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java": [],
+    "src/main/java/com/task/chart/entity/TvChartTemplate.java": [],
+    "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java": [
+      "src/main/java/com/task/chart/entity/TvChartTemplate.java"
+    ],
+    "src/main/java/com/task/chart/service/ChartTemplateService.java": [
+      "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java": [
+      "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "src/main/java/com/task/chart/exception/ValidationException.java",
+      "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "src/main/java/com/task/chart/security/CustomerContext.java",
+      "src/main/java/com/task/chart/service/ChartTemplateService.java"
+    ]
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/controller/ChartTemplateController.java": [
+      {
+        "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+        "batchIndex": 6,
+        "symbols": [
+          "SystemDatetimeResponse"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/ChartTemplateService.java": [
+      {
+        "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+        "batchIndex": 6,
+        "symbols": [
+          "SystemDatetimeResponse"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java": [
+      {
+        "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+        "batchIndex": 6,
+        "symbols": [
+          "SystemDatetimeResponse"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ResourceNotFoundException",
+          "ResourceNotFoundException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ValidationException",
+          "ValidationException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/security/CustomerContext.java",
+        "batchIndex": 4,
+        "symbols": [
+          "set",
+          "get",
+          "requireCustomerNo",
+          "clear",
+          "CustomerContext"
+        ]
+      }
+    ]
+  }
+}

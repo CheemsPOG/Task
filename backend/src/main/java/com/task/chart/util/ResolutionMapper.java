@@ -35,12 +35,6 @@ import java.util.Map;
  */
 public final class ResolutionMapper {
 
-	public static final List<String> SUPPORTED_RESOLUTIONS = List.of(
-			"1S", "5S", "15S", "30S",
-			"1", "2", "3", "4", "5", "10", "15", "30",
-			"60", "90", "120", "180", "240", "360", "480", "720",
-			"1D", "3D", "1W", "1M");
-
 	/** Resolutions accepted by design doc 121 validation. */
 	public static final List<String> HISTORY_RESOLUTIONS = List.of(
 			"1S", "1", "5", "10", "15", "30", "60", "120", "240", "480", "1D", "1W", "1M");
@@ -48,9 +42,6 @@ public final class ResolutionMapper {
 	/** Resolutions accepted by design doc 125 marks (no {@code 10}). */
 	public static final List<String> MARKS_RESOLUTIONS = List.of(
 			"1S", "1", "5", "15", "30", "60", "120", "240", "480", "1D", "1W", "1M");
-
-	public static final List<String> INTRADAY_MULTIPLIERS = List.of(
-			"1", "3", "5", "15", "30", "60", "120", "240", "360", "480", "720");
 
 	public static final List<String> SECONDS_MULTIPLIERS = List.of("1");
 	public static final List<String> DAILY_MULTIPLIERS = List.of("1", "3");

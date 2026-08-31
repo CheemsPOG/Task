@@ -1,0 +1,774 @@
+{
+  "nodes": [
+    {
+      "id": "file:.gitattributes",
+      "type": "file",
+      "name": ".gitattributes",
+      "filePath": ".gitattributes",
+      "summary": "Forces LF line endings for the Unix Maven wrapper and CRLF for Windows .cmd scripts so mvnw stays portable across checkouts.",
+      "tags": ["git", "line-endings", "maven-wrapper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.ua/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".ua/.understandignore",
+      "summary": "Understand-Anything ignore list that excludes IDE, build, and test-pattern paths from knowledge-graph analysis of the chart backend.",
+      "tags": ["ignore-list", "analysis", "tooling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.ua/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".ua/config.json",
+      "summary": "Understand-Anything project config that sets English as the output language for generated graph text.",
+      "tags": ["configuration", "analysis", "localization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:mvnw",
+      "type": "file",
+      "name": "mvnw",
+      "filePath": "mvnw",
+      "summary": "Apache Maven Wrapper 3.3.4 Unix shell script that locates or downloads a pinned Maven distribution and then execs the build.",
+      "tags": ["entry-point", "maven-wrapper", "build-system"],
+      "complexity": "complex",
+      "languageNotes": "POSIX shell wrapper with Java-style string hashing to compute the Maven home cache key."
+    },
+    {
+      "id": "function:mvnw:set_java_home",
+      "type": "function",
+      "name": "set_java_home",
+      "filePath": "mvnw",
+      "lineRange": [45, 79],
+      "summary": "Resolves JAVACMD and JAVACCMD from JAVA_HOME or PATH, including IBM AIX and Cygwin/MinGW path quirks.",
+      "tags": ["utility", "java-home", "maven-wrapper"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:mvnw.cmd",
+      "type": "file",
+      "name": "mvnw.cmd",
+      "filePath": "mvnw.cmd",
+      "summary": "Windows Maven Wrapper that bootstraps via a batch header then runs an embedded PowerShell block to download and launch Maven.",
+      "tags": ["entry-point", "maven-wrapper", "build-system"],
+      "complexity": "moderate",
+      "languageNotes": "Hybrid batch-plus-PowerShell file: the batch portion invokes the same file as a PowerShell scriptblock."
+    },
+    {
+      "id": "config:pom.xml",
+      "type": "config",
+      "name": "pom.xml",
+      "filePath": "pom.xml",
+      "summary": "Maven POM for chart-backend: Spring Boot 4.0.7 on Java 21 with web, JPA, Flyway, Redis, Security, JJWT, and springdoc OpenAPI.",
+      "tags": ["configuration", "maven", "build-system", "spring-boot"],
+      "complexity": "moderate",
+      "languageNotes": "Spring Boot parent 4.0.7; springdoc 3.0.x is required for Boot 4 (2.8.x is Boot 3)."
+    },
+    {
+      "id": "document:src/main/java/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "src/main/java/README.md",
+      "summary": "Mentor-facing class map of com.task.chart covering CTFX layering, datafeed docs 120–139, cache SSOT, and a full Java file tree.",
+      "tags": ["documentation", "onboarding", "architecture"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "type": "file",
+      "name": "ChartBarRepository.java",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "summary": "JDBC warehouse for OHLC bars: deletes/upserts into t_chart_* tables chosen from CacheNamespace and range-queries history for Redis seeding and history reads.",
+      "tags": ["repository", "jdbc", "cache", "data-access"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/ChartBarRepository.java:ChartBarRepository",
+      "type": "class",
+      "name": "ChartBarRepository",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [40, 253],
+      "summary": "Spring repository that binds CachedChartBar rows through JdbcTemplate using enum-derived table names only.",
+      "tags": ["repository", "jdbc", "ohlc", "spring"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:replacePair",
+      "type": "function",
+      "name": "replacePair",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [63, 83],
+      "summary": "Deletes all bars for a pair in a namespace then batch-inserts unique timestamps, used when reseeding a warehouse table.",
+      "tags": ["data-access", "batch-write", "ohlc"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:upsert",
+      "type": "function",
+      "name": "upsert",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [91, 99],
+      "summary": "Deletes the bar at a timestamp then inserts the latest OHLC so ingest can rewrite the currently forming candle.",
+      "tags": ["data-access", "upsert", "ingest"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:query",
+      "type": "function",
+      "name": "query",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [122, 168],
+      "summary": "Loads bars in [fromSec, toSec] and, when needed, prepends the previous bar so TradingView history can stitch across gaps.",
+      "tags": ["data-access", "history", "query"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:nextTimeBefore",
+      "type": "function",
+      "name": "nextTimeBefore",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [178, 189],
+      "summary": "Returns the latest bar timestamp strictly before fromSec so callers can page older history.",
+      "tags": ["data-access", "pagination", "query"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:size",
+      "type": "function",
+      "name": "size",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [198, 207],
+      "summary": "Counts warehouse rows for a currency pair in a CacheNamespace table.",
+      "tags": ["data-access", "metrics", "query"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:bindBar",
+      "type": "function",
+      "name": "bindBar",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [216, 229],
+      "summary": "Binds pair code, unix time, bid/ask OHLC, and volume onto a PreparedStatement for insert.",
+      "tags": ["jdbc", "serialization", "ohlc"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:mapRow",
+      "type": "function",
+      "name": "mapRow",
+      "filePath": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "lineRange": [239, 252],
+      "summary": "Maps a JDBC result row into a CachedChartBar with bid and ask OHLC fields.",
+      "tags": ["jdbc", "mapping", "ohlc"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "type": "file",
+      "name": "OpenApiConfig.java",
+      "filePath": "src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "summary": "Springdoc OpenAPI bean that titles the CTFX Chart Backend, tags docs 120–139 plus auth and currency pairs, and registers a Bearer JWT scheme.",
+      "tags": ["configuration", "openapi", "swagger", "documentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/config/OpenApiConfig.java:OpenApiConfig",
+      "type": "class",
+      "name": "OpenApiConfig",
+      "filePath": "src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "lineRange": [44, 101],
+      "summary": "Configuration class exposing the OpenAPI document used by Swagger UI Try it out with relative server URL and bearer-jwt.",
+      "tags": ["configuration", "openapi", "spring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/config/OpenApiConfig.java:apiInfo",
+      "type": "function",
+      "name": "apiInfo",
+      "filePath": "src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "lineRange": [68, 77],
+      "summary": "Builds OpenAPI Info with title CTFX Chart Backend, snapshot version, and a short description of implemented REST.",
+      "tags": ["openapi", "metadata", "documentation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/config/OpenApiConfig.java:apiTags",
+      "type": "function",
+      "name": "apiTags",
+      "filePath": "src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "lineRange": [79, 92],
+      "summary": "Returns Swagger tags for Auth, Datafeed 120–126, layouts 127–131, indicator templates 132–135, chart templates 136–139, and currency pairs.",
+      "tags": ["openapi", "tags", "api-schema"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/config/PasswordConfig.java",
+      "type": "file",
+      "name": "PasswordConfig.java",
+      "filePath": "src/main/java/com/task/chart/config/PasswordConfig.java",
+      "summary": "Registers a BCryptPasswordEncoder bean used by login to hash and verify demo user passwords.",
+      "tags": ["configuration", "security", "password", "bcrypt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/config/PasswordConfig.java:PasswordConfig",
+      "type": "class",
+      "name": "PasswordConfig",
+      "filePath": "src/main/java/com/task/chart/config/PasswordConfig.java",
+      "lineRange": [36, 48],
+      "summary": "Spring configuration that exposes BCryptPasswordEncoder as the application PasswordEncoder.",
+      "tags": ["configuration", "security", "spring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/config/WebConfig.java",
+      "type": "file",
+      "name": "WebConfig.java",
+      "filePath": "src/main/java/com/task/chart/config/WebConfig.java",
+      "summary": "CORS configuration that allows the Vite widget origins to call /api/** and GET /curpairs with credentials.",
+      "tags": ["configuration", "cors", "middleware", "web"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/config/WebConfig.java:WebConfig",
+      "type": "class",
+      "name": "WebConfig",
+      "filePath": "src/main/java/com/task/chart/config/WebConfig.java",
+      "lineRange": [36, 63],
+      "summary": "Spring configuration providing a WebMvcConfigurer that maps CORS from AppProperties cors origins.",
+      "tags": ["configuration", "cors", "spring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/config/WebConfig.java:corsConfigurer",
+      "type": "function",
+      "name": "corsConfigurer",
+      "filePath": "src/main/java/com/task/chart/config/WebConfig.java",
+      "lineRange": [45, 62],
+      "summary": "Allows GET/POST/PUT/DELETE/OPTIONS on /api/** and GET/OPTIONS on /curpairs from configured frontend origins.",
+      "tags": ["cors", "middleware", "web"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "type": "file",
+      "name": "MarkSeedWindow.java",
+      "filePath": "src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "summary": "Fixed unix FROM/TO window used when seeding demo marks and timescale marks for datafeed docs 125 and 126.",
+      "tags": ["constants", "marks", "seed-data"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/constants/MarkSeedWindow.java:MarkSeedWindow",
+      "type": "class",
+      "name": "MarkSeedWindow",
+      "filePath": "src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "lineRange": [32, 42],
+      "summary": "Utility holder for the demo mark seed interval constants FROM and TO.",
+      "tags": ["constants", "utility", "seed-data"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/package-info.java",
+      "type": "file",
+      "name": "package-info.java",
+      "filePath": "src/main/java/com/task/chart/package-info.java",
+      "summary": "Package javadoc for com.task.chart describing controller-service-repository layering, live ingest SSOT, and the Java README map.",
+      "tags": ["documentation", "package-info", "architecture"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "type": "file",
+      "name": "ChartPrincipal.java",
+      "filePath": "src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "summary": "Authenticated chart user record carrying username and tenant customerNo taken from the access JWT.",
+      "tags": ["security", "data-model", "jwt", "tenant"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as the Spring Security principal, not a Peach SSO identity."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/ChartPrincipal.java:ChartPrincipal",
+      "type": "class",
+      "name": "ChartPrincipal",
+      "filePath": "src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "lineRange": [31, 32],
+      "summary": "Immutable principal of username plus customerNo used to filter layouts and templates per tenant.",
+      "tags": ["security", "principal", "tenant"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "type": "file",
+      "name": "JwtAuthenticationFilter.java",
+      "filePath": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "summary": "OncePerRequestFilter that parses Bearer access JWTs, sets SecurityContext and CustomerContext, and clears both after the request.",
+      "tags": ["security", "middleware", "jwt", "filter"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:JwtAuthenticationFilter",
+      "type": "class",
+      "name": "JwtAuthenticationFilter",
+      "filePath": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "lineRange": [46, 112],
+      "summary": "JWT filter that authenticates the 1h access token only; invalid tokens leave the request anonymous rather than failing the chain.",
+      "tags": ["security", "filter", "jwt", "spring"],
+      "complexity": "moderate",
+      "languageNotes": "Extends Spring OncePerRequestFilter and writes both SecurityContextHolder and a thread-local CustomerContext."
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:doFilterInternal",
+      "type": "function",
+      "name": "doFilterInternal",
+      "filePath": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "lineRange": [69, 90],
+      "summary": "Reads Authorization Bearer, authenticates when present, continues the filter chain, then always clears tenant and security context.",
+      "tags": ["security", "filter", "jwt"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:authenticateBearer",
+      "type": "function",
+      "name": "authenticateBearer",
+      "filePath": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "lineRange": [92, 102],
+      "summary": "Parses the access JWT via JwtService and sets ChartPrincipal authentication, or clears context if the token is invalid.",
+      "tags": ["security", "jwt", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "type": "file",
+      "name": "SecurityConfig.java",
+      "filePath": "src/main/java/com/task/chart/security/SecurityConfig.java",
+      "summary": "Stateless Spring Security chain: CSRF off, public health/auth/Swagger, JWT required for /api/** and GET /curpairs, JSON 401 entry point.",
+      "tags": ["security", "configuration", "filter-chain", "jwt"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/SecurityConfig.java:SecurityConfig",
+      "type": "class",
+      "name": "SecurityConfig",
+      "filePath": "src/main/java/com/task/chart/security/SecurityConfig.java",
+      "lineRange": [48, 115],
+      "summary": "Security configuration that injects JwtAuthenticationFilter and JsonUnauthorizedEntryPoint and builds the HTTP filter chain.",
+      "tags": ["security", "configuration", "spring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/SecurityConfig.java:securityFilterChain",
+      "type": "function",
+      "name": "securityFilterChain",
+      "filePath": "src/main/java/com/task/chart/security/SecurityConfig.java",
+      "lineRange": [87, 114],
+      "summary": "Permits OPTIONS, health, login/refresh/logout, and Swagger; requires authentication for /api/** and GET /curpairs; inserts the JWT filter before UsernamePasswordAuthenticationFilter.",
+      "tags": ["security", "filter-chain", "authorization"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:mvnw",
+      "target": "function:mvnw:set_java_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "class:src/main/java/com/task/chart/cache/ChartBarRepository.java:ChartBarRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:replacePair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:upsert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:nextTimeBefore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:size",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:bindBar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:mapRow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "target": "class:src/main/java/com/task/chart/config/OpenApiConfig.java:OpenApiConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "target": "function:src/main/java/com/task/chart/config/OpenApiConfig.java:apiInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "target": "function:src/main/java/com/task/chart/config/OpenApiConfig.java:apiTags",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/PasswordConfig.java",
+      "target": "class:src/main/java/com/task/chart/config/PasswordConfig.java:PasswordConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/WebConfig.java",
+      "target": "class:src/main/java/com/task/chart/config/WebConfig.java:WebConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/WebConfig.java",
+      "target": "function:src/main/java/com/task/chart/config/WebConfig.java:corsConfigurer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "target": "class:src/main/java/com/task/chart/constants/MarkSeedWindow.java:MarkSeedWindow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "target": "class:src/main/java/com/task/chart/security/ChartPrincipal.java:ChartPrincipal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "target": "class:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:JwtAuthenticationFilter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "target": "function:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:doFilterInternal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "target": "function:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:authenticateBearer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "target": "class:src/main/java/com/task/chart/security/SecurityConfig.java:SecurityConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "target": "function:src/main/java/com/task/chart/security/SecurityConfig.java:securityFilterChain",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "class:src/main/java/com/task/chart/cache/ChartBarRepository.java:ChartBarRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:replacePair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:upsert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:query",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:nextTimeBefore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartBarRepository.java:size",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "target": "class:src/main/java/com/task/chart/config/OpenApiConfig.java:OpenApiConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/PasswordConfig.java",
+      "target": "class:src/main/java/com/task/chart/config/PasswordConfig.java:PasswordConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/config/WebConfig.java",
+      "target": "class:src/main/java/com/task/chart/config/WebConfig.java:WebConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "target": "class:src/main/java/com/task/chart/constants/MarkSeedWindow.java:MarkSeedWindow",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "target": "class:src/main/java/com/task/chart/security/ChartPrincipal.java:ChartPrincipal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "target": "class:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:JwtAuthenticationFilter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "target": "class:src/main/java/com/task/chart/security/SecurityConfig.java:SecurityConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "target": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "target": "file:src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:mvnw",
+      "target": "config:pom.xml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:mvnw.cmd",
+      "target": "config:pom.xml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/security/SecurityConfig.java:securityFilterChain",
+      "target": "class:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:JwtAuthenticationFilter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java:authenticateBearer",
+      "target": "class:src/main/java/com/task/chart/security/ChartPrincipal.java:ChartPrincipal",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:pom.xml",
+      "target": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pom.xml",
+      "target": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pom.xml",
+      "target": "file:src/main/java/com/task/chart/config/PasswordConfig.java",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pom.xml",
+      "target": "file:src/main/java/com/task/chart/config/WebConfig.java",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pom.xml",
+      "target": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pom.xml",
+      "target": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/package-info.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/config/PasswordConfig.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/config/WebConfig.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/main/java/README.md",
+      "target": "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.ua/config.json",
+      "target": "file:.ua/.understandignore",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

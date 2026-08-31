@@ -1,0 +1,1351 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "type": "file",
+      "name": "DemoTickEngine.java",
+      "filePath": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "summary": "Simulates live FX quotes for every warehouse currency pair by walking bid/ask from last 1s bars or DemoMarket seeds, then exposing stepped ticks and snapshots for ingest.",
+      "tags": ["service", "factory", "event-handler", "simulation"],
+      "complexity": "complex",
+      "languageNotes": "Inner SimulatedQuote holds per-pair Gaussian random-walk state and maps to FxQuoteMessage."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/DemoTickEngine.java:DemoTickEngine",
+      "type": "class",
+      "name": "DemoTickEngine",
+      "filePath": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "lineRange": [44, 293],
+      "summary": "Spring component that loads currency pairs, seeds simulated quotes from cache or DemoMarket, and advances all quotes each tick.",
+      "tags": ["service", "singleton", "simulation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:loadFromWarehouse",
+      "type": "function",
+      "name": "loadFromWarehouse",
+      "filePath": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "lineRange": [65, 72],
+      "summary": "Clears in-memory quotes and rebuilds SimulatedQuote entries from CurrencyPairService.list and the latest 1s bar.",
+      "tags": ["service", "factory"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:stepAll",
+      "type": "function",
+      "name": "stepAll",
+      "filePath": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "lineRange": [79, 90],
+      "summary": "Advances every simulated quote one random-walk step and returns the resulting FxQuoteMessage list.",
+      "tags": ["event-handler", "simulation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:snapshot",
+      "type": "function",
+      "name": "snapshot",
+      "filePath": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "lineRange": [97, 107],
+      "summary": "Returns current bid/ask/mid messages for all loaded pairs without advancing the walk.",
+      "tags": ["service", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:lastOneSecondBar",
+      "type": "function",
+      "name": "lastOneSecondBar",
+      "filePath": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "lineRange": [125, 138],
+      "summary": "Queries the 1s cache namespace for the newest bar of a pair so SimulatedQuote can seed from bid close.",
+      "tags": ["utility", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "type": "file",
+      "name": "QuoteBus.java",
+      "filePath": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "summary": "Publishes live FX quotes and forming OHLC bars to Redis as JSON, writing last-value keys and broadcasting on dedicated channels.",
+      "tags": ["service", "event-handler", "serialization"],
+      "complexity": "moderate",
+      "languageNotes": "Uses StringRedisTemplate convertAndSend plus Jackson ObjectMapper for pub/sub payloads."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/QuoteBus.java:QuoteBus",
+      "type": "class",
+      "name": "QuoteBus",
+      "filePath": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "lineRange": [41, 148],
+      "summary": "Redis-backed bus that stores and publishes FxQuoteMessage and FormingBarMessage payloads for chart clients.",
+      "tags": ["service", "singleton", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publish",
+      "type": "function",
+      "name": "publish",
+      "filePath": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "lineRange": [73, 80],
+      "summary": "Writes the latest quote JSON under a pair key and publishes it on the quote channel.",
+      "tags": ["event-handler", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publishForming",
+      "type": "function",
+      "name": "publishForming",
+      "filePath": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "lineRange": [89, 111],
+      "summary": "Maps a cached bar plus namespace into FormingBarMessage, stores it by resolution/symbol, and publishes on the bar channel.",
+      "tags": ["event-handler", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/QuoteBus.java:key",
+      "type": "function",
+      "name": "key",
+      "filePath": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "lineRange": [119, 121],
+      "summary": "Builds the Redis last-quote key from a numeric currency-pair code.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/QuoteBus.java:formingKey",
+      "type": "function",
+      "name": "formingKey",
+      "filePath": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "lineRange": [130, 132],
+      "summary": "Builds the Redis forming-bar key from TradingView resolution and pair name.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "type": "file",
+      "name": "TickIngestWorker.java",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "summary": "Startup and scheduled worker that drives DemoTickEngine, upserts open bars across cache namespaces, and publishes quotes and forming bars on QuoteBus.",
+      "tags": ["service", "event-handler", "entry-point"],
+      "complexity": "complex",
+      "languageNotes": "Implements ApplicationRunner for seed-time snapshots and a scheduled tick after cache seed completes."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/TickIngestWorker.java:TickIngestWorker",
+      "type": "class",
+      "name": "TickIngestWorker",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "lineRange": [51, 226],
+      "summary": "Orchestrates demo tick ingest: snapshot on boot, then periodically step quotes and roll forming OHLC bars into store, repository, and Redis.",
+      "tags": ["service", "event-handler", "singleton"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "lineRange": [95, 101],
+      "summary": "ApplicationRunner hook that loads warehouse quotes and publishes initial quote and forming-bar snapshots.",
+      "tags": ["entry-point", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:tick",
+      "type": "function",
+      "name": "tick",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "lineRange": [108, 125],
+      "summary": "Scheduled cycle that waits for cache seed, steps all demo quotes, upserts open bars, and publishes each quote.",
+      "tags": ["event-handler", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:publishFormingSnapshotForPair",
+      "type": "function",
+      "name": "publishFormingSnapshotForPair",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "lineRange": [152, 171],
+      "summary": "Loads the latest cached bar per CacheNamespace for one pair and republishes it as a forming bar.",
+      "tags": ["event-handler", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:upsertOpenBars",
+      "type": "function",
+      "name": "upsertOpenBars",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "lineRange": [178, 191],
+      "summary": "Resolves the quote's pair and upserts the current open bar for every cache namespace.",
+      "tags": ["service", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:upsertOpenBar",
+      "type": "function",
+      "name": "upsertOpenBar",
+      "filePath": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "lineRange": [201, 225],
+      "summary": "Opens a new bar or applies the tick to the existing forming bar, then persists to repository and cache and publishes forming state.",
+      "tags": ["service", "data-model", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "type": "file",
+      "name": "CurrencyPairController.java",
+      "filePath": "src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "summary": "REST controller exposing the active FX currency-pair catalog used by chart symbol pickers.",
+      "tags": ["api-handler", "entry-point"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/controller/CurrencyPairController.java:CurrencyPairController",
+      "type": "class",
+      "name": "CurrencyPairController",
+      "filePath": "src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "lineRange": [38, 71],
+      "summary": "Authenticated GET handler that returns the priority-ordered currency pair list from CurrencyPairService.",
+      "tags": ["api-handler", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/CurrencyPairController.java:curpairs",
+      "type": "function",
+      "name": "curpairs",
+      "filePath": "src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "lineRange": [59, 70],
+      "summary": "GET /api/1.0/curpairs endpoint returning the full CurrencyPairDto list.",
+      "tags": ["api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "file",
+      "name": "CurrencyPairDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "summary": "API and cache-facing DTO carrying numeric pair code, display name, and sort priority for FX symbols.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple",
+      "languageNotes": "Java record used as the shared currency-pair transfer object."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java:CurrencyPairDto",
+      "type": "class",
+      "name": "CurrencyPairDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "lineRange": [33, 34],
+      "summary": "Immutable currency-pair record with curpairCd, curpairName, curpairDisplay, and priority.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "type": "file",
+      "name": "FormingBarMessage.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "summary": "Redis/WebSocket payload for the in-progress OHLC bar of a symbol at a given TradingView resolution.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple",
+      "languageNotes": "Java record describing bid/ask OHLC plus volume for a forming bar."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/FormingBarMessage.java:FormingBarMessage",
+      "type": "class",
+      "name": "FormingBarMessage",
+      "filePath": "src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "lineRange": [32, 47],
+      "summary": "Immutable forming-bar message with pair identity, resolution, period, timestamp, and bid/ask OHLC fields.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "type": "file",
+      "name": "FxQuoteMessage.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "summary": "Live tick payload with bid, ask, mid, and session high/low used by QuoteBus and the demo tick engine.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple",
+      "languageNotes": "Java record for Redis-published FX quotes."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java:FxQuoteMessage",
+      "type": "class",
+      "name": "FxQuoteMessage",
+      "filePath": "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "lineRange": [32, 40],
+      "summary": "Immutable quote record keyed by curpairCd with timestamped bid/ask/mid and high/low.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "type": "file",
+      "name": "Ccypair.java",
+      "filePath": "src/main/java/com/task/chart/entity/Ccypair.java",
+      "summary": "JPA entity for warehouse currency pairs, including Japanese name, rate unit, delete flag, and display priority.",
+      "tags": ["data-model", "type-definition"],
+      "complexity": "moderate",
+      "languageNotes": "JPA entity mapped to the CCYPAIR table with ACTIVE flag constant."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/entity/Ccypair.java:Ccypair",
+      "type": "class",
+      "name": "Ccypair",
+      "filePath": "src/main/java/com/task/chart/entity/Ccypair.java",
+      "lineRange": [36, 85],
+      "summary": "Persistent currency-pair row with code, JP label, rate unit, soft-delete flag, and priority used for catalog ordering.",
+      "tags": ["data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "type": "file",
+      "name": "CcypairRepository.java",
+      "filePath": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "summary": "Spring Data repository for active currency pairs: lookup by code, priority-ordered lists, and name search.",
+      "tags": ["data-model", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "class",
+      "name": "CcypairRepository",
+      "filePath": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "lineRange": [41, 96],
+      "summary": "JpaRepository interface querying Ccypair by delete flag, priority, and optional search text.",
+      "tags": ["data-model", "service"],
+      "complexity": "moderate",
+      "languageNotes": "Spring Data JPA derived queries plus a custom searchActive method."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "type": "file",
+      "name": "CurrencyPairService.java",
+      "filePath": "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "summary": "Service contract for listing active FX pairs and resolving one pair by numeric code.",
+      "tags": ["service", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "class",
+      "name": "CurrencyPairService",
+      "filePath": "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "lineRange": [37, 54],
+      "summary": "Interface exposing list() of CurrencyPairDto and find(curpairCd) for tick ingest and catalog consumers.",
+      "tags": ["service", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "type": "file",
+      "name": "CurrencyPairServiceImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "summary": "Loads active Ccypair rows, maps them to CurrencyPairDto, and formats six-letter codes as XXX/YYY display names.",
+      "tags": ["service", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:CurrencyPairServiceImpl",
+      "type": "class",
+      "name": "CurrencyPairServiceImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "lineRange": [41, 94],
+      "summary": "CurrencyPairService implementation backed by CcypairRepository with priority-ordered list and code lookup.",
+      "tags": ["service", "singleton"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:list",
+      "type": "function",
+      "name": "list",
+      "filePath": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "lineRange": [60, 65],
+      "summary": "Returns all active pairs ordered by priority, mapped to CurrencyPairDto.",
+      "tags": ["service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:find",
+      "type": "function",
+      "name": "find",
+      "filePath": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "lineRange": [73, 80],
+      "summary": "Finds an active pair by numeric code (priority) or returns empty when missing.",
+      "tags": ["service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "type": "file",
+      "name": "SymbolCatalogImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "summary": "Builds the TradingView symbol catalog from currency pairs and AppProperties exchange/type, then resolves symbols by ticker aliases.",
+      "tags": ["service", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "type": "class",
+      "name": "SymbolCatalogImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "lineRange": [41, 100],
+      "summary": "In-memory SymbolCatalog that maps each CurrencyPairDto to CachedSymbol with DemoMarket price scale.",
+      "tags": ["service", "singleton", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "type": "function",
+      "name": "SymbolCatalogImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "lineRange": [52, 59],
+      "summary": "Constructor that reads TradingView exchange/type from AppProperties and materializes CachedSymbol rows from pair list.",
+      "tags": ["factory", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:getAll",
+      "type": "function",
+      "name": "getAll",
+      "filePath": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "lineRange": [61, 64],
+      "summary": "Returns the full cached symbol list for datafeed search and config.",
+      "tags": ["service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:find",
+      "type": "function",
+      "name": "find",
+      "filePath": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "lineRange": [66, 77],
+      "summary": "Resolves a symbol name against ticker, full name, short name, provider symbol, pair code, or fx: prefix.",
+      "tags": ["service", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:fromPair",
+      "type": "function",
+      "name": "fromPair",
+      "filePath": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "lineRange": [79, 90],
+      "summary": "Maps a CurrencyPairDto plus exchange/type into a CachedSymbol including DemoMarket price scale.",
+      "tags": ["factory", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "type": "file",
+      "name": "DemoMarket.java",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "summary": "Static FX demo-market helpers for price scale, seed bid/mid, bar amplitude, spreads, and wicks, with JPY-quote vs majors branching.",
+      "tags": ["utility", "factory"],
+      "complexity": "moderate",
+      "languageNotes": "Non-instantiable utility class with a private constructor and yenQuote branching."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/util/DemoMarket.java:DemoMarket",
+      "type": "class",
+      "name": "DemoMarket",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [31, 116],
+      "summary": "Shared demo pricing constants and formulas used by tick simulation, mock bars, and symbol priceScale.",
+      "tags": ["utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:priceScale",
+      "type": "function",
+      "name": "priceScale",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [42, 44],
+      "summary": "Returns TradingView priceScale (100 vs 100000) depending on whether the quote currency is JPY.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedBid",
+      "type": "function",
+      "name": "seedBid",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [52, 54],
+      "summary": "Computes a starting bid as seed mid minus half spread for demo ticks.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedMid",
+      "type": "function",
+      "name": "seedMid",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [62, 71],
+      "summary": "Returns a hardcoded mid seed for well-known pairs, otherwise a yen-aware default.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:barAmplitude",
+      "type": "function",
+      "name": "barAmplitude",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [79, 81],
+      "summary": "Typical mock-bar body amplitude, larger for JPY-quoted pairs.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:halfSpread",
+      "type": "function",
+      "name": "halfSpread",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [89, 91],
+      "summary": "Half bid/ask spread used to derive seed bid and full spread.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:fullSpread",
+      "type": "function",
+      "name": "fullSpread",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [99, 101],
+      "summary": "Full bid/ask spread as twice halfSpread for SimulatedQuote ask derivation.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/util/DemoMarket.java:outerWick",
+      "type": "function",
+      "name": "outerWick",
+      "filePath": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "lineRange": [109, 111],
+      "summary": "Wick size for generated demo bars, scaled for JPY quotes.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "target": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "target": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "class:src/main/java/com/task/chart/cache/DemoTickEngine.java:DemoTickEngine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:loadFromWarehouse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:stepAll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:lastOneSecondBar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "class:src/main/java/com/task/chart/cache/QuoteBus.java:QuoteBus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publishForming",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:formingKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "class:src/main/java/com/task/chart/cache/TickIngestWorker.java:TickIngestWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:tick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:publishFormingSnapshotForPair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:upsertOpenBars",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:upsertOpenBar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "target": "class:src/main/java/com/task/chart/controller/CurrencyPairController.java:CurrencyPairController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "target": "function:src/main/java/com/task/chart/controller/CurrencyPairController.java:curpairs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java:CurrencyPairDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/FormingBarMessage.java:FormingBarMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java:FxQuoteMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "target": "class:src/main/java/com/task/chart/entity/Ccypair.java:Ccypair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:CurrencyPairServiceImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:find",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:getAll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:find",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:fromPair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "class:src/main/java/com/task/chart/util/DemoMarket.java:DemoMarket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:priceScale",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedBid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedMid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:barAmplitude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:halfSpread",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:fullSpread",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:outerWick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "class:src/main/java/com/task/chart/cache/DemoTickEngine.java:DemoTickEngine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:loadFromWarehouse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:stepAll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:snapshot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "class:src/main/java/com/task/chart/cache/QuoteBus.java:QuoteBus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publishForming",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:formingKey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "class:src/main/java/com/task/chart/cache/TickIngestWorker.java:TickIngestWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:tick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "target": "class:src/main/java/com/task/chart/controller/CurrencyPairController.java:CurrencyPairController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "target": "function:src/main/java/com/task/chart/controller/CurrencyPairController.java:curpairs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java:CurrencyPairDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/FormingBarMessage.java:FormingBarMessage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java:FxQuoteMessage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "target": "class:src/main/java/com/task/chart/entity/Ccypair.java:Ccypair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "target": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:CurrencyPairServiceImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:list",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:find",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:getAll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:find",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "class:src/main/java/com/task/chart/util/DemoMarket.java:DemoMarket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:priceScale",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedBid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedMid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:barAmplitude",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:halfSpread",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:fullSpread",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:outerWick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:CurrencyPairServiceImpl",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:SymbolCatalog",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:loadFromWarehouse",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/cache/DemoTickEngine.java:DemoTickEngine",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:fullSpread",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/cache/DemoTickEngine.java:DemoTickEngine",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedBid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publishForming",
+      "target": "class:src/main/java/com/task/chart/dto/response/FormingBarMessage.java:FormingBarMessage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:run",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:loadFromWarehouse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:tick",
+      "target": "function:src/main/java/com/task/chart/cache/DemoTickEngine.java:stepAll",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:tick",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:publishFormingSnapshotForPair",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publishForming",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:upsertOpenBars",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/TickIngestWorker.java:upsertOpenBar",
+      "target": "function:src/main/java/com/task/chart/cache/QuoteBus.java:publishForming",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/CurrencyPairController.java:curpairs",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:list",
+      "target": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java:find",
+      "target": "class:src/main/java/com/task/chart/repository/CcypairRepository.java:CcypairRepository",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "target": "class:src/main/java/com/task/chart/service/CurrencyPairService.java:CurrencyPairService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:SymbolCatalogImpl",
+      "target": "function:src/main/java/com/task/chart/config/AppProperties.java:getTradingView",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java:fromPair",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:priceScale",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "target": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

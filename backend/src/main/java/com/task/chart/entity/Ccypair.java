@@ -15,7 +15,8 @@ import jakarta.persistence.Table;
  * <p>This JPA row is the FX pair catalog for design docs 123 / 124 and extra {@code GET /curpairs}.
  * {@code ccypair_cd} is the 6-char PK ({@code USDJPY}). {@code priority} is the quote-stream id
  * exposed as {@code curpairCd}. {@code ChartDataServiceImpl}, {@code CurrencyPairServiceImpl}, and
- * {@code ChartLayoutServiceImpl} read it. It is never HTTP JSON and is not a bar warehouse row.
+ * {@code ChartLayoutServiceImpl} read it. {@link #ACTIVE}{@code = 0} is the live-row flag.
+ * There are no SQL foreign keys — pair existence is enforced in Java. Never HTTP JSON.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

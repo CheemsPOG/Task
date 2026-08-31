@@ -1,0 +1,818 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 9,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 9,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 9,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 146,
+      "nonEmptyLines": 133,
+      "functions": [
+        {
+          "name": "IndicatorTemplateController",
+          "startLine": 60,
+          "endLine": 62,
+          "params": [
+            "indicatorTemplateService"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 69,
+          "endLine": 79,
+          "params": []
+        },
+        {
+          "name": "upsert",
+          "startLine": 87,
+          "endLine": 103,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 111,
+          "endLine": 124,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "delete",
+          "startLine": 132,
+          "endLine": 145,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "IndicatorTemplateController",
+          "startLine": 48,
+          "endLine": 146,
+          "methods": [
+            "IndicatorTemplateController",
+            "list",
+            "upsert",
+            "get",
+            "delete"
+          ],
+          "properties": [
+            "indicatorTemplateService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "IndicatorTemplateController",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "upsert",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "delete",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "IndicatorTemplateController",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "list",
+          "callee": "indicatorTemplateService.list",
+          "lineNumber": 78
+        },
+        {
+          "caller": "upsert",
+          "callee": "indicatorTemplateService.upsert",
+          "lineNumber": 102
+        },
+        {
+          "caller": "get",
+          "callee": "indicatorTemplateService.get",
+          "lineNumber": 123
+        },
+        {
+          "caller": "delete",
+          "callee": "indicatorTemplateService.delete",
+          "lineNumber": 144
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 6,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 34,
+      "classes": [
+        {
+          "name": "UpsertIndicatorTemplateRequest",
+          "startLine": 34,
+          "endLine": 37,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "UpsertIndicatorTemplateRequest",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "IndicatorTemplateDto",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "IndicatorTemplateDto",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "IndicatorTemplateListItemDto",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "IndicatorTemplateListItemDto",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "SystemDatetimeResponse",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SystemDatetimeResponse",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 113,
+      "nonEmptyLines": 97,
+      "functions": [
+        {
+          "name": "TvIndicatorTemplate",
+          "startLine": 65,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "TvIndicatorTemplate",
+          "startLine": 76,
+          "endLine": 81,
+          "params": [
+            "customerNo",
+            "name",
+            "content",
+            "updatedAt"
+          ]
+        },
+        {
+          "name": "getId",
+          "startLine": 83,
+          "endLine": 85,
+          "params": []
+        },
+        {
+          "name": "getCustomerNo",
+          "startLine": 87,
+          "endLine": 89,
+          "params": []
+        },
+        {
+          "name": "getName",
+          "startLine": 91,
+          "endLine": 93,
+          "params": []
+        },
+        {
+          "name": "getContent",
+          "startLine": 95,
+          "endLine": 97,
+          "params": []
+        },
+        {
+          "name": "getUpdatedAt",
+          "startLine": 99,
+          "endLine": 101,
+          "params": []
+        },
+        {
+          "name": "applyContent",
+          "startLine": 109,
+          "endLine": 112,
+          "params": [
+            "content",
+            "updatedAt"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TvIndicatorTemplate",
+          "startLine": 40,
+          "endLine": 113,
+          "methods": [
+            "TvIndicatorTemplate",
+            "TvIndicatorTemplate",
+            "getId",
+            "getCustomerNo",
+            "getName",
+            "getContent",
+            "getUpdatedAt",
+            "applyContent"
+          ],
+          "properties": [
+            "id",
+            "customerNo",
+            "name",
+            "content",
+            "updatedAt"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvIndicatorTemplate",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "getId",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "getCustomerNo",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "getName",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "getContent",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "getUpdatedAt",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "applyContent",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "TvIndicatorTemplate",
+          "line": 40,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 48,
+      "classes": [
+        {
+          "name": "TvIndicatorTemplateRepository",
+          "startLine": 35,
+          "endLine": 53,
+          "methods": [
+            "findByCustomerNoOrderByNameAsc",
+            "findByCustomerNoAndName"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvIndicatorTemplateRepository",
+          "line": 35,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 71,
+      "nonEmptyLines": 64,
+      "classes": [
+        {
+          "name": "IndicatorTemplateService",
+          "startLine": 39,
+          "endLine": 71,
+          "methods": [
+            "list",
+            "upsert",
+            "get",
+            "delete"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "IndicatorTemplateService",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 147,
+      "nonEmptyLines": 127,
+      "functions": [
+        {
+          "name": "IndicatorTemplateServiceImpl",
+          "startLine": 60,
+          "endLine": 62,
+          "params": [
+            "tvIndicatorTemplateRepository"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 64,
+          "endLine": 71,
+          "params": []
+        },
+        {
+          "name": "upsert",
+          "startLine": 73,
+          "endLine": 102,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 104,
+          "endLine": 109,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "delete",
+          "startLine": 111,
+          "endLine": 117,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "toListItem",
+          "startLine": 119,
+          "endLine": 121,
+          "params": [
+            "template"
+          ]
+        },
+        {
+          "name": "requireOwnedTemplate",
+          "startLine": 123,
+          "endLine": 133,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "requireTemplateName",
+          "startLine": 135,
+          "endLine": 146,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "IndicatorTemplateServiceImpl",
+          "startLine": 48,
+          "endLine": 147,
+          "methods": [
+            "IndicatorTemplateServiceImpl",
+            "list",
+            "upsert",
+            "get",
+            "delete",
+            "toListItem",
+            "requireOwnedTemplate",
+            "requireTemplateName"
+          ],
+          "properties": [
+            "NAME_MAX_LENGTH",
+            "tvIndicatorTemplateRepository"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "IndicatorTemplateServiceImpl",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "upsert",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "delete",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "IndicatorTemplateServiceImpl",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "list",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 67
+        },
+        {
+          "caller": "list",
+          "callee": "tvIndicatorTemplateRepository.findByCustomerNoOrderByNameAsc",
+          "lineNumber": 69
+        },
+        {
+          "caller": "list",
+          "callee": "templates.stream().map(IndicatorTemplateServiceImpl::toListItem).toList",
+          "lineNumber": 70
+        },
+        {
+          "caller": "list",
+          "callee": "templates.stream().map",
+          "lineNumber": 70
+        },
+        {
+          "caller": "list",
+          "callee": "templates.stream",
+          "lineNumber": 70
+        },
+        {
+          "caller": "upsert",
+          "callee": "new ValidationException",
+          "lineNumber": 77
+        },
+        {
+          "caller": "upsert",
+          "callee": "requireTemplateName",
+          "lineNumber": 80
+        },
+        {
+          "caller": "upsert",
+          "callee": "request.name",
+          "lineNumber": 80
+        },
+        {
+          "caller": "upsert",
+          "callee": "request.content",
+          "lineNumber": 81
+        },
+        {
+          "caller": "upsert",
+          "callee": "content.isBlank",
+          "lineNumber": 82
+        },
+        {
+          "caller": "upsert",
+          "callee": "new ValidationException",
+          "lineNumber": 83
+        },
+        {
+          "caller": "upsert",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 86
+        },
+        {
+          "caller": "upsert",
+          "callee": "Instant.now",
+          "lineNumber": 87
+        },
+        {
+          "caller": "upsert",
+          "callee": "tvIndicatorTemplateRepository.findByCustomerNoAndName",
+          "lineNumber": 89
+        },
+        {
+          "caller": "upsert",
+          "callee": "found.isPresent",
+          "lineNumber": 93
+        },
+        {
+          "caller": "upsert",
+          "callee": "found.get",
+          "lineNumber": 94
+        },
+        {
+          "caller": "upsert",
+          "callee": "row.applyContent",
+          "lineNumber": 95
+        },
+        {
+          "caller": "upsert",
+          "callee": "tvIndicatorTemplateRepository.save",
+          "lineNumber": 96
+        },
+        {
+          "caller": "upsert",
+          "callee": "tvIndicatorTemplateRepository.save",
+          "lineNumber": 98
+        },
+        {
+          "caller": "upsert",
+          "callee": "new TvIndicatorTemplate",
+          "lineNumber": 98
+        },
+        {
+          "caller": "upsert",
+          "callee": "new SystemDatetimeResponse",
+          "lineNumber": 101
+        },
+        {
+          "caller": "upsert",
+          "callee": "saved.getUpdatedAt().getEpochSecond",
+          "lineNumber": 101
+        },
+        {
+          "caller": "upsert",
+          "callee": "saved.getUpdatedAt",
+          "lineNumber": 101
+        },
+        {
+          "caller": "get",
+          "callee": "requireOwnedTemplate",
+          "lineNumber": 107
+        },
+        {
+          "caller": "get",
+          "callee": "new IndicatorTemplateDto",
+          "lineNumber": 108
+        },
+        {
+          "caller": "get",
+          "callee": "template.getName",
+          "lineNumber": 108
+        },
+        {
+          "caller": "get",
+          "callee": "template.getContent",
+          "lineNumber": 108
+        },
+        {
+          "caller": "delete",
+          "callee": "requireOwnedTemplate",
+          "lineNumber": 114
+        },
+        {
+          "caller": "delete",
+          "callee": "tvIndicatorTemplateRepository.delete",
+          "lineNumber": 115
+        },
+        {
+          "caller": "delete",
+          "callee": "new SystemDatetimeResponse",
+          "lineNumber": 116
+        },
+        {
+          "caller": "delete",
+          "callee": "Instant.now().getEpochSecond",
+          "lineNumber": 116
+        },
+        {
+          "caller": "delete",
+          "callee": "Instant.now",
+          "lineNumber": 116
+        },
+        {
+          "caller": "toListItem",
+          "callee": "new IndicatorTemplateListItemDto",
+          "lineNumber": 120
+        },
+        {
+          "caller": "toListItem",
+          "callee": "template.getName",
+          "lineNumber": 120
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "requireTemplateName",
+          "lineNumber": 124
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 125
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "tvIndicatorTemplateRepository.findByCustomerNoAndName",
+          "lineNumber": 127
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "found.isEmpty",
+          "lineNumber": 128
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "new ResourceNotFoundException",
+          "lineNumber": 129
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "found.get",
+          "lineNumber": 132
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "name.isBlank",
+          "lineNumber": 136
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "new ValidationException",
+          "lineNumber": 137
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "name.trim",
+          "lineNumber": 140
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "trimmed.length",
+          "lineNumber": 141
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "new ValidationException",
+          "lineNumber": 142
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 6,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    }
+  ]
+}

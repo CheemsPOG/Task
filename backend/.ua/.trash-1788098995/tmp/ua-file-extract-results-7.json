@@ -1,0 +1,789 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 8,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 145,
+      "nonEmptyLines": 132,
+      "functions": [
+        {
+          "name": "ChartTemplateController",
+          "startLine": 59,
+          "endLine": 61,
+          "params": [
+            "chartTemplateService"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 68,
+          "endLine": 78,
+          "params": []
+        },
+        {
+          "name": "upsert",
+          "startLine": 86,
+          "endLine": 102,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 110,
+          "endLine": 123,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "delete",
+          "startLine": 131,
+          "endLine": 144,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartTemplateController",
+          "startLine": 47,
+          "endLine": 145,
+          "methods": [
+            "ChartTemplateController",
+            "list",
+            "upsert",
+            "get",
+            "delete"
+          ],
+          "properties": [
+            "chartTemplateService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartTemplateController",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "upsert",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "delete",
+          "line": 131,
+          "isDefault": false
+        },
+        {
+          "name": "ChartTemplateController",
+          "line": 47,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "list",
+          "callee": "chartTemplateService.list",
+          "lineNumber": 77
+        },
+        {
+          "caller": "upsert",
+          "callee": "chartTemplateService.upsert",
+          "lineNumber": 101
+        },
+        {
+          "caller": "get",
+          "callee": "chartTemplateService.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "delete",
+          "callee": "chartTemplateService.delete",
+          "lineNumber": 143
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 6,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 34,
+      "classes": [
+        {
+          "name": "UpsertChartTemplateRequest",
+          "startLine": 34,
+          "endLine": 37,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "UpsertChartTemplateRequest",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "ChartTemplateDto",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartTemplateDto",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "ChartTemplateListItemDto",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartTemplateListItemDto",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 113,
+      "nonEmptyLines": 97,
+      "functions": [
+        {
+          "name": "TvChartTemplate",
+          "startLine": 65,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "TvChartTemplate",
+          "startLine": 76,
+          "endLine": 81,
+          "params": [
+            "customerNo",
+            "name",
+            "content",
+            "updatedAt"
+          ]
+        },
+        {
+          "name": "getId",
+          "startLine": 83,
+          "endLine": 85,
+          "params": []
+        },
+        {
+          "name": "getCustomerNo",
+          "startLine": 87,
+          "endLine": 89,
+          "params": []
+        },
+        {
+          "name": "getName",
+          "startLine": 91,
+          "endLine": 93,
+          "params": []
+        },
+        {
+          "name": "getContent",
+          "startLine": 95,
+          "endLine": 97,
+          "params": []
+        },
+        {
+          "name": "getUpdatedAt",
+          "startLine": 99,
+          "endLine": 101,
+          "params": []
+        },
+        {
+          "name": "applyContent",
+          "startLine": 109,
+          "endLine": 112,
+          "params": [
+            "content",
+            "updatedAt"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TvChartTemplate",
+          "startLine": 40,
+          "endLine": 113,
+          "methods": [
+            "TvChartTemplate",
+            "TvChartTemplate",
+            "getId",
+            "getCustomerNo",
+            "getName",
+            "getContent",
+            "getUpdatedAt",
+            "applyContent"
+          ],
+          "properties": [
+            "id",
+            "customerNo",
+            "name",
+            "content",
+            "updatedAt"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvChartTemplate",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "getId",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "getCustomerNo",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "getName",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "getContent",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "getUpdatedAt",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "applyContent",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "TvChartTemplate",
+          "line": 40,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 48,
+      "classes": [
+        {
+          "name": "TvChartTemplateRepository",
+          "startLine": 35,
+          "endLine": 53,
+          "methods": [
+            "findByCustomerNoOrderByNameAsc",
+            "findByCustomerNoAndName"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TvChartTemplateRepository",
+          "line": 35,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 62,
+      "classes": [
+        {
+          "name": "ChartTemplateService",
+          "startLine": 37,
+          "endLine": 69,
+          "methods": [
+            "list",
+            "upsert",
+            "get",
+            "delete"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartTemplateService",
+          "line": 37,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 144,
+      "nonEmptyLines": 124,
+      "functions": [
+        {
+          "name": "ChartTemplateServiceImpl",
+          "startLine": 59,
+          "endLine": 61,
+          "params": [
+            "tvChartTemplateRepository"
+          ]
+        },
+        {
+          "name": "list",
+          "startLine": 63,
+          "endLine": 69,
+          "params": []
+        },
+        {
+          "name": "upsert",
+          "startLine": 71,
+          "endLine": 99,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 101,
+          "endLine": 106,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "delete",
+          "startLine": 108,
+          "endLine": 114,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "toListItem",
+          "startLine": 116,
+          "endLine": 118,
+          "params": [
+            "template"
+          ]
+        },
+        {
+          "name": "requireOwnedTemplate",
+          "startLine": 120,
+          "endLine": 130,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "requireTemplateName",
+          "startLine": 132,
+          "endLine": 143,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartTemplateServiceImpl",
+          "startLine": 47,
+          "endLine": 144,
+          "methods": [
+            "ChartTemplateServiceImpl",
+            "list",
+            "upsert",
+            "get",
+            "delete",
+            "toListItem",
+            "requireOwnedTemplate",
+            "requireTemplateName"
+          ],
+          "properties": [
+            "NAME_MAX_LENGTH",
+            "tvChartTemplateRepository"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartTemplateServiceImpl",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "list",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "upsert",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "delete",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "ChartTemplateServiceImpl",
+          "line": 47,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "list",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 66
+        },
+        {
+          "caller": "list",
+          "callee": "tvChartTemplateRepository.findByCustomerNoOrderByNameAsc",
+          "lineNumber": 67
+        },
+        {
+          "caller": "list",
+          "callee": "templates.stream().map(ChartTemplateServiceImpl::toListItem).toList",
+          "lineNumber": 68
+        },
+        {
+          "caller": "list",
+          "callee": "templates.stream().map",
+          "lineNumber": 68
+        },
+        {
+          "caller": "list",
+          "callee": "templates.stream",
+          "lineNumber": 68
+        },
+        {
+          "caller": "upsert",
+          "callee": "new ValidationException",
+          "lineNumber": 75
+        },
+        {
+          "caller": "upsert",
+          "callee": "requireTemplateName",
+          "lineNumber": 78
+        },
+        {
+          "caller": "upsert",
+          "callee": "request.name",
+          "lineNumber": 78
+        },
+        {
+          "caller": "upsert",
+          "callee": "request.content",
+          "lineNumber": 79
+        },
+        {
+          "caller": "upsert",
+          "callee": "content.isBlank",
+          "lineNumber": 80
+        },
+        {
+          "caller": "upsert",
+          "callee": "new ValidationException",
+          "lineNumber": 81
+        },
+        {
+          "caller": "upsert",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 84
+        },
+        {
+          "caller": "upsert",
+          "callee": "Instant.now",
+          "lineNumber": 85
+        },
+        {
+          "caller": "upsert",
+          "callee": "tvChartTemplateRepository.findByCustomerNoAndName",
+          "lineNumber": 86
+        },
+        {
+          "caller": "upsert",
+          "callee": "found.isPresent",
+          "lineNumber": 90
+        },
+        {
+          "caller": "upsert",
+          "callee": "found.get",
+          "lineNumber": 91
+        },
+        {
+          "caller": "upsert",
+          "callee": "row.applyContent",
+          "lineNumber": 92
+        },
+        {
+          "caller": "upsert",
+          "callee": "tvChartTemplateRepository.save",
+          "lineNumber": 93
+        },
+        {
+          "caller": "upsert",
+          "callee": "tvChartTemplateRepository.save",
+          "lineNumber": 95
+        },
+        {
+          "caller": "upsert",
+          "callee": "new TvChartTemplate",
+          "lineNumber": 95
+        },
+        {
+          "caller": "upsert",
+          "callee": "new SystemDatetimeResponse",
+          "lineNumber": 98
+        },
+        {
+          "caller": "upsert",
+          "callee": "saved.getUpdatedAt().getEpochSecond",
+          "lineNumber": 98
+        },
+        {
+          "caller": "upsert",
+          "callee": "saved.getUpdatedAt",
+          "lineNumber": 98
+        },
+        {
+          "caller": "get",
+          "callee": "requireOwnedTemplate",
+          "lineNumber": 104
+        },
+        {
+          "caller": "get",
+          "callee": "new ChartTemplateDto",
+          "lineNumber": 105
+        },
+        {
+          "caller": "get",
+          "callee": "template.getName",
+          "lineNumber": 105
+        },
+        {
+          "caller": "get",
+          "callee": "template.getContent",
+          "lineNumber": 105
+        },
+        {
+          "caller": "delete",
+          "callee": "requireOwnedTemplate",
+          "lineNumber": 111
+        },
+        {
+          "caller": "delete",
+          "callee": "tvChartTemplateRepository.delete",
+          "lineNumber": 112
+        },
+        {
+          "caller": "delete",
+          "callee": "new SystemDatetimeResponse",
+          "lineNumber": 113
+        },
+        {
+          "caller": "delete",
+          "callee": "Instant.now().getEpochSecond",
+          "lineNumber": 113
+        },
+        {
+          "caller": "delete",
+          "callee": "Instant.now",
+          "lineNumber": 113
+        },
+        {
+          "caller": "toListItem",
+          "callee": "new ChartTemplateListItemDto",
+          "lineNumber": 117
+        },
+        {
+          "caller": "toListItem",
+          "callee": "template.getName",
+          "lineNumber": 117
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "requireTemplateName",
+          "lineNumber": 121
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "CustomerContext.requireCustomerNo",
+          "lineNumber": 122
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "tvChartTemplateRepository.findByCustomerNoAndName",
+          "lineNumber": 124
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "found.isEmpty",
+          "lineNumber": 125
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "new ResourceNotFoundException",
+          "lineNumber": 126
+        },
+        {
+          "caller": "requireOwnedTemplate",
+          "callee": "found.get",
+          "lineNumber": 129
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "name.isBlank",
+          "lineNumber": 133
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "new ValidationException",
+          "lineNumber": 134
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "name.trim",
+          "lineNumber": 137
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "trimmed.length",
+          "lineNumber": 138
+        },
+        {
+          "caller": "requireTemplateName",
+          "callee": "new ValidationException",
+          "lineNumber": 139
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 6,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    }
+  ]
+}

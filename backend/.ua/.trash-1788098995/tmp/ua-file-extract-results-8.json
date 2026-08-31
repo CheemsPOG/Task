@@ -1,0 +1,1199 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 7,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 181,
+      "nonEmptyLines": 164,
+      "functions": [
+        {
+          "name": "toBarDto",
+          "startLine": 52,
+          "endLine": 63,
+          "params": [
+            "bidAsk"
+          ]
+        },
+        {
+          "name": "open",
+          "startLine": 71,
+          "endLine": 78,
+          "params": [
+            "side"
+          ]
+        },
+        {
+          "name": "high",
+          "startLine": 86,
+          "endLine": 93,
+          "params": [
+            "side"
+          ]
+        },
+        {
+          "name": "low",
+          "startLine": 101,
+          "endLine": 108,
+          "params": [
+            "side"
+          ]
+        },
+        {
+          "name": "close",
+          "startLine": 116,
+          "endLine": 123,
+          "params": [
+            "side"
+          ]
+        },
+        {
+          "name": "openFromTick",
+          "startLine": 134,
+          "endLine": 147,
+          "params": [
+            "curpairCd",
+            "chartDatetimeSec",
+            "bid",
+            "ask"
+          ]
+        },
+        {
+          "name": "applyTick",
+          "startLine": 156,
+          "endLine": 169,
+          "params": [
+            "bid",
+            "ask"
+          ]
+        },
+        {
+          "name": "mid",
+          "startLine": 178,
+          "endLine": 180,
+          "params": [
+            "bid",
+            "ask"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "CachedChartBar",
+          "startLine": 33,
+          "endLine": 181,
+          "methods": [
+            "toBarDto",
+            "open",
+            "high",
+            "low",
+            "close",
+            "openFromTick",
+            "applyTick",
+            "mid"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "toBarDto",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "open",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "high",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "low",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "close",
+          "line": 116,
+          "isDefault": false
+        },
+        {
+          "name": "openFromTick",
+          "line": 134,
+          "isDefault": false
+        },
+        {
+          "name": "applyTick",
+          "line": 156,
+          "isDefault": false
+        },
+        {
+          "name": "CachedChartBar",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toBarDto",
+          "callee": "new BarDto",
+          "lineNumber": 56
+        },
+        {
+          "caller": "toBarDto",
+          "callee": "open",
+          "lineNumber": 58
+        },
+        {
+          "caller": "toBarDto",
+          "callee": "high",
+          "lineNumber": 59
+        },
+        {
+          "caller": "toBarDto",
+          "callee": "low",
+          "lineNumber": 60
+        },
+        {
+          "caller": "toBarDto",
+          "callee": "close",
+          "lineNumber": 61
+        },
+        {
+          "caller": "open",
+          "callee": "mid",
+          "lineNumber": 76
+        },
+        {
+          "caller": "high",
+          "callee": "mid",
+          "lineNumber": 91
+        },
+        {
+          "caller": "low",
+          "callee": "mid",
+          "lineNumber": 106
+        },
+        {
+          "caller": "close",
+          "callee": "mid",
+          "lineNumber": 121
+        },
+        {
+          "caller": "openFromTick",
+          "callee": "new CachedChartBar",
+          "lineNumber": 135
+        },
+        {
+          "caller": "applyTick",
+          "callee": "new CachedChartBar",
+          "lineNumber": 157
+        },
+        {
+          "caller": "applyTick",
+          "callee": "Math.max",
+          "lineNumber": 161
+        },
+        {
+          "caller": "applyTick",
+          "callee": "Math.min",
+          "lineNumber": 162
+        },
+        {
+          "caller": "applyTick",
+          "callee": "Math.max",
+          "lineNumber": 165
+        },
+        {
+          "caller": "applyTick",
+          "callee": "Math.min",
+          "lineNumber": 166
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 8,
+        "functionCount": 8,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 173,
+      "nonEmptyLines": 153,
+      "functions": [
+        {
+          "name": "ChartCacheWriter",
+          "startLine": 65,
+          "endLine": 74,
+          "params": [
+            "chartBarRepository",
+            "chartCacheStore",
+            "symbolCatalog",
+            "mockBarGenerator"
+          ]
+        },
+        {
+          "name": "run",
+          "startLine": 81,
+          "endLine": 86,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "isSeedComplete",
+          "startLine": 93,
+          "endLine": 95,
+          "params": []
+        },
+        {
+          "name": "seedAll",
+          "startLine": 100,
+          "endLine": 123,
+          "params": []
+        },
+        {
+          "name": "buildSeries",
+          "startLine": 134,
+          "endLine": 152,
+          "params": [
+            "symbol",
+            "namespace",
+            "toMs",
+            "depth"
+          ]
+        },
+        {
+          "name": "seedDepth",
+          "startLine": 160,
+          "endLine": 172,
+          "params": [
+            "namespace"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartCacheWriter",
+          "startLine": 45,
+          "endLine": 173,
+          "methods": [
+            "ChartCacheWriter",
+            "run",
+            "isSeedComplete",
+            "seedAll",
+            "buildSeries",
+            "seedDepth"
+          ],
+          "properties": [
+            "log",
+            "chartBarRepository",
+            "chartCacheStore",
+            "symbolCatalog",
+            "mockBarGenerator",
+            "seedComplete"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartCacheWriter",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "run",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "isSeedComplete",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "seedAll",
+          "line": 100,
+          "isDefault": false
+        },
+        {
+          "name": "ChartCacheWriter",
+          "line": 45,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "run",
+          "callee": "seedAll",
+          "lineNumber": 84
+        },
+        {
+          "caller": "seedAll",
+          "callee": "Instant.now().toEpochMilli",
+          "lineNumber": 102
+        },
+        {
+          "caller": "seedAll",
+          "callee": "Instant.now",
+          "lineNumber": 102
+        },
+        {
+          "caller": "seedAll",
+          "callee": "symbolCatalog.getAll",
+          "lineNumber": 103
+        },
+        {
+          "caller": "seedAll",
+          "callee": "CacheNamespace.values",
+          "lineNumber": 107
+        },
+        {
+          "caller": "seedAll",
+          "callee": "seedDepth",
+          "lineNumber": 108
+        },
+        {
+          "caller": "seedAll",
+          "callee": "buildSeries",
+          "lineNumber": 111
+        },
+        {
+          "caller": "seedAll",
+          "callee": "chartBarRepository.replacePair",
+          "lineNumber": 112
+        },
+        {
+          "caller": "seedAll",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 112
+        },
+        {
+          "caller": "seedAll",
+          "callee": "chartCacheStore.replacePair",
+          "lineNumber": 113
+        },
+        {
+          "caller": "seedAll",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 113
+        },
+        {
+          "caller": "seedAll",
+          "callee": "bars.size",
+          "lineNumber": 114
+        },
+        {
+          "caller": "seedAll",
+          "callee": "log.info",
+          "lineNumber": 118
+        },
+        {
+          "caller": "seedAll",
+          "callee": "CacheNamespace.values",
+          "lineNumber": 121
+        },
+        {
+          "caller": "seedAll",
+          "callee": "symbols.size",
+          "lineNumber": 122
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "namespace.periodMillis",
+          "lineNumber": 140
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "Math.floorDiv",
+          "lineNumber": 141
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "new java.util.LinkedHashMap<>",
+          "lineNumber": 142
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "bySec.size",
+          "lineNumber": 145
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "mockBarGenerator.peachBarAt",
+          "lineNumber": 146
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "bySec.putIfAbsent",
+          "lineNumber": 147
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 147
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "new ArrayList<>",
+          "lineNumber": 151
+        },
+        {
+          "caller": "buildSeries",
+          "callee": "bySec.values",
+          "lineNumber": 151
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 5,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 77,
+      "nonEmptyLines": 70,
+      "functions": [
+        {
+          "name": "from",
+          "startLine": 45,
+          "endLine": 56,
+          "params": [
+            "raw"
+          ]
+        },
+        {
+          "name": "fromBidAsk",
+          "startLine": 65,
+          "endLine": 76,
+          "params": [
+            "raw"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "PriceComponent",
+          "startLine": 34,
+          "endLine": 77,
+          "methods": [
+            "from",
+            "fromBidAsk"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "from",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "fromBidAsk",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "PriceComponent",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "from",
+          "callee": "raw.isBlank",
+          "lineNumber": 46
+        },
+        {
+          "caller": "from",
+          "callee": "raw.trim().toLowerCase",
+          "lineNumber": 51
+        },
+        {
+          "caller": "from",
+          "callee": "raw.trim",
+          "lineNumber": 51
+        },
+        {
+          "caller": "fromBidAsk",
+          "callee": "raw.isBlank",
+          "lineNumber": 66
+        },
+        {
+          "caller": "fromBidAsk",
+          "callee": "new IllegalArgumentException",
+          "lineNumber": 67
+        },
+        {
+          "caller": "fromBidAsk",
+          "callee": "raw.trim().toUpperCase",
+          "lineNumber": 70
+        },
+        {
+          "caller": "fromBidAsk",
+          "callee": "raw.trim",
+          "lineNumber": 70
+        },
+        {
+          "caller": "fromBidAsk",
+          "callee": "new IllegalArgumentException",
+          "lineNumber": 74
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 38,
+      "classes": [
+        {
+          "name": "BarDto",
+          "startLine": 33,
+          "endLine": 40,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "BarDto",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 99,
+      "nonEmptyLines": 91,
+      "classes": [
+        {
+          "name": "MockBarGenerator",
+          "startLine": 39,
+          "endLine": 99,
+          "methods": [
+            "generate",
+            "generate",
+            "barAt",
+            "barAt",
+            "peachBarAt"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MockBarGenerator",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 56,
+      "classes": [
+        {
+          "name": "SymbolCatalog",
+          "startLine": 34,
+          "endLine": 62,
+          "methods": [
+            "getAll",
+            "find"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SymbolCatalog",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 173,
+      "nonEmptyLines": 157,
+      "functions": [
+        {
+          "name": "generate",
+          "startLine": 45,
+          "endLine": 48,
+          "params": [
+            "symbol",
+            "periodMs",
+            "toMs",
+            "countBack"
+          ]
+        },
+        {
+          "name": "generate",
+          "startLine": 50,
+          "endLine": 71,
+          "params": [
+            "symbol",
+            "periodMs",
+            "toMs",
+            "countBack",
+            "price"
+          ]
+        },
+        {
+          "name": "barAt",
+          "startLine": 73,
+          "endLine": 76,
+          "params": [
+            "symbol",
+            "periodMs",
+            "time"
+          ]
+        },
+        {
+          "name": "barAt",
+          "startLine": 78,
+          "endLine": 109,
+          "params": [
+            "symbol",
+            "periodMs",
+            "time",
+            "price"
+          ]
+        },
+        {
+          "name": "peachBarAt",
+          "startLine": 111,
+          "endLine": 127,
+          "params": [
+            "symbol",
+            "periodMs",
+            "timeMs"
+          ]
+        },
+        {
+          "name": "priceAt",
+          "startLine": 129,
+          "endLine": 141,
+          "params": [
+            "symbol",
+            "periodMs",
+            "time",
+            "price"
+          ]
+        },
+        {
+          "name": "bidAt",
+          "startLine": 143,
+          "endLine": 152,
+          "params": [
+            "symbol",
+            "periodMs",
+            "time"
+          ]
+        },
+        {
+          "name": "max",
+          "startLine": 154,
+          "endLine": 156,
+          "params": [
+            "a",
+            "b",
+            "c",
+            "d"
+          ]
+        },
+        {
+          "name": "min",
+          "startLine": 158,
+          "endLine": 160,
+          "params": [
+            "a",
+            "b",
+            "c",
+            "d"
+          ]
+        },
+        {
+          "name": "round",
+          "startLine": 162,
+          "endLine": 164,
+          "params": [
+            "value",
+            "priceScale"
+          ]
+        },
+        {
+          "name": "mix64",
+          "startLine": 166,
+          "endLine": 172,
+          "params": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "MockBarGeneratorImpl",
+          "startLine": 42,
+          "endLine": 173,
+          "methods": [
+            "generate",
+            "generate",
+            "barAt",
+            "barAt",
+            "peachBarAt",
+            "priceAt",
+            "bidAt",
+            "max",
+            "min",
+            "round",
+            "mix64"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "generate",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "generate",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "barAt",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "barAt",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "peachBarAt",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "MockBarGeneratorImpl",
+          "line": 42,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "generate",
+          "callee": "generate",
+          "lineNumber": 47
+        },
+        {
+          "caller": "generate",
+          "callee": "Math.floorDiv",
+          "lineNumber": 57
+        },
+        {
+          "caller": "generate",
+          "callee": "new ArrayList<>",
+          "lineNumber": 58
+        },
+        {
+          "caller": "generate",
+          "callee": "barAt",
+          "lineNumber": 65
+        },
+        {
+          "caller": "generate",
+          "callee": "bar.time",
+          "lineNumber": 66
+        },
+        {
+          "caller": "generate",
+          "callee": "bars.add",
+          "lineNumber": 67
+        },
+        {
+          "caller": "barAt",
+          "callee": "barAt",
+          "lineNumber": 75
+        },
+        {
+          "caller": "barAt",
+          "callee": "symbol.priceScale",
+          "lineNumber": 81
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 82
+        },
+        {
+          "caller": "barAt",
+          "callee": "priceAt",
+          "lineNumber": 82
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 83
+        },
+        {
+          "caller": "barAt",
+          "callee": "priceAt",
+          "lineNumber": 83
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 84
+        },
+        {
+          "caller": "barAt",
+          "callee": "priceAt",
+          "lineNumber": 84
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 85
+        },
+        {
+          "caller": "barAt",
+          "callee": "priceAt",
+          "lineNumber": 85
+        },
+        {
+          "caller": "barAt",
+          "callee": "max",
+          "lineNumber": 86
+        },
+        {
+          "caller": "barAt",
+          "callee": "min",
+          "lineNumber": 87
+        },
+        {
+          "caller": "barAt",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 88
+        },
+        {
+          "caller": "barAt",
+          "callee": "mix64",
+          "lineNumber": 89
+        },
+        {
+          "caller": "barAt",
+          "callee": "symbol.ticker().hashCode",
+          "lineNumber": 89
+        },
+        {
+          "caller": "barAt",
+          "callee": "symbol.ticker",
+          "lineNumber": 89
+        },
+        {
+          "caller": "barAt",
+          "callee": "component.ordinal",
+          "lineNumber": 89
+        },
+        {
+          "caller": "barAt",
+          "callee": "DemoMarket.barAmplitude",
+          "lineNumber": 90
+        },
+        {
+          "caller": "barAt",
+          "callee": "DemoMarket.outerWick",
+          "lineNumber": 91
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 95
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 96
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 98
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 99
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 101
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 102
+        },
+        {
+          "caller": "barAt",
+          "callee": "round",
+          "lineNumber": 105
+        },
+        {
+          "caller": "barAt",
+          "callee": "Math.min",
+          "lineNumber": 105
+        },
+        {
+          "caller": "barAt",
+          "callee": "new BarDto",
+          "lineNumber": 108
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "barAt",
+          "lineNumber": 113
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "barAt",
+          "lineNumber": 114
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "new CachedChartBar",
+          "lineNumber": 115
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 116
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "bid.open",
+          "lineNumber": 118
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "bid.high",
+          "lineNumber": 119
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "bid.low",
+          "lineNumber": 120
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "bid.close",
+          "lineNumber": 121
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "ask.open",
+          "lineNumber": 122
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "ask.high",
+          "lineNumber": 123
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "ask.low",
+          "lineNumber": 124
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "ask.close",
+          "lineNumber": 125
+        },
+        {
+          "caller": "peachBarAt",
+          "callee": "bid.volume",
+          "lineNumber": 126
+        },
+        {
+          "caller": "priceAt",
+          "callee": "bidAt",
+          "lineNumber": 134
+        },
+        {
+          "caller": "priceAt",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 135
+        },
+        {
+          "caller": "priceAt",
+          "callee": "DemoMarket.fullSpread",
+          "lineNumber": 138
+        },
+        {
+          "caller": "priceAt",
+          "callee": "DemoMarket.halfSpread",
+          "lineNumber": 139
+        },
+        {
+          "caller": "bidAt",
+          "callee": "DemoMarket.seedBid",
+          "lineNumber": 144
+        },
+        {
+          "caller": "bidAt",
+          "callee": "symbol.providerSymbol",
+          "lineNumber": 144
+        },
+        {
+          "caller": "bidAt",
+          "callee": "Math.floorDiv",
+          "lineNumber": 145
+        },
+        {
+          "caller": "bidAt",
+          "callee": "symbol.ticker().hashCode",
+          "lineNumber": 146
+        },
+        {
+          "caller": "bidAt",
+          "callee": "symbol.ticker",
+          "lineNumber": 146
+        },
+        {
+          "caller": "bidAt",
+          "callee": "Math.sin",
+          "lineNumber": 147
+        },
+        {
+          "caller": "bidAt",
+          "callee": "Math.sin",
+          "lineNumber": 148
+        },
+        {
+          "caller": "bidAt",
+          "callee": "Math.sin",
+          "lineNumber": 149
+        },
+        {
+          "caller": "bidAt",
+          "callee": "mix64",
+          "lineNumber": 150
+        },
+        {
+          "caller": "bidAt",
+          "callee": "Math.max",
+          "lineNumber": 151
+        },
+        {
+          "caller": "max",
+          "callee": "Math.max",
+          "lineNumber": 155
+        },
+        {
+          "caller": "max",
+          "callee": "Math.max",
+          "lineNumber": 155
+        },
+        {
+          "caller": "max",
+          "callee": "Math.max",
+          "lineNumber": 155
+        },
+        {
+          "caller": "min",
+          "callee": "Math.min",
+          "lineNumber": 159
+        },
+        {
+          "caller": "min",
+          "callee": "Math.min",
+          "lineNumber": 159
+        },
+        {
+          "caller": "min",
+          "callee": "Math.min",
+          "lineNumber": 159
+        },
+        {
+          "caller": "round",
+          "callee": "Math.round",
+          "lineNumber": 163
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 6,
+        "functionCount": 11,
+        "classCount": 1
+      }
+    }
+  ]
+}

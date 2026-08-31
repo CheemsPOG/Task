@@ -29,11 +29,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/26</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/26</td><td>Task</td><td>Assert peach:forming snapshot</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/08/30</td><td>Task</td><td>Daily forming close tracks quote</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @SpringBootTest
 class TickIngestWorkerTest {
@@ -85,6 +86,23 @@ class TickIngestWorkerTest {
 		assertThat(formingRoot.get("volume").asDouble()).isPositive();
 		assertThat(formingRoot.get("bidClose").asDouble())
 				.isLessThan(formingRoot.get("askClose").asDouble());
+	}
+
+	@Test
+	void tickKeepsDailyFormingCloseInLockstepWithQuote() throws Exception {
+		tickIngestWorker.tick();
+
+		String quoteJson = redis.opsForValue().get(QuoteBus.key("1"));
+		assertThat(quoteJson).isNotBlank();
+		JsonNode quote = objectMapper.readTree(quoteJson);
+
+		String formingJson = redis.opsForValue().get(QuoteBus.formingKey("1D", "USDJPY"));
+		assertThat(formingJson).as("peach:forming:1D:USDJPY").isNotBlank();
+		JsonNode forming = objectMapper.readTree(formingJson);
+		assertThat(forming.get("bidClose").asDouble())
+				.isCloseTo(quote.get("bid").asDouble(), within(0.1));
+		assertThat(forming.get("askClose").asDouble())
+				.isCloseTo(quote.get("ask").asDouble(), within(0.1));
 	}
 
 	@Test

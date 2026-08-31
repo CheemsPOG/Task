@@ -156,7 +156,7 @@ function ensureSocket(): WebSocket {
 		if (!isCurrentSocket(event)) {
 			return;
 		}
-		socket.close();
+		socket?.close();
 	});
 
 	return socket;
@@ -234,7 +234,6 @@ export function resubscribeAllWithCurrentPrice(): void {
 	}
 
 	subscriberToHandler.forEach((handler, uid) => {
-		handler.price = quoteStore.mode;
 		if (socket?.readyState !== WebSocket.OPEN) {
 			return;
 		}

@@ -1,0 +1,39 @@
+{
+  "projectRoot": "D:\\Personal Projects\\New\\Task\\backend",
+  "batchFiles": [
+    {"path": ".gitattributes", "language": "unknown", "sizeLines": 2, "fileCategory": "code"},
+    {"path": ".ua/.understandignore", "language": "unknown", "sizeLines": 83, "fileCategory": "code"},
+    {"path": ".ua/config.json", "language": "json", "sizeLines": 3, "fileCategory": "config"},
+    {"path": "mvnw", "language": "unknown", "sizeLines": 295, "fileCategory": "code"},
+    {"path": "mvnw.cmd", "language": "batch", "sizeLines": 189, "fileCategory": "script"},
+    {"path": "pom.xml", "language": "xml", "sizeLines": 123, "fileCategory": "config"},
+    {"path": "src/main/java/README.md", "language": "markdown", "sizeLines": 261, "fileCategory": "docs"},
+    {"path": "src/main/java/com/task/chart/cache/ChartBarRepository.java", "language": "java", "sizeLines": 253, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/config/OpenApiConfig.java", "language": "java", "sizeLines": 101, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/config/PasswordConfig.java", "language": "java", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/config/WebConfig.java", "language": "java", "sizeLines": 63, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/constants/MarkSeedWindow.java", "language": "java", "sizeLines": 42, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/package-info.java", "language": "java", "sizeLines": 37, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/ChartPrincipal.java", "language": "java", "sizeLines": 32, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java", "language": "java", "sizeLines": 112, "fileCategory": "code"},
+    {"path": "src/main/java/com/task/chart/security/SecurityConfig.java", "language": "java", "sizeLines": 115, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    ".gitattributes": [],
+    ".ua/.understandignore": [],
+    ".ua/config.json": [],
+    "mvnw": [],
+    "mvnw.cmd": [],
+    "pom.xml": [],
+    "src/main/java/README.md": [],
+    "src/main/java/com/task/chart/cache/ChartBarRepository.java": [],
+    "src/main/java/com/task/chart/config/OpenApiConfig.java": [],
+    "src/main/java/com/task/chart/config/PasswordConfig.java": [],
+    "src/main/java/com/task/chart/config/WebConfig.java": [],
+    "src/main/java/com/task/chart/constants/MarkSeedWindow.java": [],
+    "src/main/java/com/task/chart/package-info.java": [],
+    "src/main/java/com/task/chart/security/ChartPrincipal.java": [],
+    "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java": [],
+    "src/main/java/com/task/chart/security/SecurityConfig.java": []
+  }
+}

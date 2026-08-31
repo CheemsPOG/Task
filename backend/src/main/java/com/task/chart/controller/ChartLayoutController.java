@@ -32,6 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Chart layout HTTP API (design docs 127–131). HTTP only; no SQL.
  *
+ * <p>Status shapes the tests lock: POST → 201 {@code {id}}; GET/PUT → layout DTO;
+ * DELETE → {@code {t: now}}; other tenant → 404 (service, not this class).
+ *
+ * <p><strong>NOT:</strong> not tenant checks (that is {@code ChartLayoutServiceImpl});
+ * not chart/indicator templates.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

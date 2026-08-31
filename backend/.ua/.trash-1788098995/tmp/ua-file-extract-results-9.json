@@ -1,0 +1,519 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 9,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 9,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 9
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 18,
+      "nonEmptyLines": 16,
+      "definitions": [
+        {
+          "name": "m_ccypairs",
+          "kind": "table",
+          "fields": [
+            "ccypair_cd",
+            "ccypair_jp",
+            "rate_unit",
+            "is_deleted",
+            "priority"
+          ],
+          "startLine": 5,
+          "endLine": 11
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V2__create_m_season.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 13,
+      "nonEmptyLines": 11,
+      "definitions": [
+        {
+          "name": "m_season",
+          "kind": "table",
+          "fields": [
+            "id",
+            "season_cd",
+            "start_at",
+            "end_at"
+          ],
+          "startLine": 5,
+          "endLine": 10
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V3__create_m_tv_mark.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 19,
+      "nonEmptyLines": 17,
+      "definitions": [
+        {
+          "name": "m_tv_mark",
+          "kind": "table",
+          "fields": [
+            "id",
+            "ccypair_cd",
+            "resolution",
+            "mark_at",
+            "color",
+            "label",
+            "mark_text"
+          ],
+          "startLine": 4,
+          "endLine": 12
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 18,
+      "nonEmptyLines": 16,
+      "definitions": [
+        {
+          "name": "m_tv_timescale_mark",
+          "kind": "table",
+          "fields": [
+            "id",
+            "ccypair_cd",
+            "resolution",
+            "timescale_mark_at",
+            "color",
+            "label",
+            "tooltip"
+          ],
+          "startLine": 3,
+          "endLine": 11
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 12,
+      "nonEmptyLines": 11,
+      "definitions": [
+        {
+          "name": "m_tv_chart_layout",
+          "kind": "table",
+          "fields": [
+            "id",
+            "customer_no",
+            "name",
+            "content",
+            "ccypair_cd",
+            "chart_type",
+            "updated_at"
+          ],
+          "startLine": 4,
+          "endLine": 12
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 10,
+      "nonEmptyLines": 9,
+      "definitions": [
+        {
+          "name": "m_tv_indicator_template",
+          "kind": "table",
+          "fields": [
+            "id",
+            "customer_no",
+            "name",
+            "content",
+            "updated_at"
+          ],
+          "startLine": 3,
+          "endLine": 10
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 12,
+      "nonEmptyLines": 11,
+      "definitions": [
+        {
+          "name": "m_app_user",
+          "kind": "table",
+          "fields": [
+            "id",
+            "username",
+            "password_hash",
+            "customer_no",
+            "enabled",
+            "created_at"
+          ],
+          "startLine": 4,
+          "endLine": 12
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 199,
+      "nonEmptyLines": 186,
+      "definitions": [
+        {
+          "name": "t_chart_1",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 6,
+          "endLine": 19
+        },
+        {
+          "name": "t_chart_60",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 21,
+          "endLine": 34
+        },
+        {
+          "name": "t_chart_300",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 36,
+          "endLine": 49
+        },
+        {
+          "name": "t_chart_600",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 51,
+          "endLine": 64
+        },
+        {
+          "name": "t_chart_900",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 66,
+          "endLine": 79
+        },
+        {
+          "name": "t_chart_1800",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 81,
+          "endLine": 94
+        },
+        {
+          "name": "t_chart_3600",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 96,
+          "endLine": 109
+        },
+        {
+          "name": "t_chart_7200",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 111,
+          "endLine": 124
+        },
+        {
+          "name": "t_chart_14400",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 126,
+          "endLine": 139
+        },
+        {
+          "name": "t_chart_28800",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 141,
+          "endLine": 154
+        },
+        {
+          "name": "t_chart_day",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 156,
+          "endLine": 169
+        },
+        {
+          "name": "t_chart_week",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 171,
+          "endLine": 184
+        },
+        {
+          "name": "t_chart_month",
+          "kind": "table",
+          "fields": [
+            "curpair_cd",
+            "chart_datetime",
+            "bid_open",
+            "bid_high",
+            "bid_low",
+            "bid_close",
+            "ask_open",
+            "ask_high",
+            "ask_low",
+            "ask_close",
+            "volume"
+          ],
+          "startLine": 186,
+          "endLine": 199
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 13
+      }
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 11,
+      "nonEmptyLines": 10,
+      "definitions": [
+        {
+          "name": "m_tv_chart_templates",
+          "kind": "table",
+          "fields": [
+            "id",
+            "customer_no",
+            "name",
+            "content",
+            "updated_at"
+          ],
+          "startLine": 4,
+          "endLine": 11
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    }
+  ]
+}

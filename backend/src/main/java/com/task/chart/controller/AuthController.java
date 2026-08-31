@@ -26,6 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
  * Local auth HTTP API (JWT stand-in for S-01). Extra vs design docs 120–139.
  * HTTP only; no SQL.
  *
+ * <p><strong>NOT:</strong> no Bearer required on {@code /refresh} and {@code /logout}
+ * ({@link com.task.chart.security.SecurityConfig} permits them) — they use the
+ * HttpOnly cookie, not the access header. Refresh token value is never in JSON.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

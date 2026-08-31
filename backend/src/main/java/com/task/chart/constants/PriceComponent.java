@@ -74,11 +74,4 @@ public enum PriceComponent {
 			default -> throw new IllegalArgumentException("invalid bid_ask: " + raw);
 		};
 	}
-
-	/**
-	 * @return lowercase wire name ({@code bid}, {@code ask}, {@code mid})
-	 */
-	public String wireName() {
-		return name().toLowerCase(Locale.ROOT);
-	}
 }

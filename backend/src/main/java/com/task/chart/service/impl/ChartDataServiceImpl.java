@@ -48,9 +48,14 @@ import org.springframework.stereotype.Service;
  * <p>Docs 120–126: config from {@code app.tradingview}; history from Redis
  * {@code peach:{cache_set_*}:{CD}} (last bar matches ingest); resolve/search from {@code m_ccypairs}
  * and {@code m_season}; marks from {@code m_tv_mark} / {@code m_tv_timescale_mark} (no tenant).
- * {@link com.task.chart.controller.ChartDataController} is the HTTP caller. This is NOT
- * {@link MockBarGeneratorImpl} (boot seed), NOT {@code TickIngestWorker} (writes the last bar), NOT
- * the Python WS, and NOT the widget {@code datafeed.ts}.
+ * {@link com.task.chart.controller.ChartDataController} is the HTTP caller.
+ *
+ * <p><strong>NOT:</strong> not {@link MockBarGeneratorImpl} (boot seed); not
+ * {@code TickIngestWorker} (writes the last bar); not the Python WS; not the widget
+ * {@code datafeed.ts}. Unknown pair on {@code /symbols} is <strong>404</strong>; the same
+ * unknown CD on {@code /history} is <strong>422</strong>. Do not harmonize — see
+ * {@code SystemOverviewDesign121Test}. {@code price=mid} is a widget quirk that maps to
+ * {@code bid_ask=MID} (second input path for the same semantic).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
@@ -62,11 +67,13 @@ import org.springframework.stereotype.Service;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/20</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.0.1</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.0.2</td><td>2026/08/31</td><td>Task</td><td>Review comments on 422/404/500 paths</td></tr>
+ *   <tr><td>1.0.3</td><td>2026/08/31</td><td>Task</td><td>Method overview Javadocs on helpers</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.0.1
+ * @version 1.0.3
  */
 @Service
 public class ChartDataServiceImpl implements ChartDataService {
@@ -107,6 +114,12 @@ public class ChartDataServiceImpl implements ChartDataService {
 		this.tvTimescaleMarkRepository = tvTimescaleMarkRepository;
 	}
 
+	/**
+	 * Doc 120 {@code GET /api/config}. Copies {@code app.tradingview} flags into the UDF
+	 * {@code onReady} payload (search, marks, resolutions, one exchange/type).
+	 * {@code supports_group_request} is hardcoded {@code false} — this demo has no
+	 * group-resolve API; flipping the flag would make the widget call an endpoint we do not have.
+	 */
 	@Override
 	public DatafeedConfigResponse config() {
 		AppProperties.TradingView tradingView = appProperties.getTradingView();
@@ -123,11 +136,20 @@ public class ChartDataServiceImpl implements ChartDataService {
 				List.of(new SymbolTypeDto(symbolType, symbolType)));
 	}
 
+	/**
+	 * Doc 122. Unix <em>seconds</em> (same unit as Peach {@code t[]}), not millis.
+	 */
 	@Override
 	public long serverTimeSeconds() {
 		return Instant.now().getEpochSecond();
 	}
 
+	/**
+	 * Doc 124 {@code GET /api/search} over active {@code m_ccypairs}. Empty query lists
+	 * pairs; otherwise match display ticker or CD without the slash. Query longer than
+	 * 10 is 422. A wrong exchange/type returns {@code []} (200), not 422, so the widget
+	 * treats it as "no hits" instead of a datafeed error.
+	 */
 	@Override
 	public List<SearchSymbolDto> search(String query, String exchange, String type, Integer limit) {
 		AppProperties.TradingView tradingView = appProperties.getTradingView();
@@ -137,6 +159,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 		}
 
 		int effectiveLimit = resolveSearchLimit(limit, tradingView);
+
+		// Unknown exchange/type is empty, not 422 — widget search should not hard-fail.
 		if (!matchesConfiguredFilter(exchange, tradingView.getExchanges())
 				|| !matchesConfiguredFilter(type, tradingView.getSymbolsTypes())) {
 			return List.of();
@@ -159,6 +183,11 @@ public class ChartDataServiceImpl implements ChartDataService {
 				.toList();
 	}
 
+	/**
+	 * Doc 125. Marks are global demo seeds — no {@code customer_no}. After validation, a
+	 * pair with no rows returns {@code []} (200), not 404. Resolution {@code 10} is valid
+	 * on history but 422 here ({@link ResolutionMapper#MARKS_RESOLUTIONS}).
+	 */
 	@Override
 	public List<MarkDto> marks(String symbol, String resolution, Long from, Long to) {
 		validateMarksRequest(symbol, resolution, from, to);
@@ -172,6 +201,9 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return marks.stream().map(ChartDataServiceImpl::toMarkDto).toList();
 	}
 
+	/**
+	 * Doc 126. Same contract as {@link #marks}: global, 422 on bad fields, 200 empty if none.
+	 */
 	@Override
 	public List<TimescaleMarkDto> timescaleMarks(String symbol, String resolution, Long from, Long to) {
 		validateMarksRequest(symbol, resolution, from, to);
@@ -185,6 +217,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return marks.stream().map(ChartDataServiceImpl::toTimescaleMarkDto).toList();
 	}
 
+	/**
+	 * Marks/timescale: 422 on blank symbol, resolution not in marks list (so {@code 10}
+	 * fails here), or inverted from/to. Does <em>not</em> check the pair exists.
+	 */
 	private static void validateMarksRequest(String symbol, String resolution, Long from, Long to) {
 		if (symbol == null || symbol.isBlank()) {
 			throw new ValidationException();
@@ -200,6 +236,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		}
 	}
 
+	/**
+	 * Maps a mark row to UDF JSON. Label font is hardcoded ({@code #ffffff}, size 14) —
+	 * not stored on {@code m_tv_mark}.
+	 */
 	private static MarkDto toMarkDto(TvMark mark) {
 		return new MarkDto(
 				mark.getId(),
@@ -211,6 +251,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 				14);
 	}
 
+	/**
+	 * Maps a timescale-mark row. Tooltip is a one-element list because the widget
+	 * expects an array even when the table has a single string.
+	 */
 	private static TimescaleMarkDto toTimescaleMarkDto(TvTimescaleMark mark) {
 		return new TimescaleMarkDto(
 				mark.getId(),
@@ -221,6 +265,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 				"#ffffff");
 	}
 
+	/**
+	 * Caps search page size. Omitted {@code limit} uses {@code search-default-limit};
+	 * below 1 or above max is 422, not a silent clamp.
+	 */
 	private static int resolveSearchLimit(Integer limit, AppProperties.TradingView tradingView) {
 		int maxLimit = tradingView.getSearchMaxLimit();
 		if (limit == null) {
@@ -233,6 +281,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return limit;
 	}
 
+	/**
+	 * Blank exchange/type means "no filter" (match all). A non-blank value must equal
+	 * {@code app.tradingview} config; mismatch is handled by the caller as empty hits.
+	 */
 	private static boolean matchesConfiguredFilter(String requested, String configured) {
 		if (requested == null || requested.isBlank()) {
 			return true;
@@ -241,6 +293,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return configured.equalsIgnoreCase(requested.trim());
 	}
 
+	/**
+	 * Search hit: ticker is the 6-char CD; display is {@code USD/JPY}. Japanese name
+	 * comes from {@code ccypair_jp}.
+	 */
 	private static SearchSymbolDto toSearchSymbol(Ccypair pair, String exchange, String type) {
 		String ccypairCd = pair.getCcypairCd();
 		String display = displayTicker(ccypairCd);
@@ -253,18 +309,29 @@ public class ChartDataServiceImpl implements ChartDataService {
 				type);
 	}
 
+	/**
+	 * Doc 123. Unknown active pair is <strong>404</strong>. {@link #history} uses 422 for
+	 * the same miss — tested in {@code SystemOverviewDesign121Test}; do not harmonize.
+	 */
 	@Override
 	public SymbolInfoDto resolve(String symbolName) {
 		String ccypairCd = requireCcypairCd(symbolName);
 		Optional<Ccypair> found = ccypairRepository.findByCcypairCdAndIsDeleted(ccypairCd, Ccypair.ACTIVE);
 		Ccypair pair = found.orElse(null);
 		if (pair == null) {
+
+			// Resolve/search: unknown pair is 404. /history uses 422 for the same miss
+			// (SystemOverviewDesign121Test). Do not "harmonize" those statuses.
 			throw new ResourceNotFoundException();
 		}
 
 		return toSymbolInfo(pair, currentSession());
 	}
 
+	/**
+	 * Resolve-path CD: blank or not length-6 after {@link #normalizeCcypairCd} is 422
+	 * (malformed ticker). Unknown-but-well-formed CD is 404 in {@link #resolve}.
+	 */
 	private static String requireCcypairCd(String symbolName) {
 		if (symbolName == null || symbolName.isBlank()) {
 			throw new ValidationException();
@@ -278,6 +345,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return ccypairCd;
 	}
 
+	/**
+	 * Resolve/layouts: strip {@code FX:} then slashes so {@code FX:USD/JPY} → {@code USDJPY}.
+	 * History uses {@link #normalizeSymbolCd} instead (letter-only; {@code FX:} becomes 422).
+	 */
 	private static String normalizeCcypairCd(String symbolName) {
 		String upper = symbolName.trim().toUpperCase(Locale.ROOT);
 
@@ -289,6 +360,10 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return upper.replace("/", "");
 	}
 
+	/**
+	 * Session string for doc 123. Empty {@code m_season} is 500: the demo seed covers
+	 * 2020–2099, so a miss means seed/config is broken, not a client typo.
+	 */
 	private String currentSession() {
 		Instant now = Instant.now();
 		List<Integer> seasonCds = List.of(Season.DAYLIGHT_SAVING, Season.STANDARD);
@@ -313,6 +388,11 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return tradingView.getTimeWinter();
 	}
 
+	/**
+	 * Builds UDF {@code SymbolInfo}: session from {@link #currentSession},
+	 * {@code pricescale} from {@code rate_unit}, multipliers from {@link ResolutionMapper}.
+	 * {@code minmov} is always 1; {@code volume_precision} path is unused (plots are price).
+	 */
 	private SymbolInfoDto toSymbolInfo(Ccypair pair, String session) {
 		AppProperties.TradingView tradingView = appProperties.getTradingView();
 		String ccypairCd = pair.getCcypairCd();
@@ -344,6 +424,9 @@ public class ChartDataServiceImpl implements ChartDataService {
 				ccypairCd);
 	}
 
+	/**
+	 * {@code USDJPY} → {@code USD/JPY} for widget display. Non-6-char values pass through.
+	 */
 	private static String displayTicker(String ccypairCd) {
 		if (ccypairCd == null || ccypairCd.length() != 6) {
 			return ccypairCd;
@@ -352,31 +435,23 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return ccypairCd.substring(0, 3) + "/" + ccypairCd.substring(3);
 	}
 
+	/**
+	 * {@code pricescale = 10^rate_unit} (pip display). Not the live quote precision.
+	 */
 	private static int priceScale(int rateUnit) {
 		return BigDecimal.TEN.pow(rateUnit).intValueExact();
 	}
 
-	@Override
-	public HistoryResponse history(String symbolName, String resolution, Long to, Integer countBack) {
-		return history(symbolName, resolution, to, countBack, "mid");
-	}
-
-	@Override
-	public HistoryResponse history(
-			String symbolName,
-			String resolution,
-			Long to,
-			Integer countBack,
-			String price) {
-		String bidAsk = PriceComponent.from(price).name();
-		Long effectiveTo = to == null ? Instant.now().getEpochSecond() : to;
-		Long periodSec = ResolutionMapper.periodMillis(resolution);
-		long stepSec = periodSec == null ? 60L : Math.max(1L, periodSec / 1000L);
-		int needed = countBack == null || countBack <= 0 ? 300 : countBack;
-		Long from = effectiveTo - (long) needed * stepSec;
-		return history(symbolName, resolution, from, effectiveTo, countBack, price, bidAsk);
-	}
-
+	/**
+	 * Doc 121 {@code GET /api/history}. Reads Redis only — does not compute OHLC. Unknown CD
+	 * is <strong>422</strong> (not 404). {@code bid_ask} is required; {@code price} is used
+	 * only when {@code bid_ask} is blank (widget quirk this datafeed does not send).
+	 * Missing both is 422, not a silent MID default.
+	 *
+	 * <p>History strips to letters via {@link #normalizeSymbolCd}, so {@code FX:USD/JPY}
+	 * becomes {@code FXUSDJPY} (length 8 → 422). Resolve/layouts use
+	 * {@link #normalizeCcypairCd} which strips {@code FX:} first. Do not swap the two.
+	 */
 	@Override
 	public HistoryResponse history(
 			String symbolName,
@@ -391,7 +466,7 @@ public class ChartDataServiceImpl implements ChartDataService {
 				&& price != null
 				&& !price.isBlank()) {
 
-			// Widget may send price=mid instead of bid_ask=MID.
+			// Widget quirk: price=mid is a second input for the same BID/ASK/MID side.
 			effectiveBidAsk = PriceComponent.from(price).name();
 		}
 		validateHistoryRequest(symbolName, resolution, from, to, effectiveBidAsk);
@@ -399,17 +474,15 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return history(symbolName, resolution, from, to, countBack, component);
 	}
 
-	@Override
-	public HistoryResponse history(
-			String symbolName,
-			String resolution,
-			Long to,
-			Integer countBack,
-			PriceComponent price) {
-		String bidAsk = (price == null ? PriceComponent.MID : price).name();
-		return history(symbolName, resolution, to, countBack, bidAsk.toLowerCase(Locale.ROOT));
-	}
-
+	/**
+	 * Redis read + BID/ASK/MID projection. Does not generate bars. Clamps {@code to} to
+	 * now so the widget cannot request the future. Empty range is Peach {@code no_data}
+	 * with optional {@code nextTime}, not 404.
+	 *
+	 * <p>The {@code price == null ? MID} line is defensive only — the public method always
+	 * passes a non-null enum after {@code fromBidAsk}. This app's datafeed always sends
+	 * {@code bid_ask}; missing both {@code bid_ask} and {@code price} is 422, not MID.
+	 */
 	private HistoryResponse history(
 			String symbolName,
 			String resolution,
@@ -419,6 +492,8 @@ public class ChartDataServiceImpl implements ChartDataService {
 			PriceComponent price) {
 		CachedSymbol symbol = symbolCatalog.find(symbolName);
 		if (symbol == null) {
+
+			// History is stricter than /symbols: unknown CD is 422, not 404.
 			throw new ValidationException();
 		}
 
@@ -442,11 +517,14 @@ public class ChartDataServiceImpl implements ChartDataService {
 				queryFrom,
 				queryTo);
 
+		// UDF countBack: keep the newest N bars. Older warehouse rows stay in Redis.
 		if (countBack != null && countBack > 0 && cached.size() > countBack) {
 			cached = cached.subList(cached.size() - countBack, cached.size());
 		}
 
 		if (cached.isEmpty()) {
+
+			// Peach no_data + nextTime: widget can jump to the previous stored bar.
 			Long nextTimeSeconds = null;
 			if (from != null) {
 				nextTimeSeconds = chartCacheStore.nextTimeBefore(
@@ -464,6 +542,12 @@ public class ChartDataServiceImpl implements ChartDataService {
 		return HistoryResponse.ok(bars);
 	}
 
+	/**
+	 * History 422 rules: symbol letters must be length 6, resolution in
+	 * {@link ResolutionMapper#HISTORY_RESOLUTIONS} (includes {@code 10}), {@code bid_ask}
+	 * required (BID/ASK/MID), {@code from}/{@code to} both present or both omitted.
+	 * Does not look up the pair — unknown CD is 422 later via {@link SymbolCatalog#find}.
+	 */
 	private static void validateHistoryRequest(
 			String symbolName,
 			String resolution,
@@ -499,23 +583,13 @@ public class ChartDataServiceImpl implements ChartDataService {
 	}
 
 	/**
-	 * Strips non-letters so {@code USD/JPY} becomes {@code USDJPY} (length-6 CD).
+	 * History-only: letters only so {@code USD/JPY} → {@code USDJPY}. {@code FX:USD/JPY}
+	 * becomes {@code FXUSDJPY} (8 chars → 422). Resolve uses {@link #normalizeCcypairCd}.
 	 *
 	 * @param symbolName raw symbol query
 	 * @return uppercase CD letters only
 	 */
 	static String normalizeSymbolCd(String symbolName) {
 		return symbolName.replaceAll("[^A-Za-z]", "").toUpperCase(Locale.ROOT);
-	}
-
-	@Override
-	public CachedSymbol findSymbol(String symbolName) {
-		return symbolCatalog.find(symbolName);
-	}
-
-	@Override
-	public String providerSymbol(String symbolName) {
-		CachedSymbol symbol = symbolCatalog.find(symbolName);
-		return symbol == null ? null : symbol.providerSymbol();
 	}
 }

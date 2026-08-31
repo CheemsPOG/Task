@@ -160,7 +160,7 @@ export function saveTheme(theme: ThemeName): void {
 
 /**
  * Persists the last viewed pair and interval. First visit still opens
- * USD/JPY; later refreshes use this instead of the constructor default.
+ * USD/JPY 1D; later refreshes re-apply these after a named layout loads.
  *
  * @param lastSymbol widget symbol, e.g. `EUR/USD`
  * @param lastInterval widget resolution, e.g. `1D`

@@ -53,7 +53,6 @@ export function installLoginOverlay(callbacks: LoginOverlayCallbacks): void {
 		}
 		try {
 			await login(usernameInput.value.trim(), passwordInput.value);
-			hideLoginOverlay();
 			callbacks.onLoggedIn();
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Login failed';

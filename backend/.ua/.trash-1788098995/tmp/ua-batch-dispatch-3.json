@@ -1,0 +1,227 @@
+{
+  "batchIndex": 3,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "language": "java",
+      "sizeLines": 293,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "language": "java",
+      "sizeLines": 148,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "language": "java",
+      "sizeLines": 226,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "language": "java",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "language": "java",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "language": "java",
+      "sizeLines": 47,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/Ccypair.java",
+      "language": "java",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "language": "java",
+      "sizeLines": 96,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "language": "java",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "language": "java",
+      "sizeLines": 94,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "language": "java",
+      "sizeLines": 100,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "language": "java",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/cache/DemoTickEngine.java": [
+      "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "src/main/java/com/task/chart/util/DemoMarket.java"
+    ],
+    "src/main/java/com/task/chart/cache/QuoteBus.java": [
+      "src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java"
+    ],
+    "src/main/java/com/task/chart/cache/TickIngestWorker.java": [
+      "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "src/main/java/com/task/chart/service/CurrencyPairService.java"
+    ],
+    "src/main/java/com/task/chart/controller/CurrencyPairController.java": [
+      "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "src/main/java/com/task/chart/service/CurrencyPairService.java"
+    ],
+    "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java": [],
+    "src/main/java/com/task/chart/dto/response/FormingBarMessage.java": [],
+    "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java": [],
+    "src/main/java/com/task/chart/entity/Ccypair.java": [],
+    "src/main/java/com/task/chart/repository/CcypairRepository.java": [
+      "src/main/java/com/task/chart/entity/Ccypair.java"
+    ],
+    "src/main/java/com/task/chart/service/CurrencyPairService.java": [
+      "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java": [
+      "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "src/main/java/com/task/chart/entity/Ccypair.java",
+      "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "src/main/java/com/task/chart/service/CurrencyPairService.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java": [
+      "src/main/java/com/task/chart/config/AppProperties.java",
+      "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "src/main/java/com/task/chart/util/DemoMarket.java"
+    ],
+    "src/main/java/com/task/chart/util/DemoMarket.java": []
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/entity/Ccypair.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/repository/CcypairRepository.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java": [
+      {
+        "path": "src/main/java/com/task/chart/config/AppProperties.java",
+        "batchIndex": 2,
+        "symbols": [
+          "getCorsOrigins",
+          "setCorsOrigins",
+          "getJwt",
+          "setJwt",
+          "getTradingView",
+          "setTradingView",
+          "AppProperties"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+        "batchIndex": 8,
+        "symbols": [
+          "SymbolCatalog"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/util/DemoMarket.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+        "batchIndex": 8,
+        "symbols": [
+          "generate",
+          "generate",
+          "barAt",
+          "barAt",
+          "peachBarAt",
+          "MockBarGeneratorImpl"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 2,
+  "edgesRestored": 11,
+  "crossBatchEdgesAdded": 11,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Merge report had no Fixed pattern counts; 390 nodes in/out and 11 dropped edges match the 11 could-not-fix items — counts look sane.",
+    "Batches omitted getter/helper function nodes AppProperties.getTradingView and CustomerContext.requireCustomerNo; recovered both and restored 2+9 calls edges.",
+    "Wired recovered functions with file/class contains and file exports to match existing graph conventions.",
+    "Import map: 182 imports edges already present; 0 added; 0 skipped (missing file nodes).",
+    "Added configures from application.yml to AppProperties and ChartBackendApplication, and from messages.properties to LocalizedMessageServiceImpl.",
+    "Added defines_schema from V1–V7 and V9 SQL migrations to matching entity files; V8 has no entity counterpart so it was left as SQL→table migrates only.",
+    "No unknown node types or complexity values were listed; none remapped.",
+    "Structural contains/exports added for recovered functions: 6 (not counted in edgesRestored)."
+  ]
+}

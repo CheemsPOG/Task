@@ -1,0 +1,690 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "type": "file",
+      "name": "CachedChartBar.java",
+      "filePath": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "summary": "Immutable cache row holding dual bid/ask OHLC for one FX candle, used by tick ingest to form bars and by history to map a price side into BarDto.",
+      "tags": ["data-model", "cache", "ohlc", "serialization"],
+      "complexity": "moderate",
+      "languageNotes": "Java record with instance OHLC accessors and static factories for opening and updating a forming bar from ticks."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/CachedChartBar.java:CachedChartBar",
+      "type": "class",
+      "name": "CachedChartBar",
+      "filePath": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "lineRange": [33, 181],
+      "summary": "Cached OHLC record storing bid and ask open/high/low/close plus volume; MID is averaged at read time when mapping to a widget bar.",
+      "tags": ["data-model", "cache", "ohlc", "record"],
+      "complexity": "moderate",
+      "languageNotes": "Java record; MID is derived, not stored."
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:toBarDto",
+      "type": "function",
+      "name": "toBarDto",
+      "filePath": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "lineRange": [52, 63],
+      "summary": "Maps this cache row to a BarDto for BID, ASK, or MID, converting the candle open time to milliseconds.",
+      "tags": ["serialization", "mapping", "ohlc"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:openFromTick",
+      "type": "function",
+      "name": "openFromTick",
+      "filePath": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "lineRange": [134, 147],
+      "summary": "Creates a new forming candle from the first tick, seeding both bid and ask OHLC to that tick's prices.",
+      "tags": ["factory", "cache", "tick-ingest"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:applyTick",
+      "type": "function",
+      "name": "applyTick",
+      "filePath": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "lineRange": [156, 169],
+      "summary": "Returns an updated bar with bid/ask high/low extended by the tick and close set to the latest bid and ask.",
+      "tags": ["cache", "tick-ingest", "ohlc"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "type": "file",
+      "name": "ChartCacheWriter.java",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "summary": "Startup seeder that fills warehouse tables and Redis cache with deterministic historical bars for every FX symbol and timeframe once at boot.",
+      "tags": ["service", "cache", "seed", "entry-point"],
+      "complexity": "moderate",
+      "languageNotes": "Spring ApplicationRunner at @Order(100); live forming bars are not refreshed here after seed."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/ChartCacheWriter.java:ChartCacheWriter",
+      "type": "class",
+      "name": "ChartCacheWriter",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "lineRange": [45, 173],
+      "summary": "Boot-time component that iterates symbols and cache namespaces, generates Peach bars, and writes them to the chart warehouse and Redis store.",
+      "tags": ["service", "cache", "seed", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:seedAll",
+      "type": "function",
+      "name": "seedAll",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "lineRange": [100, 123],
+      "summary": "Seeds every catalog symbol across all cache namespaces, replacing warehouse and Redis series, then marks seed complete.",
+      "tags": ["seed", "cache", "orchestration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:buildSeries",
+      "type": "function",
+      "name": "buildSeries",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "lineRange": [134, 152],
+      "summary": "Builds a unique oldest-to-newest series of CachedChartBar rows by walking back depth periods and calling the mock generator.",
+      "tags": ["factory", "ohlc", "cache"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:seedDepth",
+      "type": "function",
+      "name": "seedDepth",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "lineRange": [160, 172],
+      "summary": "Chooses how many historical bars to seed for a namespace, using a larger depth for daily/weekly/monthly than for intraday.",
+      "tags": ["seed", "config", "timeframe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "type": "file",
+      "name": "PriceComponent.java",
+      "filePath": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "summary": "Enumerates BID, ASK, and MID price sides for history and mock bars, with lenient and strict parsers for the bid_ask query parameter.",
+      "tags": ["type-definition", "validation", "enum", "constants"],
+      "complexity": "moderate",
+      "languageNotes": "Java enum using switch expressions; from() defaults unknown values to MID, fromBidAsk() rejects them."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/constants/PriceComponent.java:PriceComponent",
+      "type": "class",
+      "name": "PriceComponent",
+      "filePath": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "lineRange": [34, 77],
+      "summary": "Price-side enum (BID, ASK, MID) used when mapping dual-sided cache rows and generating mock OHLCV.",
+      "tags": ["type-definition", "enum", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/constants/PriceComponent.java:from",
+      "type": "function",
+      "name": "from",
+      "filePath": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "lineRange": [45, 56],
+      "summary": "Parses a free-form price side string; blank or unknown values become MID so history still paints.",
+      "tags": ["validation", "parsing", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/constants/PriceComponent.java:fromBidAsk",
+      "type": "function",
+      "name": "fromBidAsk",
+      "filePath": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "lineRange": [65, 76],
+      "summary": "Strictly parses design-doc bid_ask as BID, ASK, or MID and throws IllegalArgumentException otherwise.",
+      "tags": ["validation", "parsing", "api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "type": "file",
+      "name": "BarDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "summary": "Internal OHLCV bar DTO used when mapping cache rows toward GET /api/history; time is unix milliseconds at candle open and is not the columnar JSON payload.",
+      "tags": ["data-model", "dto", "ohlc", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/BarDto.java:BarDto",
+      "type": "class",
+      "name": "BarDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "lineRange": [33, 40],
+      "summary": "Compact OHLCV record (time, open, high, low, close, volume) used as the in-process history mapping shape.",
+      "tags": ["data-model", "dto", "record"],
+      "complexity": "simple",
+      "languageNotes": "Java record; not serialized as the Peach columnar history JSON."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "type": "file",
+      "name": "MockBarGenerator.java",
+      "filePath": "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "summary": "Service interface for deterministic mock OHLCV used only to boot-seed warehouse and Redis caches, not for live tick ingest.",
+      "tags": ["service", "factory", "interface", "mock"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/MockBarGenerator.java:MockBarGenerator",
+      "type": "class",
+      "name": "MockBarGenerator",
+      "filePath": "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "lineRange": [39, 99],
+      "summary": "Contract to generate MID or side-specific BarDto series, a single bar at a time, and a dual-sided CachedChartBar for Peach cache seeding.",
+      "tags": ["service", "interface", "factory", "mock"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "type": "file",
+      "name": "SymbolCatalog.java",
+      "filePath": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "summary": "In-memory FX symbol catalog interface that resolves widget tickers to provider symbols, price scale, and pair codes for history and ingest.",
+      "tags": ["service", "catalog", "interface", "lookup"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:SymbolCatalog",
+      "type": "class",
+      "name": "SymbolCatalog",
+      "filePath": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "lineRange": [34, 62],
+      "summary": "Catalog API to list all seeded FX symbols and find one by ticker, display name, FX prefix, or numeric pair code.",
+      "tags": ["service", "interface", "catalog", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:CachedSymbol",
+      "type": "class",
+      "name": "CachedSymbol",
+      "filePath": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "lineRange": [52, 61],
+      "summary": "In-memory TradingView symbol row holding ticker, provider symbol, exchange, type, price scale, and currency-pair code.",
+      "tags": ["data-model", "catalog", "record"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "type": "file",
+      "name": "MockBarGeneratorImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "summary": "Deterministic sine-and-hash mock bar factory that seeds historical BID/ASK/MID candles and Peach cache rows from DemoMarket parameters.",
+      "tags": ["service", "factory", "mock", "ohlc"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:MockBarGeneratorImpl",
+      "type": "class",
+      "name": "MockBarGeneratorImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "lineRange": [42, 173],
+      "summary": "Spring service implementing MockBarGenerator with repeatable OHLC from seed bid, spread, and hashed wicks for boot seed only.",
+      "tags": ["service", "factory", "mock", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:generate",
+      "type": "function",
+      "name": "generate",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "lineRange": [50, 71],
+      "summary": "Walks backward from toMs by period and countBack, emitting oldest-first BarDto candles on the requested price side.",
+      "tags": ["factory", "ohlc", "mock"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:barAt",
+      "type": "function",
+      "name": "barAt",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "lineRange": [78, 109],
+      "summary": "Builds one mock OHLCV bar at a bar-open time using DemoMarket amplitude and hashed wicks, then rounds to the symbol price scale.",
+      "tags": ["factory", "ohlc", "mock"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:peachBarAt",
+      "type": "function",
+      "name": "peachBarAt",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "lineRange": [111, 127],
+      "summary": "Produces a CachedChartBar with separate bid and ask OHLC at the given open time for Peach warehouse and Redis seed.",
+      "tags": ["factory", "cache", "ohlc"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:priceAt",
+      "type": "function",
+      "name": "priceAt",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "lineRange": [129, 141],
+      "summary": "Returns bid, ask, or mid price at a time by applying DemoMarket full or half spread on top of the seeded bid path.",
+      "tags": ["pricing", "mock", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:bidAt",
+      "type": "function",
+      "name": "bidAt",
+      "filePath": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "lineRange": [143, 152],
+      "summary": "Computes a deterministic bid from DemoMarket seed plus sine waves and a hash mix keyed by symbol and bar time.",
+      "tags": ["pricing", "mock", "utility"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "target": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "target": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "class:src/main/java/com/task/chart/cache/CachedChartBar.java:CachedChartBar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:toBarDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:openFromTick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:applyTick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "class:src/main/java/com/task/chart/cache/ChartCacheWriter.java:ChartCacheWriter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:seedAll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:buildSeries",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:seedDepth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "target": "class:src/main/java/com/task/chart/constants/PriceComponent.java:PriceComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:from",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:fromBidAsk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/BarDto.java:BarDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "target": "class:src/main/java/com/task/chart/service/MockBarGenerator.java:MockBarGenerator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:SymbolCatalog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:CachedSymbol",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:MockBarGeneratorImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:generate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:barAt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:peachBarAt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:priceAt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:bidAt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "class:src/main/java/com/task/chart/cache/CachedChartBar.java:CachedChartBar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:toBarDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:openFromTick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "target": "function:src/main/java/com/task/chart/cache/CachedChartBar.java:applyTick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "class:src/main/java/com/task/chart/cache/ChartCacheWriter.java:ChartCacheWriter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:seedAll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "target": "class:src/main/java/com/task/chart/constants/PriceComponent.java:PriceComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:from",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "target": "function:src/main/java/com/task/chart/constants/PriceComponent.java:fromBidAsk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/BarDto.java:BarDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "target": "class:src/main/java/com/task/chart/service/MockBarGenerator.java:MockBarGenerator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:SymbolCatalog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:CachedSymbol",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:MockBarGeneratorImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:generate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:barAt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "target": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:peachBarAt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:MockBarGeneratorImpl",
+      "target": "class:src/main/java/com/task/chart/service/MockBarGenerator.java:MockBarGenerator",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:seedAll",
+      "target": "class:src/main/java/com/task/chart/service/SymbolCatalog.java:SymbolCatalog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/ChartCacheWriter.java:buildSeries",
+      "target": "class:src/main/java/com/task/chart/service/MockBarGenerator.java:MockBarGenerator",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:barAt",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:barAmplitude",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:barAt",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:outerWick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:priceAt",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:fullSpread",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:priceAt",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:halfSpread",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java:bidAt",
+      "target": "function:src/main/java/com/task/chart/util/DemoMarket.java:seedBid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

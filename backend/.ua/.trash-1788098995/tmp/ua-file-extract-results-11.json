@@ -1,0 +1,1525 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 11,
+  "filesSkipped": [
+    ".gitattributes",
+    ".ua/.understandignore",
+    "mvnw",
+    "mvnw.cmd",
+    "pom.xml"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 11,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 9,
+      "failed": 0,
+      "skipped": 2
+    }
+  },
+  "results": [
+    {
+      "path": ".ua/config.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "src/main/java/README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 261,
+      "nonEmptyLines": 226,
+      "sections": [
+        {
+          "heading": "Java source map — `com.task.chart`",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Repo root (where this package sits)",
+          "level": 2,
+          "line": 11
+        },
+        {
+          "heading": "If they ask “where is doc 120 / the datafeed?”",
+          "level": 2,
+          "line": 35
+        },
+        {
+          "heading": "Layering (CTFX)",
+          "level": 2,
+          "line": 70
+        },
+        {
+          "heading": "What each package is for",
+          "level": 2,
+          "line": 83
+        },
+        {
+          "heading": "Design docs → first file to open",
+          "level": 2,
+          "line": 101
+        },
+        {
+          "heading": "Cache package (doc 121 + live SSOT)",
+          "level": 2,
+          "line": 107
+        },
+        {
+          "heading": "File tree",
+          "level": 2,
+          "line": 127
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 253,
+      "nonEmptyLines": 220,
+      "functions": [
+        {
+          "name": "ChartBarRepository",
+          "startLine": 52,
+          "endLine": 54,
+          "params": [
+            "jdbcTemplate"
+          ]
+        },
+        {
+          "name": "replacePair",
+          "startLine": 63,
+          "endLine": 83,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "bars"
+          ]
+        },
+        {
+          "name": "upsert",
+          "startLine": 91,
+          "endLine": 99,
+          "params": [
+            "namespace",
+            "bar"
+          ]
+        },
+        {
+          "name": "insertSql",
+          "startLine": 107,
+          "endLine": 111,
+          "params": [
+            "table"
+          ]
+        },
+        {
+          "name": "query",
+          "startLine": 122,
+          "endLine": 168,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "fromSec",
+            "toSec"
+          ]
+        },
+        {
+          "name": "nextTimeBefore",
+          "startLine": 178,
+          "endLine": 189,
+          "params": [
+            "namespace",
+            "curpairCd",
+            "fromSec"
+          ]
+        },
+        {
+          "name": "size",
+          "startLine": 198,
+          "endLine": 207,
+          "params": [
+            "namespace",
+            "curpairCd"
+          ]
+        },
+        {
+          "name": "bindBar",
+          "startLine": 216,
+          "endLine": 229,
+          "params": [
+            "ps",
+            "bar"
+          ]
+        },
+        {
+          "name": "mapRow",
+          "startLine": 239,
+          "endLine": 252,
+          "params": [
+            "rs",
+            "rowNum"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChartBarRepository",
+          "startLine": 40,
+          "endLine": 253,
+          "methods": [
+            "ChartBarRepository",
+            "replacePair",
+            "upsert",
+            "insertSql",
+            "query",
+            "nextTimeBefore",
+            "size",
+            "bindBar",
+            "mapRow"
+          ],
+          "properties": [
+            "ROW_MAPPER",
+            "jdbcTemplate"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartBarRepository",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "replacePair",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "upsert",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "query",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "nextTimeBefore",
+          "line": 178,
+          "isDefault": false
+        },
+        {
+          "name": "size",
+          "line": 198,
+          "isDefault": false
+        },
+        {
+          "name": "ChartBarRepository",
+          "line": 40,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "replacePair",
+          "callee": "namespace.tableName",
+          "lineNumber": 65
+        },
+        {
+          "caller": "replacePair",
+          "callee": "jdbcTemplate.update",
+          "lineNumber": 66
+        },
+        {
+          "caller": "replacePair",
+          "callee": "bars.isEmpty",
+          "lineNumber": 68
+        },
+        {
+          "caller": "replacePair",
+          "callee": "new java.util.LinkedHashMap<>",
+          "lineNumber": 72
+        },
+        {
+          "caller": "replacePair",
+          "callee": "unique.put",
+          "lineNumber": 75
+        },
+        {
+          "caller": "replacePair",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 75
+        },
+        {
+          "caller": "replacePair",
+          "callee": "insertSql",
+          "lineNumber": 78
+        },
+        {
+          "caller": "replacePair",
+          "callee": "unique.values",
+          "lineNumber": 80
+        },
+        {
+          "caller": "replacePair",
+          "callee": "jdbcTemplate.update",
+          "lineNumber": 81
+        },
+        {
+          "caller": "replacePair",
+          "callee": "bindBar",
+          "lineNumber": 81
+        },
+        {
+          "caller": "upsert",
+          "callee": "namespace.tableName",
+          "lineNumber": 93
+        },
+        {
+          "caller": "upsert",
+          "callee": "jdbcTemplate.update",
+          "lineNumber": 94
+        },
+        {
+          "caller": "upsert",
+          "callee": "bar.curpairCd",
+          "lineNumber": 96
+        },
+        {
+          "caller": "upsert",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 97
+        },
+        {
+          "caller": "upsert",
+          "callee": "jdbcTemplate.update",
+          "lineNumber": 98
+        },
+        {
+          "caller": "upsert",
+          "callee": "insertSql",
+          "lineNumber": 98
+        },
+        {
+          "caller": "upsert",
+          "callee": "bindBar",
+          "lineNumber": 98
+        },
+        {
+          "caller": "query",
+          "callee": "namespace.tableName",
+          "lineNumber": 128
+        },
+        {
+          "caller": "query",
+          "callee": "jdbcTemplate.query",
+          "lineNumber": 131
+        },
+        {
+          "caller": "query",
+          "callee": "List.of",
+          "lineNumber": 140
+        },
+        {
+          "caller": "query",
+          "callee": "jdbcTemplate.query",
+          "lineNumber": 143
+        },
+        {
+          "caller": "query",
+          "callee": "jdbcTemplate.query",
+          "lineNumber": 154
+        },
+        {
+          "caller": "query",
+          "callee": "jdbcTemplate.query",
+          "lineNumber": 162
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "namespace.tableName",
+          "lineNumber": 180
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "jdbcTemplate.query",
+          "lineNumber": 181
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "rs.getLong",
+          "lineNumber": 184
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "rows.isEmpty",
+          "lineNumber": 188
+        },
+        {
+          "caller": "nextTimeBefore",
+          "callee": "rows.get",
+          "lineNumber": 188
+        },
+        {
+          "caller": "size",
+          "callee": "namespace.tableName",
+          "lineNumber": 200
+        },
+        {
+          "caller": "size",
+          "callee": "jdbcTemplate.queryForObject",
+          "lineNumber": 201
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setString",
+          "lineNumber": 218
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.curpairCd",
+          "lineNumber": 218
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setLong",
+          "lineNumber": 219
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.chartDatetimeSec",
+          "lineNumber": 219
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 220
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.bidOpen",
+          "lineNumber": 220
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 221
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.bidHigh",
+          "lineNumber": 221
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 222
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.bidLow",
+          "lineNumber": 222
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 223
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.bidClose",
+          "lineNumber": 223
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 224
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.askOpen",
+          "lineNumber": 224
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 225
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.askHigh",
+          "lineNumber": 225
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 226
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.askLow",
+          "lineNumber": 226
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 227
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.askClose",
+          "lineNumber": 227
+        },
+        {
+          "caller": "bindBar",
+          "callee": "ps.setDouble",
+          "lineNumber": 228
+        },
+        {
+          "caller": "bindBar",
+          "callee": "bar.volume",
+          "lineNumber": 228
+        },
+        {
+          "caller": "mapRow",
+          "callee": "new CachedChartBar",
+          "lineNumber": 240
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getString",
+          "lineNumber": 241
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getLong",
+          "lineNumber": 242
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 243
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 244
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 245
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 246
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 247
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 248
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 249
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 250
+        },
+        {
+          "caller": "mapRow",
+          "callee": "rs.getDouble",
+          "lineNumber": 251
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 9,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 92,
+      "functions": [
+        {
+          "name": "chartOpenApi",
+          "startLine": 54,
+          "endLine": 62,
+          "params": []
+        },
+        {
+          "name": "relativeServer",
+          "startLine": 64,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "apiInfo",
+          "startLine": 68,
+          "endLine": 77,
+          "params": []
+        },
+        {
+          "name": "apiTags",
+          "startLine": 79,
+          "endLine": 92,
+          "params": []
+        },
+        {
+          "name": "bearerScheme",
+          "startLine": 94,
+          "endLine": 100,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "OpenApiConfig",
+          "startLine": 44,
+          "endLine": 101,
+          "methods": [
+            "chartOpenApi",
+            "relativeServer",
+            "apiInfo",
+            "apiTags",
+            "bearerScheme"
+          ],
+          "properties": [
+            "BEARER_JWT"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "OpenApiConfig",
+          "line": 44,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chartOpenApi",
+          "callee": "new OpenAPI()\n\t\t\t\t.servers(relativeServer())\n\t\t\t\t.info(apiInfo())\n\t\t\t\t.tags(apiTags())\n\t\t\t\t.addSecurityItem(new SecurityRequirement().addList(BEARER_JWT)).components",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new OpenAPI()\n\t\t\t\t.servers(relativeServer())\n\t\t\t\t.info(apiInfo())\n\t\t\t\t.tags(apiTags()).addSecurityItem",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new OpenAPI()\n\t\t\t\t.servers(relativeServer())\n\t\t\t\t.info(apiInfo()).tags",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new OpenAPI()\n\t\t\t\t.servers(relativeServer()).info",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new OpenAPI().servers",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new OpenAPI",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "relativeServer",
+          "lineNumber": 57
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "apiInfo",
+          "lineNumber": 58
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "apiTags",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new SecurityRequirement().addList",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new SecurityRequirement",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new Components().addSecuritySchemes",
+          "lineNumber": 61
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "new Components",
+          "lineNumber": 61
+        },
+        {
+          "caller": "chartOpenApi",
+          "callee": "bearerScheme",
+          "lineNumber": 61
+        },
+        {
+          "caller": "relativeServer",
+          "callee": "List.of",
+          "lineNumber": 65
+        },
+        {
+          "caller": "relativeServer",
+          "callee": "new Server().url(\"/\").description",
+          "lineNumber": 65
+        },
+        {
+          "caller": "relativeServer",
+          "callee": "new Server().url",
+          "lineNumber": 65
+        },
+        {
+          "caller": "relativeServer",
+          "callee": "new Server",
+          "lineNumber": 65
+        },
+        {
+          "caller": "apiInfo",
+          "callee": "new Info()\n\t\t\t\t.title(\"CTFX Chart Backend\")\n\t\t\t\t.version(\"0.0.1-SNAPSHOT\").description",
+          "lineNumber": 69
+        },
+        {
+          "caller": "apiInfo",
+          "callee": "new Info()\n\t\t\t\t.title(\"CTFX Chart Backend\").version",
+          "lineNumber": 69
+        },
+        {
+          "caller": "apiInfo",
+          "callee": "new Info().title",
+          "lineNumber": 69
+        },
+        {
+          "caller": "apiInfo",
+          "callee": "new Info",
+          "lineNumber": 69
+        },
+        {
+          "caller": "apiTags",
+          "callee": "List.of",
+          "lineNumber": 80
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name(\"Auth\").description",
+          "lineNumber": 81
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name",
+          "lineNumber": 81
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag",
+          "lineNumber": 81
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name(\"Datafeed (120–126)\").description",
+          "lineNumber": 82
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name",
+          "lineNumber": 82
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag",
+          "lineNumber": 82
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name(\"Chart layouts (127–131)\").description",
+          "lineNumber": 84
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name",
+          "lineNumber": 84
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag",
+          "lineNumber": 84
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name(\"Indicator templates (132–135)\").description",
+          "lineNumber": 86
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name",
+          "lineNumber": 86
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag",
+          "lineNumber": 86
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name(\"Chart templates (136–139)\").description",
+          "lineNumber": 88
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name",
+          "lineNumber": 88
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag",
+          "lineNumber": 88
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name(\"Currency pairs\").description",
+          "lineNumber": 90
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag().name",
+          "lineNumber": 90
+        },
+        {
+          "caller": "apiTags",
+          "callee": "new Tag",
+          "lineNumber": 90
+        },
+        {
+          "caller": "bearerScheme",
+          "callee": "new SecurityScheme()\n\t\t\t\t.type(SecurityScheme.Type.HTTP)\n\t\t\t\t.scheme(\"bearer\")\n\t\t\t\t.bearerFormat(\"JWT\").description",
+          "lineNumber": 95
+        },
+        {
+          "caller": "bearerScheme",
+          "callee": "new SecurityScheme()\n\t\t\t\t.type(SecurityScheme.Type.HTTP)\n\t\t\t\t.scheme(\"bearer\").bearerFormat",
+          "lineNumber": 95
+        },
+        {
+          "caller": "bearerScheme",
+          "callee": "new SecurityScheme()\n\t\t\t\t.type(SecurityScheme.Type.HTTP).scheme",
+          "lineNumber": 95
+        },
+        {
+          "caller": "bearerScheme",
+          "callee": "new SecurityScheme().type",
+          "lineNumber": 95
+        },
+        {
+          "caller": "bearerScheme",
+          "callee": "new SecurityScheme",
+          "lineNumber": 95
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/PasswordConfig.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 44,
+      "functions": [
+        {
+          "name": "passwordEncoder",
+          "startLine": 44,
+          "endLine": 47,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "PasswordConfig",
+          "startLine": 36,
+          "endLine": 48,
+          "methods": [
+            "passwordEncoder"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "PasswordConfig",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "passwordEncoder",
+          "callee": "new BCryptPasswordEncoder",
+          "lineNumber": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/WebConfig.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 63,
+      "nonEmptyLines": 58,
+      "functions": [
+        {
+          "name": "corsConfigurer",
+          "startLine": 45,
+          "endLine": 62,
+          "params": [
+            "properties"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "WebConfig",
+          "startLine": 36,
+          "endLine": 63,
+          "methods": [
+            "corsConfigurer"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "WebConfig",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "corsConfigurer",
+          "callee": "new WebMvcConfigurer",
+          "lineNumber": 47
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping(\"/api/**\")\n\t\t\t\t\t\t.allowedOrigins(properties.getCorsOrigins().toArray(String[]::new))\n\t\t\t\t\t\t.allowedMethods(\"GET\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\").allowedHeaders",
+          "lineNumber": 50
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping(\"/api/**\")\n\t\t\t\t\t\t.allowedOrigins(properties.getCorsOrigins().toArray(String[]::new)).allowedMethods",
+          "lineNumber": 50
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping(\"/api/**\").allowedOrigins",
+          "lineNumber": 50
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping",
+          "lineNumber": 50
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "properties.getCorsOrigins().toArray",
+          "lineNumber": 51
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "properties.getCorsOrigins",
+          "lineNumber": 51
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping(\"/curpairs\")\n\t\t\t\t\t\t.allowedOrigins(properties.getCorsOrigins().toArray(String[]::new))\n\t\t\t\t\t\t.allowedMethods(\"GET\", \"OPTIONS\").allowedHeaders",
+          "lineNumber": 56
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping(\"/curpairs\")\n\t\t\t\t\t\t.allowedOrigins(properties.getCorsOrigins().toArray(String[]::new)).allowedMethods",
+          "lineNumber": 56
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping(\"/curpairs\").allowedOrigins",
+          "lineNumber": 56
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "registry.addMapping",
+          "lineNumber": 56
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "properties.getCorsOrigins().toArray",
+          "lineNumber": 57
+        },
+        {
+          "caller": "addCorsMappings",
+          "callee": "properties.getCorsOrigins",
+          "lineNumber": 57
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 37,
+      "functions": [
+        {
+          "name": "MarkSeedWindow",
+          "startLine": 40,
+          "endLine": 41,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "MarkSeedWindow",
+          "startLine": 32,
+          "endLine": 42,
+          "methods": [
+            "MarkSeedWindow"
+          ],
+          "properties": [
+            "FROM",
+            "TO"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FROM",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "TO",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "MarkSeedWindow",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/package-info.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 36,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 30,
+      "classes": [
+        {
+          "name": "ChartPrincipal",
+          "startLine": 31,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChartPrincipal",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 112,
+      "nonEmptyLines": 100,
+      "functions": [
+        {
+          "name": "JwtAuthenticationFilter",
+          "startLine": 58,
+          "endLine": 60,
+          "params": [
+            "jwtService"
+          ]
+        },
+        {
+          "name": "doFilterInternal",
+          "startLine": 69,
+          "endLine": 90,
+          "params": [
+            "request",
+            "response",
+            "filterChain"
+          ]
+        },
+        {
+          "name": "authenticateBearer",
+          "startLine": 92,
+          "endLine": 102,
+          "params": [
+            "token"
+          ]
+        },
+        {
+          "name": "setAuthentication",
+          "startLine": 104,
+          "endLine": 111,
+          "params": [
+            "principal"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "JwtAuthenticationFilter",
+          "startLine": 46,
+          "endLine": 112,
+          "methods": [
+            "JwtAuthenticationFilter",
+            "doFilterInternal",
+            "authenticateBearer",
+            "setAuthentication"
+          ],
+          "properties": [
+            "BEARER_PREFIX",
+            "jwtService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "JwtAuthenticationFilter",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "JwtAuthenticationFilter",
+          "line": 46,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "doFilterInternal",
+          "callee": "request.getHeader",
+          "lineNumber": 75
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "header.startsWith",
+          "lineNumber": 76
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "header.substring(BEARER_PREFIX.length()).trim",
+          "lineNumber": 77
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "header.substring",
+          "lineNumber": 77
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "BEARER_PREFIX.length",
+          "lineNumber": 77
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "token.isEmpty",
+          "lineNumber": 78
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "authenticateBearer",
+          "lineNumber": 79
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "filterChain.doFilter",
+          "lineNumber": 83
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "CustomerContext.clear",
+          "lineNumber": 87
+        },
+        {
+          "caller": "doFilterInternal",
+          "callee": "SecurityContextHolder.clearContext",
+          "lineNumber": 88
+        },
+        {
+          "caller": "authenticateBearer",
+          "callee": "jwtService.parseToken",
+          "lineNumber": 94
+        },
+        {
+          "caller": "authenticateBearer",
+          "callee": "setAuthentication",
+          "lineNumber": 95
+        },
+        {
+          "caller": "authenticateBearer",
+          "callee": "SecurityContextHolder.clearContext",
+          "lineNumber": 99
+        },
+        {
+          "caller": "authenticateBearer",
+          "callee": "CustomerContext.clear",
+          "lineNumber": 100
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "new UsernamePasswordAuthenticationToken",
+          "lineNumber": 105
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "List.of",
+          "lineNumber": 108
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "new SimpleGrantedAuthority",
+          "lineNumber": 108
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "SecurityContextHolder.getContext().setAuthentication",
+          "lineNumber": 109
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "SecurityContextHolder.getContext",
+          "lineNumber": 109
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "CustomerContext.set",
+          "lineNumber": 110
+        },
+        {
+          "caller": "setAuthentication",
+          "callee": "principal.customerNo",
+          "lineNumber": 110
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 4,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/SecurityConfig.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 115,
+      "nonEmptyLines": 106,
+      "functions": [
+        {
+          "name": "SecurityConfig",
+          "startLine": 61,
+          "endLine": 66,
+          "params": [
+            "jwtAuthenticationFilter",
+            "jsonUnauthorizedEntryPoint"
+          ]
+        },
+        {
+          "name": "userDetailsService",
+          "startLine": 73,
+          "endLine": 78,
+          "params": []
+        },
+        {
+          "name": "securityFilterChain",
+          "startLine": 87,
+          "endLine": 114,
+          "params": [
+            "http"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "SecurityConfig",
+          "startLine": 48,
+          "endLine": 115,
+          "methods": [
+            "SecurityConfig",
+            "userDetailsService",
+            "securityFilterChain"
+          ],
+          "properties": [
+            "jwtAuthenticationFilter",
+            "jsonUnauthorizedEntryPoint"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SecurityConfig",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "SecurityConfig",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "userDetailsService",
+          "callee": "new UsernameNotFoundException",
+          "lineNumber": 76
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.csrf(csrf -> csrf.disable())\r\n\t\t\t\t.cors(Customizer.withDefaults())\r\n\t\t\t\t.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))\r\n\t\t\t\t.exceptionHandling(ex -> ex.authenticationEntryPoint(jsonUnauthorizedEntryPoint))\r\n\t\t\t\t.authorizeHttpRequests(auth -> auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll()\r\n\r\n\t\t\t\t\t\t// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.\r\n\t\t\t\t\t\t.requestMatchers(\"/api/**\").authenticated()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/curpairs\").authenticated()\r\n\t\t\t\t\t\t.anyRequest().permitAll()).addFilterBefore",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.csrf(csrf -> csrf.disable())\r\n\t\t\t\t.cors(Customizer.withDefaults())\r\n\t\t\t\t.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))\r\n\t\t\t\t.exceptionHandling(ex -> ex.authenticationEntryPoint(jsonUnauthorizedEntryPoint)).authorizeHttpRequests",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.csrf(csrf -> csrf.disable())\r\n\t\t\t\t.cors(Customizer.withDefaults())\r\n\t\t\t\t.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).exceptionHandling",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.csrf(csrf -> csrf.disable())\r\n\t\t\t\t.cors(Customizer.withDefaults()).sessionManagement",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.csrf(csrf -> csrf.disable()).cors",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.csrf",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "csrf.disable",
+          "lineNumber": 89
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "Customizer.withDefaults",
+          "lineNumber": 90
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "session.sessionCreationPolicy",
+          "lineNumber": 91
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "ex.authenticationEntryPoint",
+          "lineNumber": 92
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll()\r\n\r\n\t\t\t\t\t\t// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.\r\n\t\t\t\t\t\t.requestMatchers(\"/api/**\").authenticated()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/curpairs\").authenticated()\r\n\t\t\t\t\t\t.anyRequest().permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll()\r\n\r\n\t\t\t\t\t\t// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.\r\n\t\t\t\t\t\t.requestMatchers(\"/api/**\").authenticated()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/curpairs\").authenticated().anyRequest",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll()\r\n\r\n\t\t\t\t\t\t// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.\r\n\t\t\t\t\t\t.requestMatchers(\"/api/**\").authenticated()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/curpairs\").authenticated",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll()\r\n\r\n\t\t\t\t\t\t// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.\r\n\t\t\t\t\t\t.requestMatchers(\"/api/**\").authenticated().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll()\r\n\r\n\t\t\t\t\t\t// Datafeed 120–139 and /curpairs require the 1h access JWT, not the refresh cookie.\r\n\t\t\t\t\t\t.requestMatchers(\"/api/**\").authenticated",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\")\r\n\t\t\t\t\t\t.permitAll().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(\r\n\t\t\t\t\t\t\t\t\"/swagger-ui.html\",\r\n\t\t\t\t\t\t\t\t\"/swagger-ui/**\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs\",\r\n\t\t\t\t\t\t\t\t\"/v3/api-docs/**\").permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/logout\").permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/refresh\").permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll()\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.POST, \"/api/auth/login\").permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll()\r\n\r\n\t\t\t\t\t\t// Login, refresh, and logout stay public so the widget can mint/rotate tokens.\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.GET, \"/api/health\").permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll().requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth\r\n\t\t\t\t\t\t.requestMatchers(HttpMethod.OPTIONS, \"/**\").permitAll",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "auth.requestMatchers",
+          "lineNumber": 93
+        },
+        {
+          "caller": "securityFilterChain",
+          "callee": "http.build",
+          "lineNumber": 113
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    }
+  ]
+}

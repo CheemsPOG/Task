@@ -1,0 +1,1031 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "type": "file",
+      "name": "CacheNamespace.java",
+      "filePath": "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "summary": "Enum of Redis/warehouse cache namespaces keyed by Peach chart type, mapping TradingView resolutions to table names, cache names, and bar periods.",
+      "tags": [
+        "cache",
+        "enum",
+        "resolution",
+        "data-model"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Java enum with a static factory that scans values to resolve a TradingView resolution string."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "type": "file",
+      "name": "ChartCacheStore.java",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "summary": "Redis sorted-set cache for OHLC bars, with per-namespace locks, JSON encode/decode, and lazy warm-from-warehouse when a pair's key is empty.",
+      "tags": [
+        "cache",
+        "redis",
+        "service",
+        "serialization"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses Spring Redis ZSET operations scored by bar datetime, with striped Object locks by namespace ordinal."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "type": "file",
+      "name": "ChartDataController.java",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "summary": "REST controller exposing the TradingView UDF datafeed: health, config, server time, symbol search/resolve, marks, timescale marks, and history bars.",
+      "tags": [
+        "api-handler",
+        "controller",
+        "datafeed",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "type": "file",
+      "name": "DatafeedConfigResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "summary": "Response DTO for the UDF /config endpoint, including supported exchanges, symbol types, resolutions, and feature flags.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "datafeed"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "type": "file",
+      "name": "HealthResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "summary": "Minimal health-check response carrying a status string for the datafeed liveness endpoint.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "health"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "type": "file",
+      "name": "HistoryResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "summary": "UDF history response that converts OHLC bars into columnar t/o/h/l/c arrays, with factories for successful and empty (no-data / nextTime) results.",
+      "tags": [
+        "dto",
+        "serialization",
+        "factory",
+        "datafeed"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "type": "file",
+      "name": "MarkDto.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "summary": "DTO for a TradingView chart mark: id, timestamp, color, text, and label used by the /marks endpoint.",
+      "tags": [
+        "dto",
+        "serialization",
+        "type-definition",
+        "datafeed"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/CacheNamespace.java:CacheNamespace",
+      "type": "class",
+      "name": "CacheNamespace",
+      "filePath": "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "lineRange": [
+        34,
+        130
+      ],
+      "summary": "Enum of cache namespaces (chart type, warehouse table, Redis name, TV resolution) with a factory that matches a TradingView resolution.",
+      "tags": [
+        "enum",
+        "cache",
+        "factory",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/cache/ChartCacheStore.java:ChartCacheStore",
+      "type": "class",
+      "name": "ChartCacheStore",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        46,
+        289
+      ],
+      "summary": "Spring component that stores and queries CachedChartBar JSON in Redis ZSETs, warming from ChartBarRepository when a key is empty.",
+      "tags": [
+        "cache",
+        "redis",
+        "service",
+        "singleton"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/controller/ChartDataController.java:ChartDataController",
+      "type": "class",
+      "name": "ChartDataController",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        52,
+        251
+      ],
+      "summary": "Spring MVC controller that delegates UDF datafeed HTTP endpoints to ChartDataService.",
+      "tags": [
+        "api-handler",
+        "controller",
+        "datafeed"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java:DatafeedConfigResponse",
+      "type": "class",
+      "name": "DatafeedConfigResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "lineRange": [
+        33,
+        50
+      ],
+      "summary": "Record-style response for datafeed configuration: exchanges, symbol types, resolutions, and capability flags.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/HealthResponse.java:HealthResponse",
+      "type": "class",
+      "name": "HealthResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "lineRange": [
+        30,
+        31
+      ],
+      "summary": "Tiny response record exposing a health status field.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "health"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/HistoryResponse.java:HistoryResponse",
+      "type": "class",
+      "name": "HistoryResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "lineRange": [
+        39,
+        118
+      ],
+      "summary": "Columnar UDF history payload with static factories for bar lists and empty/no-data responses including optional nextTime.",
+      "tags": [
+        "dto",
+        "factory",
+        "serialization",
+        "datafeed"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/MarkDto.java:MarkDto",
+      "type": "class",
+      "name": "MarkDto",
+      "filePath": "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "lineRange": [
+        32,
+        40
+      ],
+      "summary": "Chart-mark DTO with id, time, color, text, and label fields.",
+      "tags": [
+        "dto",
+        "type-definition",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/CacheNamespace.java:fromTvResolution",
+      "type": "function",
+      "name": "fromTvResolution",
+      "filePath": "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "lineRange": [
+        113,
+        129
+      ],
+      "summary": "Resolves a TradingView resolution string to a CacheNamespace via Peach chart type, returning null when unmatched.",
+      "tags": [
+        "factory",
+        "cache",
+        "resolution"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:replacePair",
+      "type": "function",
+      "name": "replacePair",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        78,
+        85
+      ],
+      "summary": "Replaces all cached bars for a pair under a namespace lock.",
+      "tags": [
+        "cache",
+        "redis",
+        "mutation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:put",
+      "type": "function",
+      "name": "put",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        93,
+        102
+      ],
+      "summary": "Upserts one bar into the Redis ZSET, removing any existing member at the same datetime score.",
+      "tags": [
+        "cache",
+        "redis",
+        "mutation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:query",
+      "type": "function",
+      "name": "query",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        115,
+        137
+      ],
+      "summary": "Returns bars in [fromSec, toSec] from Redis after warming the key from the warehouse if empty.",
+      "tags": [
+        "cache",
+        "redis",
+        "query"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:nextTimeBefore",
+      "type": "function",
+      "name": "nextTimeBefore",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        147,
+        168
+      ],
+      "summary": "Finds the latest bar datetime strictly before fromSec, falling back to the warehouse repository.",
+      "tags": [
+        "cache",
+        "redis",
+        "query"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:size",
+      "type": "function",
+      "name": "size",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        177,
+        187
+      ],
+      "summary": "Returns the ZSET cardinality for a pair after ensuring the cache is warmed.",
+      "tags": [
+        "cache",
+        "redis",
+        "query"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:warmFromWarehouseIfEmpty",
+      "type": "function",
+      "name": "warmFromWarehouseIfEmpty",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        206,
+        219
+      ],
+      "summary": "Loads bars from ChartBarRepository and writes them to Redis when the pair key has no members.",
+      "tags": [
+        "cache",
+        "warm-up",
+        "data-access"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:replacePairUnlocked",
+      "type": "function",
+      "name": "replacePairUnlocked",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        228,
+        247
+      ],
+      "summary": "Deletes the Redis key then bulk-adds bar JSON members scored by chart datetime.",
+      "tags": [
+        "cache",
+        "redis",
+        "mutation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:decode",
+      "type": "function",
+      "name": "decode",
+      "filePath": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "lineRange": [
+        270,
+        288
+      ],
+      "summary": "Deserializes Redis ZSET members into CachedChartBar objects, failing fast on JSON errors.",
+      "tags": [
+        "serialization",
+        "cache"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:health",
+      "type": "function",
+      "name": "health",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        73,
+        81
+      ],
+      "summary": "Returns a HealthResponse for the datafeed liveness check.",
+      "tags": [
+        "api-handler",
+        "health"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:config",
+      "type": "function",
+      "name": "config",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        88,
+        98
+      ],
+      "summary": "Serves TradingView UDF configuration from ChartDataService.",
+      "tags": [
+        "api-handler",
+        "datafeed"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:time",
+      "type": "function",
+      "name": "time",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        105,
+        115
+      ],
+      "summary": "Returns current server Unix time via ChartDataService.",
+      "tags": [
+        "api-handler",
+        "datafeed",
+        "time"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:search",
+      "type": "function",
+      "name": "search",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        126,
+        141
+      ],
+      "summary": "Searches FX symbols by query, exchange, type, and limit for the UDF search endpoint.",
+      "tags": [
+        "api-handler",
+        "datafeed",
+        "search"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:symbols",
+      "type": "function",
+      "name": "symbols",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        149,
+        163
+      ],
+      "summary": "Resolves a symbol name to SymbolInfoDto for the UDF symbols endpoint.",
+      "tags": [
+        "api-handler",
+        "datafeed",
+        "symbol"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:marks",
+      "type": "function",
+      "name": "marks",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        174,
+        189
+      ],
+      "summary": "Returns chart marks for a symbol, resolution, and time range.",
+      "tags": [
+        "api-handler",
+        "datafeed",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:timescaleMarks",
+      "type": "function",
+      "name": "timescaleMarks",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        200,
+        215
+      ],
+      "summary": "Returns timescale marks for a symbol, resolution, and time range.",
+      "tags": [
+        "api-handler",
+        "datafeed",
+        "marks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/controller/ChartDataController.java:history",
+      "type": "function",
+      "name": "history",
+      "filePath": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "lineRange": [
+        230,
+        249
+      ],
+      "summary": "Serves OHLC history bars, forwarding price/bid-ask and countBack to ChartDataService.",
+      "tags": [
+        "api-handler",
+        "datafeed",
+        "history"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:ok",
+      "type": "function",
+      "name": "ok",
+      "filePath": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "lineRange": [
+        55,
+        65
+      ],
+      "summary": "Builds a successful history response by pivoting BarDto list into columnar OHLC arrays.",
+      "tags": [
+        "factory",
+        "serialization",
+        "history"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:empty",
+      "type": "function",
+      "name": "empty",
+      "filePath": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "lineRange": [
+        73,
+        82
+      ],
+      "summary": "Builds a no-data history response with empty columns and optional nextTime for UDF pagination.",
+      "tags": [
+        "factory",
+        "serialization",
+        "history"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "target": "class:src/main/java/com/task/chart/cache/CacheNamespace.java:CacheNamespace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "target": "class:src/main/java/com/task/chart/cache/CacheNamespace.java:CacheNamespace",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "target": "function:src/main/java/com/task/chart/cache/CacheNamespace.java:fromTvResolution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "target": "function:src/main/java/com/task/chart/cache/CacheNamespace.java:fromTvResolution",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "class:src/main/java/com/task/chart/cache/ChartCacheStore.java:ChartCacheStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "class:src/main/java/com/task/chart/cache/ChartCacheStore.java:ChartCacheStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:replacePair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:replacePair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:put",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:put",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:query",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:nextTimeBefore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:nextTimeBefore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:size",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:size",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:warmFromWarehouseIfEmpty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:replacePairUnlocked",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "function:src/main/java/com/task/chart/cache/ChartCacheStore.java:decode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "class:src/main/java/com/task/chart/controller/ChartDataController.java:ChartDataController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "class:src/main/java/com/task/chart/controller/ChartDataController.java:ChartDataController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:health",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:time",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:time",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:symbols",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:symbols",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:marks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:marks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:timescaleMarks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:timescaleMarks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:history",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "function:src/main/java/com/task/chart/controller/ChartDataController.java:history",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java:DatafeedConfigResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java:DatafeedConfigResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/HealthResponse.java:HealthResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/HealthResponse.java:HealthResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/HistoryResponse.java:HistoryResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/HistoryResponse.java:HistoryResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "target": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "target": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "target": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:empty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "target": "function:src/main/java/com/task/chart/dto/response/HistoryResponse.java:empty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/MarkDto.java:MarkDto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/MarkDto.java:MarkDto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "target": "file:src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "target": "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "target": "file:src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/cache/CacheNamespace.java:fromTvResolution",
+      "target": "function:src/main/java/com/task/chart/util/ResolutionMapper.java:toPeachChartType",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:config",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:config",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:search",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:symbols",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:resolve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:marks",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:marks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:timescaleMarks",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:timescaleMarks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:history",
+      "target": "function:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java:history",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:time",
+      "target": "class:src/main/java/com/task/chart/service/ChartDataService.java:ChartDataService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/controller/ChartDataController.java:health",
+      "target": "class:src/main/java/com/task/chart/dto/response/HealthResponse.java:HealthResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

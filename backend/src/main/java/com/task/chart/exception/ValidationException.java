@@ -10,8 +10,12 @@ import com.task.chart.constants.ErrorCodes;
  * Request validation failure (HTTP 422, {@code CODE:30020}).
  *
  * <p>Services throw this for blank or illegal query/body fields on docs 120–139 and login. 
- * {@link GlobalExceptionHandler} maps it to JSON {@code errorCode} {@code CODE:30020}. This is NOT
- * {@link ResourceNotFoundException} (404), NOT auth 401, and NOT a widget-side validation error.
+ * {@link GlobalExceptionHandler} maps it to JSON {@code errorCode} {@code CODE:30020}.
+ * Carries <em>no</em> custom message — the handler always sends the same localized
+ * text (you cannot attach "resolution 10 invalid for marks" without changing this design).
+ *
+ * <p><strong>NOT:</strong> not {@link ResourceNotFoundException} (404), not auth 401,
+ * not a widget-side validation error.
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

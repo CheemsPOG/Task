@@ -17,8 +17,9 @@ import java.time.Instant;
  *
  * <p>This JPA row is one saved widget layout for design docs 127–131. {@code ChartLayoutServiceImpl}
  * inserts, updates, lists, and deletes it filtered by JWT {@code customer_no}. {@code content} is
- * the widget JSON blob; {@code chart_type} is the resolution. It is never returned as a JPA entity
- * over HTTP (controllers map to DTOs) and is not a chart template (docs 136–139).
+ * the widget JSON blob; {@code chart_type} is the DB column (Peach name) exposed as JSON
+ * {@code resolution} ({@code 1D}/{@code 60}, not {@code DAY}/{@code 60M}). Never returned as a
+ * JPA entity over HTTP. Not a chart template (docs 136–139).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

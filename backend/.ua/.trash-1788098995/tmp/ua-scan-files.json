@@ -1,0 +1,756 @@
+{
+  "scriptCompleted": true,
+  "contentDigest": "62ced02073e60c5910f3ba8cb7c0ae2136c9ea38c4895f25fac9101cbb30a184",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "language": "unknown",
+      "sizeLines": 2,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".ua/.understandignore",
+      "language": "unknown",
+      "sizeLines": 83,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".ua/config.json",
+      "language": "json",
+      "sizeLines": 3,
+      "fileCategory": "config"
+    },
+    {
+      "path": "mvnw",
+      "language": "unknown",
+      "sizeLines": 295,
+      "fileCategory": "code"
+    },
+    {
+      "path": "mvnw.cmd",
+      "language": "batch",
+      "sizeLines": 189,
+      "fileCategory": "script"
+    },
+    {
+      "path": "pom.xml",
+      "language": "xml",
+      "sizeLines": 123,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/main/java/README.md",
+      "language": "markdown",
+      "sizeLines": 261,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "src/main/java/com/task/chart/ChartBackendApplication.java",
+      "language": "java",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/CacheNamespace.java",
+      "language": "java",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "language": "java",
+      "sizeLines": 181,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "language": "java",
+      "sizeLines": 253,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "language": "java",
+      "sizeLines": 289,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "language": "java",
+      "sizeLines": 173,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "language": "java",
+      "sizeLines": 293,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/QuoteBus.java",
+      "language": "java",
+      "sizeLines": 148,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "language": "java",
+      "sizeLines": 226,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/AppProperties.java",
+      "language": "java",
+      "sizeLines": 264,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/AppUserSeedRunner.java",
+      "language": "java",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/OpenApiConfig.java",
+      "language": "java",
+      "sizeLines": 101,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/PasswordConfig.java",
+      "language": "java",
+      "sizeLines": 48,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/config/WebConfig.java",
+      "language": "java",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "language": "java",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/constants/MarkSeedWindow.java",
+      "language": "java",
+      "sizeLines": 42,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "language": "java",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/AuthController.java",
+      "language": "java",
+      "sizeLines": 129,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartDataController.java",
+      "language": "java",
+      "sizeLines": 251,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartLayoutController.java",
+      "language": "java",
+      "sizeLines": 174,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "language": "java",
+      "sizeLines": 145,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/CurrencyPairController.java",
+      "language": "java",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "language": "java",
+      "sizeLines": 146,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "language": "java",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "language": "java",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "language": "java",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartTemplateDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "language": "java",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java",
+      "language": "java",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "language": "java",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/FormingBarMessage.java",
+      "language": "java",
+      "sizeLines": 47,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/FxQuoteMessage.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/HealthResponse.java",
+      "language": "java",
+      "sizeLines": 31,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/HistoryResponse.java",
+      "language": "java",
+      "sizeLines": 118,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/LoginResponse.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/MarkDto.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/RefreshResponse.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SearchSymbolDto.java",
+      "language": "java",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ServerTimeResponse.java",
+      "language": "java",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SymbolInfoDto.java",
+      "language": "java",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java",
+      "language": "java",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/AppUser.java",
+      "language": "java",
+      "sizeLines": 105,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/Ccypair.java",
+      "language": "java",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/Season.java",
+      "language": "java",
+      "sizeLines": 88,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvChartLayout.java",
+      "language": "java",
+      "sizeLines": 144,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvChartTemplate.java",
+      "language": "java",
+      "sizeLines": 113,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "language": "java",
+      "sizeLines": 113,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvMark.java",
+      "language": "java",
+      "sizeLines": 92,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvTimescaleMark.java",
+      "language": "java",
+      "sizeLines": 92,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/BadCredentialsAppException.java",
+      "language": "java",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "language": "java",
+      "sizeLines": 120,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "language": "java",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "language": "java",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/UnauthorizedAppException.java",
+      "language": "java",
+      "sizeLines": 42,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/package-info.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/AppUserRepository.java",
+      "language": "java",
+      "sizeLines": 52,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/CcypairRepository.java",
+      "language": "java",
+      "sizeLines": 96,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/SeasonRepository.java",
+      "language": "java",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvChartLayoutRepository.java",
+      "language": "java",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvChartTemplateRepository.java",
+      "language": "java",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "language": "java",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvMarkRepository.java",
+      "language": "java",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java",
+      "language": "java",
+      "sizeLines": 52,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/AuthCookieSupport.java",
+      "language": "java",
+      "sizeLines": 95,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/ChartPrincipal.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/CustomerContext.java",
+      "language": "java",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "language": "java",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "language": "java",
+      "sizeLines": 112,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/JwtService.java",
+      "language": "java",
+      "sizeLines": 109,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/RefreshTokenSession.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/RefreshTokenStore.java",
+      "language": "java",
+      "sizeLines": 131,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/SecurityConfig.java",
+      "language": "java",
+      "sizeLines": 115,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/AuthService.java",
+      "language": "java",
+      "sizeLines": 65,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartDataService.java",
+      "language": "java",
+      "sizeLines": 119,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartLayoutService.java",
+      "language": "java",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/ChartTemplateService.java",
+      "language": "java",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "language": "java",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "language": "java",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "language": "java",
+      "sizeLines": 99,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "language": "java",
+      "sizeLines": 62,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "language": "java",
+      "sizeLines": 154,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "language": "java",
+      "sizeLines": 478,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+      "language": "java",
+      "sizeLines": 221,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "language": "java",
+      "sizeLines": 144,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java",
+      "language": "java",
+      "sizeLines": 94,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "language": "java",
+      "sizeLines": 147,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "language": "java",
+      "sizeLines": 56,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "language": "java",
+      "sizeLines": 173,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "language": "java",
+      "sizeLines": 100,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/util/DemoMarket.java",
+      "language": "java",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/util/ResolutionMapper.java",
+      "language": "java",
+      "sizeLines": 141,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/resources/application.yml",
+      "language": "yaml",
+      "sizeLines": 88,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "language": "sql",
+      "sizeLines": 18,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V2__create_m_season.sql",
+      "language": "sql",
+      "sizeLines": 13,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V3__create_m_tv_mark.sql",
+      "language": "sql",
+      "sizeLines": 19,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql",
+      "language": "sql",
+      "sizeLines": 18,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql",
+      "language": "sql",
+      "sizeLines": 12,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql",
+      "language": "sql",
+      "sizeLines": 10,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "language": "sql",
+      "sizeLines": 12,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "language": "sql",
+      "sizeLines": 199,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql",
+      "language": "sql",
+      "sizeLines": 11,
+      "fileCategory": "data"
+    },
+    {
+      "path": "src/main/resources/messages.properties",
+      "language": "properties",
+      "sizeLines": 8,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/main/resources/messages_ja.properties",
+      "language": "properties",
+      "sizeLines": 7,
+      "fileCategory": "config"
+    }
+  ],
+  "totalFiles": 121,
+  "filteredByIgnore": 34,
+  "estimatedComplexity": "moderate",
+  "stats": {
+    "filesScanned": 121,
+    "byCategory": {
+      "code": 105,
+      "config": 5,
+      "script": 1,
+      "docs": 1,
+      "data": 9
+    },
+    "byLanguage": {
+      "unknown": 3,
+      "json": 1,
+      "batch": 1,
+      "xml": 1,
+      "markdown": 1,
+      "java": 102,
+      "yaml": 1,
+      "sql": 9,
+      "properties": 2
+    }
+  }
+}

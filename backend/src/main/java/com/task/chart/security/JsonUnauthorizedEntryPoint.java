@@ -26,8 +26,13 @@ import org.springframework.web.servlet.LocaleResolver;
  * {@code E_UNAUTHORIZED} via {@code messages.properties} / {@code messages_ja.properties} when a
  * protected matcher has no valid access JWT. Filter-chain 401 is this class;
  * {@link com.task.chart.exception.GlobalExceptionHandler} handles thrown
- * {@link com.task.chart.exception.UnauthorizedAppException} from refresh. This is NOT Peach S-01
- * and NOT the widget.
+ * {@link com.task.chart.exception.UnauthorizedAppException} from refresh.
+ *
+ * <p><strong>NOT:</strong> not Peach S-01; not the widget; not
+ * {@link com.task.chart.exception.GlobalExceptionHandler} (that class never sees
+ * filter-chain 401 — the request never reached a controller). Do not collapse
+ * these two 401 paths: this is "never got past the gate"; {@code UnauthorizedAppException}
+ * is "got past the gate, refresh cookie was bad."
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

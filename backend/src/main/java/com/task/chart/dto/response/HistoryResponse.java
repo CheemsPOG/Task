@@ -14,9 +14,12 @@ import java.util.List;
  *
  * <p>{@code ChartDataServiceImpl} fills this from Redis {@code ChartCacheStore}. The JSON body
  * is Peach columnar arrays only: {@code s}, {@code t}, {@code o}, {@code h}, {@code l}, {@code c},
- * and {@code nextTime} on {@code no_data}. {@code t} is unix seconds. Widget {@code Bar[]} objects
- * are reconstructed in the frontend datafeed. It is not the live forming-bar bus
- * ({@link FormingBarMessage}) and not a warehouse row.
+ * and {@code nextTime} on {@code no_data}. {@code t} is unix <em>seconds</em>.
+ * {@link BarDto#time} (internal) is unix <em>milliseconds</em> — {@link Columnar#fromBars}
+ * divides by 1000. Off-by-1000 is the usual bug when touching this file.
+ *
+ * <p><strong>NOT:</strong> not the live forming-bar bus ({@link FormingBarMessage});
+ * not a warehouse row; not a place to add a widget {@code bars[]} array (frontend rebuilds that).
  *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">

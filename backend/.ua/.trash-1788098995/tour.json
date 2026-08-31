@@ -1,0 +1,108 @@
+[
+  {
+    "order": 1,
+    "title": "Project Overview",
+    "description": "Start with the package README to see what chart-backend is: a Spring Boot service that feeds TradingView Advanced Charts with FX history, live quotes, saved layouts, and templates. It maps the CTFX controller-service-repository layering, datafeed design docs 120–139, and the Redis cache as the single source of truth for bars. Use this file as the map for the rest of the tour before opening any Java class.",
+    "nodeIds": [
+      "document:src/main/java/README.md"
+    ]
+  },
+  {
+    "order": 2,
+    "title": "Application Entry and Config",
+    "description": "ChartBackendApplication is the Spring Boot main class; it does not import controllers or workers, it component-scans them. The Maven POM pins Java 21, Spring Boot, JPA, Flyway, Redis, Security, JJWT, and OpenAPI. application.yml wires Postgres, Redis, Flyway, JWT, CORS, TradingView flags, and demo tick cadence, while AppProperties binds those values for auth and the datafeed. Together these four files are the runtime skeleton everything else hangs from.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "config:pom.xml",
+      "config:src/main/resources/application.yml",
+      "file:src/main/java/com/task/chart/config/AppProperties.java"
+    ],
+    "languageLesson": "Spring Boot does not require the main class to import feature modules. @SpringBootApplication enables component scanning, and @ConfigurationProperties maps YAML keys under a prefix onto a typed Java bean used across security and the datafeed."
+  },
+  {
+    "order": 3,
+    "title": "Security and JWT Auth",
+    "description": "After bootstrap, every widget call hits the security chain. SecurityConfig is stateless: CSRF off, public health/auth/Swagger, JWT required for /api/** and GET /curpairs, JSON 401 instead of a login redirect. JwtAuthenticationFilter parses the Bearer access token, sets SecurityContext, and JwtService creates and verifies HS256 tokens that carry username and customer_no. AuthService and AuthServiceImpl authenticate against m_app_user with BCrypt, then issue that access JWT and rotate an opaque refresh UUID stored in Redis.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/security/SecurityConfig.java",
+      "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java",
+      "file:src/main/java/com/task/chart/security/JwtService.java",
+      "file:src/main/java/com/task/chart/service/AuthService.java",
+      "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java"
+    ],
+    "languageLesson": "A OncePerRequestFilter runs once per HTTP request in the Spring Security chain. Access tokens are compact JWTs (HS256); refresh tokens here are opaque Redis keys, not JWTs, so logout can revoke them immediately."
+  },
+  {
+    "order": 4,
+    "title": "UDF Datafeed API",
+    "description": "With auth in place, TradingView talks to this backend through the UDF protocol. ChartDataController is the highest-fan-out HTTP surface: health, config, server time, symbol search/resolve, marks, timescale marks, and history. ChartDataService defines that contract; ChartDataServiceImpl is the widest service in the graph (fan-out 49) — it validates requests, resolves FX pairs and sessions, loads marks from the database, and serves OHLC from Redis. HistoryResponse turns those bars into the columnar t/o/h/l/c arrays the charting library expects.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "file:src/main/java/com/task/chart/service/ChartDataService.java",
+      "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java"
+    ],
+    "languageLesson": "TradingView UDF history is columnar, not an array of bar objects: parallel t, o, h, l, c arrays keep payload size down. Empty ranges use a no-data status plus optional nextTime so the widget can paginate backward."
+  },
+  {
+    "order": 5,
+    "title": "Cache and Live Ticks",
+    "description": "History in Step 4 is only as good as the bar cache behind it. DemoTickEngine walks bid/ask for every warehouse pair; TickIngestWorker schedules those ticks, upserts the open bar in each timeframe, and publishes quotes. ChartCacheStore is the Redis sorted-set of OHLC bars, with per-namespace locks and lazy warm-from-warehouse. QuoteBus broadcasts live quotes and forming bars; ChartBarRepository is the JDBC warehouse those Redis keys are seeded from. This cache layer is the single source of truth the README called out in Step 1.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "file:src/main/java/com/task/chart/cache/ChartBarRepository.java"
+    ],
+    "languageLesson": "Spring @Scheduled workers plus a startup hook let the same class both seed state and then tick on a cadence. Redis sorted sets keyed by bar time make range reads for /history a single ZRANGE, while a JDBC warehouse remains the durable copy."
+  },
+  {
+    "order": 6,
+    "title": "Tenant-Scoped Chart Layouts",
+    "description": "Layouts are per-customer, not global. JwtAuthenticationFilter from Step 3 writes the JWT customer_no into CustomerContext, a thread-local the layout services read instead of trusting a request parameter. ChartLayoutController exposes register, update, list, get, and delete under /api/layouts. ChartLayoutServiceImpl validates body and resolution, requires an active FX pair, and treats another tenant's id as 404 so layouts cannot leak across customers. TvChartLayout is the JPA row stored in m_tv_chart_layout.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "file:src/main/java/com/task/chart/controller/ChartLayoutController.java",
+      "file:src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+      "file:src/main/java/com/task/chart/entity/TvChartLayout.java"
+    ],
+    "languageLesson": "ThreadLocal tenant context is set in a filter and cleared in a finally block so pooled servlet threads cannot leak customer_no to the next request. Hiding cross-tenant ids as 404 avoids confirming that another customer's layout exists."
+  },
+  {
+    "order": 7,
+    "title": "Chart and Indicator Templates",
+    "description": "Templates follow the same tenant pattern as layouts in Step 6. ChartTemplateController and ChartTemplateServiceImpl persist named TradingView chart-style JSON per (customer_no, name). IndicatorTemplateController and IndicatorTemplateServiceImpl do the same for study (indicator) templates. Both implementations validate name length, scope every query by the JWT customer, and upsert content so the widget can save and restore styles without mixing tenants.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java"
+    ]
+  },
+  {
+    "order": 8,
+    "title": "Persistence and Flyway Schema",
+    "description": "The tables behind Steps 3–7 are created by Flyway, not by Hibernate ddl-auto. V1 defines m_ccypairs, the highest fan-in table in the graph and the FX catalog Ccypair maps to. V7 creates m_app_user for the demo logins AuthServiceImpl checks. V5 stores per-customer layouts; V8 creates the thirteen t_chart_* OHLC fact tables ChartBarRepository writes. Read these migrations as the durable contract the JPA entities and Redis warehouse both depend on.",
+    "nodeIds": [
+      "file:src/main/resources/db/migration/V1__create_m_ccypairs.sql",
+      "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "file:src/main/resources/db/migration/V7__create_m_app_user.sql",
+      "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql"
+    ],
+    "languageLesson": "Flyway migrations are ordered by version prefix (V1__, V7__, V8__). Each file should be additive and never rewritten after it has run in an environment; new tables or columns go in a new version so schema history stays reproducible."
+  },
+  {
+    "order": 9,
+    "title": "Errors and Localization",
+    "description": "Every controller on this tour returns failures through one REST advice class. GlobalExceptionHandler maps validation, not-found, unauthorized, and bad-credentials exceptions to HTTP status plus an ErrorResponse body. ErrorCodes is the shared catalog of code strings and message-bundle keys; messages.properties supplies the default English text. When a request's locale is Japanese, the same keys resolve from the ja bundle, so datafeed, auth, and layout clients share one error contract.",
+    "nodeIds": [
+      "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "config:src/main/resources/messages.properties",
+      "config:src/main/resources/messages_ja.properties"
+    ],
+    "languageLesson": "Spring @RestControllerAdvice centralizes exception-to-HTTP mapping. MessageSource plus LocaleContextHolder (often from Accept-Language) picks messages.properties or messages_ja.properties without controllers formatting strings themselves."
+  }
+]

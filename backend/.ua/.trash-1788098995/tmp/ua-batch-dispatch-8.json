@@ -1,0 +1,169 @@
+{
+  "batchIndex": 8,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "language": "java",
+      "sizeLines": 181,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/cache/ChartCacheWriter.java",
+      "language": "java",
+      "sizeLines": 173,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "language": "java",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "language": "java",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "language": "java",
+      "sizeLines": 99,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/SymbolCatalog.java",
+      "language": "java",
+      "sizeLines": 62,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "language": "java",
+      "sizeLines": 173,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/cache/CachedChartBar.java": [
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java"
+    ],
+    "src/main/java/com/task/chart/cache/ChartCacheWriter.java": [
+      "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "src/main/java/com/task/chart/service/SymbolCatalog.java"
+    ],
+    "src/main/java/com/task/chart/constants/PriceComponent.java": [],
+    "src/main/java/com/task/chart/dto/response/BarDto.java": [],
+    "src/main/java/com/task/chart/service/MockBarGenerator.java": [
+      "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java"
+    ],
+    "src/main/java/com/task/chart/service/SymbolCatalog.java": [],
+    "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java": [
+      "src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "src/main/java/com/task/chart/constants/PriceComponent.java",
+      "src/main/java/com/task/chart/dto/response/BarDto.java",
+      "src/main/java/com/task/chart/service/MockBarGenerator.java",
+      "src/main/java/com/task/chart/util/DemoMarket.java"
+    ]
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/cache/CachedChartBar.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/constants/PriceComponent.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/dto/response/BarDto.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/SymbolCatalog.java": [
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+        "batchIndex": 1,
+        "symbols": [
+          "ChartDataServiceImpl",
+          "config",
+          "serverTimeSeconds",
+          "search",
+          "marks",
+          "timescaleMarks",
+          "resolve",
+          "history",
+          "ChartDataServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+        "batchIndex": 3,
+        "symbols": [
+          "SymbolCatalogImpl",
+          "getAll",
+          "find",
+          "SymbolCatalogImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java": [
+      {
+        "path": "src/main/java/com/task/chart/util/DemoMarket.java",
+        "batchIndex": 3,
+        "symbols": [
+          "priceScale",
+          "seedBid",
+          "seedMid",
+          "barAmplitude",
+          "halfSpread",
+          "fullSpread",
+          "outerWick",
+          "DemoMarket"
+        ]
+      }
+    ]
+  }
+}

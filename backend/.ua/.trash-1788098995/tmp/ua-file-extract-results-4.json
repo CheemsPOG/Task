@@ -1,0 +1,902 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 10,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 10,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 10,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 48,
+      "functions": [
+        {
+          "name": "ErrorCodes",
+          "startLine": 52,
+          "endLine": 53,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "ErrorCodes",
+          "startLine": 33,
+          "endLine": 54,
+          "methods": [
+            "ErrorCodes"
+          ],
+          "properties": [
+            "VALIDATION",
+            "NOT_FOUND",
+            "SERVER",
+            "UNAUTHORIZED",
+            "BAD_CREDENTIALS",
+            "MSG_VALIDATION",
+            "MSG_NOT_FOUND",
+            "MSG_SERVER",
+            "MSG_UNAUTHORIZED",
+            "MSG_BAD_CREDENTIALS",
+            "MSG_BAD_REQUEST",
+            "SERVER_MESSAGE"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "VALIDATION",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "NOT_FOUND",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "SERVER",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "UNAUTHORIZED",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "BAD_CREDENTIALS",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "MSG_VALIDATION",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "MSG_NOT_FOUND",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "MSG_SERVER",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "MSG_UNAUTHORIZED",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "MSG_BAD_CREDENTIALS",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "MSG_BAD_REQUEST",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "SERVER_MESSAGE",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "ErrorCodes",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 13,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 41,
+      "functions": [
+        {
+          "name": "of",
+          "startLine": 41,
+          "endLine": 43,
+          "params": [
+            "errorCode",
+            "message"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ErrorResponse",
+          "startLine": 32,
+          "endLine": 44,
+          "methods": [
+            "of"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "of",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "ErrorResponse",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "of",
+          "callee": "new ErrorResponse",
+          "lineNumber": 42
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 120,
+      "nonEmptyLines": 108,
+      "functions": [
+        {
+          "name": "GlobalExceptionHandler",
+          "startLine": 57,
+          "endLine": 59,
+          "params": [
+            "localizedMessageService"
+          ]
+        },
+        {
+          "name": "handleValidation",
+          "startLine": 61,
+          "endLine": 68,
+          "params": [
+            "ex"
+          ]
+        },
+        {
+          "name": "handleBadRequest",
+          "startLine": 70,
+          "endLine": 83,
+          "params": [
+            "ex"
+          ]
+        },
+        {
+          "name": "handleNotFound",
+          "startLine": 85,
+          "endLine": 92,
+          "params": [
+            "ex"
+          ]
+        },
+        {
+          "name": "handleBadCredentials",
+          "startLine": 94,
+          "endLine": 101,
+          "params": [
+            "ex"
+          ]
+        },
+        {
+          "name": "handleUnauthorized",
+          "startLine": 103,
+          "endLine": 110,
+          "params": [
+            "ex"
+          ]
+        },
+        {
+          "name": "handleServer",
+          "startLine": 112,
+          "endLine": 119,
+          "params": [
+            "ex"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "GlobalExceptionHandler",
+          "startLine": 47,
+          "endLine": 120,
+          "methods": [
+            "GlobalExceptionHandler",
+            "handleValidation",
+            "handleBadRequest",
+            "handleNotFound",
+            "handleBadCredentials",
+            "handleUnauthorized",
+            "handleServer"
+          ],
+          "properties": [
+            "localizedMessageService"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GlobalExceptionHandler",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "handleValidation",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "handleBadRequest",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "handleNotFound",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "handleBadCredentials",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "handleUnauthorized",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "handleServer",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "GlobalExceptionHandler",
+          "line": 47,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "handleValidation",
+          "callee": "ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body",
+          "lineNumber": 64
+        },
+        {
+          "caller": "handleValidation",
+          "callee": "ResponseEntity.status",
+          "lineNumber": 64
+        },
+        {
+          "caller": "handleValidation",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 65
+        },
+        {
+          "caller": "handleValidation",
+          "callee": "localizedMessageService.get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "handleBadRequest",
+          "callee": "ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body",
+          "lineNumber": 79
+        },
+        {
+          "caller": "handleBadRequest",
+          "callee": "ResponseEntity.status",
+          "lineNumber": 79
+        },
+        {
+          "caller": "handleBadRequest",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 80
+        },
+        {
+          "caller": "handleBadRequest",
+          "callee": "localizedMessageService.get",
+          "lineNumber": 82
+        },
+        {
+          "caller": "handleNotFound",
+          "callee": "ResponseEntity.status(HttpStatus.NOT_FOUND).body",
+          "lineNumber": 88
+        },
+        {
+          "caller": "handleNotFound",
+          "callee": "ResponseEntity.status",
+          "lineNumber": 88
+        },
+        {
+          "caller": "handleNotFound",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 89
+        },
+        {
+          "caller": "handleNotFound",
+          "callee": "localizedMessageService.get",
+          "lineNumber": 91
+        },
+        {
+          "caller": "handleBadCredentials",
+          "callee": "ResponseEntity.status(HttpStatus.UNAUTHORIZED).body",
+          "lineNumber": 97
+        },
+        {
+          "caller": "handleBadCredentials",
+          "callee": "ResponseEntity.status",
+          "lineNumber": 97
+        },
+        {
+          "caller": "handleBadCredentials",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 98
+        },
+        {
+          "caller": "handleBadCredentials",
+          "callee": "localizedMessageService.get",
+          "lineNumber": 100
+        },
+        {
+          "caller": "handleUnauthorized",
+          "callee": "ResponseEntity.status(HttpStatus.UNAUTHORIZED).body",
+          "lineNumber": 106
+        },
+        {
+          "caller": "handleUnauthorized",
+          "callee": "ResponseEntity.status",
+          "lineNumber": 106
+        },
+        {
+          "caller": "handleUnauthorized",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 107
+        },
+        {
+          "caller": "handleUnauthorized",
+          "callee": "localizedMessageService.get",
+          "lineNumber": 109
+        },
+        {
+          "caller": "handleServer",
+          "callee": "ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body",
+          "lineNumber": 115
+        },
+        {
+          "caller": "handleServer",
+          "callee": "ResponseEntity.status",
+          "lineNumber": 115
+        },
+        {
+          "caller": "handleServer",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 116
+        },
+        {
+          "caller": "handleServer",
+          "callee": "localizedMessageService.get",
+          "lineNumber": 118
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 8,
+        "functionCount": 7,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 34,
+      "functions": [
+        {
+          "name": "ResourceNotFoundException",
+          "startLine": 35,
+          "endLine": 37,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "ResourceNotFoundException",
+          "startLine": 33,
+          "endLine": 38,
+          "methods": [
+            "ResourceNotFoundException"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ResourceNotFoundException",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "ResourceNotFoundException",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 34,
+      "functions": [
+        {
+          "name": "ServerErrorException",
+          "startLine": 35,
+          "endLine": 37,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "ServerErrorException",
+          "startLine": 33,
+          "endLine": 38,
+          "methods": [
+            "ServerErrorException"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ServerErrorException",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "ServerErrorException",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 33,
+      "functions": [
+        {
+          "name": "ValidationException",
+          "startLine": 34,
+          "endLine": 36,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "ValidationException",
+          "startLine": 32,
+          "endLine": 37,
+          "methods": [
+            "ValidationException"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ValidationException",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "ValidationException",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/CustomerContext.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 76,
+      "nonEmptyLines": 67,
+      "functions": [
+        {
+          "name": "CustomerContext",
+          "startLine": 37,
+          "endLine": 38,
+          "params": []
+        },
+        {
+          "name": "set",
+          "startLine": 45,
+          "endLine": 47,
+          "params": [
+            "customerNo"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 52,
+          "endLine": 54,
+          "params": []
+        },
+        {
+          "name": "requireCustomerNo",
+          "startLine": 61,
+          "endLine": 68,
+          "params": []
+        },
+        {
+          "name": "clear",
+          "startLine": 73,
+          "endLine": 75,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "CustomerContext",
+          "startLine": 33,
+          "endLine": 76,
+          "methods": [
+            "CustomerContext",
+            "set",
+            "get",
+            "requireCustomerNo",
+            "clear"
+          ],
+          "properties": [
+            "CUSTOMER_NO"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "set",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "requireCustomerNo",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "clear",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "CustomerContext",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "set",
+          "callee": "CUSTOMER_NO.set",
+          "lineNumber": 46
+        },
+        {
+          "caller": "get",
+          "callee": "CUSTOMER_NO.get",
+          "lineNumber": 53
+        },
+        {
+          "caller": "requireCustomerNo",
+          "callee": "CUSTOMER_NO.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "requireCustomerNo",
+          "callee": "new ServerErrorException",
+          "lineNumber": 64
+        },
+        {
+          "caller": "clear",
+          "callee": "CUSTOMER_NO.remove",
+          "lineNumber": 74
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 79,
+      "functions": [
+        {
+          "name": "JsonUnauthorizedEntryPoint",
+          "startLine": 61,
+          "endLine": 64,
+          "params": [
+            "messageSource",
+            "localeResolver"
+          ]
+        },
+        {
+          "name": "commence",
+          "startLine": 73,
+          "endLine": 84,
+          "params": [
+            "request",
+            "response",
+            "authException"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "JsonUnauthorizedEntryPoint",
+          "startLine": 48,
+          "endLine": 85,
+          "methods": [
+            "JsonUnauthorizedEntryPoint",
+            "commence"
+          ],
+          "properties": [
+            "objectMapper",
+            "messageSource",
+            "localeResolver"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "JsonUnauthorizedEntryPoint",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "commence",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "JsonUnauthorizedEntryPoint",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "commence",
+          "callee": "localeResolver.resolveLocale",
+          "lineNumber": 78
+        },
+        {
+          "caller": "commence",
+          "callee": "response.setStatus",
+          "lineNumber": 79
+        },
+        {
+          "caller": "commence",
+          "callee": "HttpStatus.UNAUTHORIZED.value",
+          "lineNumber": 79
+        },
+        {
+          "caller": "commence",
+          "callee": "response.setContentType",
+          "lineNumber": 80
+        },
+        {
+          "caller": "commence",
+          "callee": "messageSource.getMessage",
+          "lineNumber": 81
+        },
+        {
+          "caller": "commence",
+          "callee": "ErrorResponse.of",
+          "lineNumber": 82
+        },
+        {
+          "caller": "commence",
+          "callee": "objectMapper.writeValue",
+          "lineNumber": 83
+        },
+        {
+          "caller": "commence",
+          "callee": "response.getOutputStream",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "LocalizedMessageService",
+          "startLine": 31,
+          "endLine": 40,
+          "methods": [
+            "get"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "LocalizedMessageService",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "language": "java",
+      "fileCategory": "code",
+      "totalLines": 56,
+      "nonEmptyLines": 50,
+      "functions": [
+        {
+          "name": "LocalizedMessageServiceImpl",
+          "startLine": 45,
+          "endLine": 47,
+          "params": [
+            "messageSource"
+          ]
+        },
+        {
+          "name": "get",
+          "startLine": 52,
+          "endLine": 55,
+          "params": [
+            "code"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "LocalizedMessageServiceImpl",
+          "startLine": 35,
+          "endLine": 56,
+          "methods": [
+            "LocalizedMessageServiceImpl",
+            "get"
+          ],
+          "properties": [
+            "messageSource"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LocalizedMessageServiceImpl",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "get",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "LocalizedMessageServiceImpl",
+          "line": 35,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get",
+          "callee": "messageSource.getMessage",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get",
+          "callee": "LocaleContextHolder.getLocale",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    }
+  ]
+}

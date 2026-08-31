@@ -1,0 +1,192 @@
+{
+  "batchIndex": 6,
+  "totalBatches": 11,
+  "files": [
+    {
+      "path": "src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "language": "java",
+      "sizeLines": 146,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "language": "java",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "language": "java",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "language": "java",
+      "sizeLines": 113,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "language": "java",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/IndicatorTemplateService.java",
+      "language": "java",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "language": "java",
+      "sizeLines": 147,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/main/java/com/task/chart/controller/IndicatorTemplateController.java": [
+      "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "src/main/java/com/task/chart/service/IndicatorTemplateService.java"
+    ],
+    "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java": [],
+    "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java": [],
+    "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java": [],
+    "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java": [],
+    "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java": [],
+    "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java": [
+      "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java"
+    ],
+    "src/main/java/com/task/chart/service/IndicatorTemplateService.java": [
+      "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java"
+    ],
+    "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java": [
+      "src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java",
+      "src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java",
+      "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "src/main/java/com/task/chart/entity/TvIndicatorTemplate.java",
+      "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "src/main/java/com/task/chart/exception/ValidationException.java",
+      "src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java",
+      "src/main/java/com/task/chart/security/CustomerContext.java",
+      "src/main/java/com/task/chart/service/IndicatorTemplateService.java"
+    ]
+  },
+  "neighborMap": {
+    "src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java": [
+      {
+        "path": "src/main/java/com/task/chart/controller/ChartLayoutController.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutController",
+          "register",
+          "update",
+          "list",
+          "get",
+          "delete",
+          "ChartLayoutController"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/controller/ChartTemplateController.java",
+        "batchIndex": 7,
+        "symbols": [
+          "ChartTemplateController",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "ChartTemplateController"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/ChartLayoutService.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutService"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/ChartTemplateService.java",
+        "batchIndex": 7,
+        "symbols": [
+          "ChartTemplateService"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+        "batchIndex": 5,
+        "symbols": [
+          "ChartLayoutServiceImpl",
+          "register",
+          "update",
+          "get",
+          "list",
+          "delete",
+          "ChartLayoutServiceImpl"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+        "batchIndex": 7,
+        "symbols": [
+          "ChartTemplateServiceImpl",
+          "list",
+          "upsert",
+          "get",
+          "delete",
+          "ChartTemplateServiceImpl"
+        ]
+      }
+    ],
+    "src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java": [
+      {
+        "path": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ResourceNotFoundException",
+          "ResourceNotFoundException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/exception/ValidationException.java",
+        "batchIndex": 4,
+        "symbols": [
+          "ValidationException",
+          "ValidationException"
+        ]
+      },
+      {
+        "path": "src/main/java/com/task/chart/security/CustomerContext.java",
+        "batchIndex": 4,
+        "symbols": [
+          "set",
+          "get",
+          "requireCustomerNo",
+          "clear",
+          "CustomerContext"
+        ]
+      }
+    ]
+  }
+}

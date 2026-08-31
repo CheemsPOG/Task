@@ -1,0 +1,744 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "type": "file",
+      "name": "ErrorCodes.java",
+      "filePath": "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "summary": "Central catalog of API error code strings and i18n message keys for validation, not-found, server, unauthorized, and bad-credentials failures.",
+      "tags": ["constants", "error-handling", "i18n", "type-definition"],
+      "complexity": "simple",
+      "languageNotes": "Utility class of public static final strings with a private constructor."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/constants/ErrorCodes.java:ErrorCodes",
+      "type": "class",
+      "name": "ErrorCodes",
+      "filePath": "src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "lineRange": [33, 54],
+      "summary": "Holds numeric-style error codes and matching message-bundle keys used by exception types and JSON error responses.",
+      "tags": ["constants", "error-handling", "i18n"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "type": "file",
+      "name": "ErrorResponse.java",
+      "filePath": "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "summary": "JSON error payload DTO with an error code and localized message, constructed via a static factory.",
+      "tags": ["serialization", "dto", "error-handling", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "class",
+      "name": "ErrorResponse",
+      "filePath": "src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "lineRange": [32, 44],
+      "summary": "Immutable-style response body pairing an errorCode with a user-facing message for REST error replies.",
+      "tags": ["serialization", "dto", "error-handling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "type": "file",
+      "name": "GlobalExceptionHandler.java",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "summary": "Spring REST advice that maps domain exceptions to HTTP statuses and localized ErrorResponse bodies.",
+      "tags": ["middleware", "error-handling", "api-handler", "i18n"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "type": "class",
+      "name": "GlobalExceptionHandler",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [47, 120],
+      "summary": "RestControllerAdvice that translates validation, not-found, auth, and server exceptions into JSON error responses.",
+      "tags": ["middleware", "error-handling", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleValidation",
+      "type": "function",
+      "name": "handleValidation",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [61, 68],
+      "summary": "Returns HTTP 422 with a localized validation error payload.",
+      "tags": ["error-handling", "api-handler", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadRequest",
+      "type": "function",
+      "name": "handleBadRequest",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [70, 83],
+      "summary": "Maps Spring bind and argument-type failures to HTTP 422 using a generic bad-request message key.",
+      "tags": ["error-handling", "api-handler", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleNotFound",
+      "type": "function",
+      "name": "handleNotFound",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [85, 92],
+      "summary": "Returns HTTP 404 with a localized not-found error payload.",
+      "tags": ["error-handling", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadCredentials",
+      "type": "function",
+      "name": "handleBadCredentials",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [94, 101],
+      "summary": "Returns HTTP 401 with a localized bad-credentials error payload.",
+      "tags": ["error-handling", "api-handler", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleUnauthorized",
+      "type": "function",
+      "name": "handleUnauthorized",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [103, 110],
+      "summary": "Returns HTTP 401 with a localized unauthorized error payload.",
+      "tags": ["error-handling", "api-handler", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleServer",
+      "type": "function",
+      "name": "handleServer",
+      "filePath": "src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "lineRange": [112, 119],
+      "summary": "Returns HTTP 500 with a localized server-error payload.",
+      "tags": ["error-handling", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "type": "file",
+      "name": "ResourceNotFoundException.java",
+      "filePath": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "summary": "Runtime exception thrown when a requested chart resource cannot be found, carrying the NOT_FOUND error code.",
+      "tags": ["error-handling", "exception", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/exception/ResourceNotFoundException.java:ResourceNotFoundException",
+      "type": "class",
+      "name": "ResourceNotFoundException",
+      "filePath": "src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "lineRange": [33, 38],
+      "summary": "Unchecked exception for missing layouts, templates, or other chart resources.",
+      "tags": ["error-handling", "exception"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "type": "file",
+      "name": "ServerErrorException.java",
+      "filePath": "src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "summary": "Runtime exception for unexpected internal failures, carrying the SERVER error code.",
+      "tags": ["error-handling", "exception", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/exception/ServerErrorException.java:ServerErrorException",
+      "type": "class",
+      "name": "ServerErrorException",
+      "filePath": "src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "lineRange": [33, 38],
+      "summary": "Unchecked exception signaling an internal server error to the global handler.",
+      "tags": ["error-handling", "exception"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "type": "file",
+      "name": "ValidationException.java",
+      "filePath": "src/main/java/com/task/chart/exception/ValidationException.java",
+      "summary": "Runtime exception for request validation failures, carrying the VALIDATION error code.",
+      "tags": ["error-handling", "exception", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "class",
+      "name": "ValidationException",
+      "filePath": "src/main/java/com/task/chart/exception/ValidationException.java",
+      "lineRange": [32, 37],
+      "summary": "Unchecked exception raised when input parameters fail domain validation.",
+      "tags": ["error-handling", "exception", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "type": "file",
+      "name": "CustomerContext.java",
+      "filePath": "src/main/java/com/task/chart/security/CustomerContext.java",
+      "summary": "Thread-local holder for the authenticated customer number, used by layout and template services to scope data.",
+      "tags": ["security", "middleware", "singleton", "context"],
+      "complexity": "moderate",
+      "languageNotes": "Static ThreadLocal accessors with a private constructor; requireCustomerNo throws ServerErrorException when unset."
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/CustomerContext.java:CustomerContext",
+      "type": "class",
+      "name": "CustomerContext",
+      "filePath": "src/main/java/com/task/chart/security/CustomerContext.java",
+      "lineRange": [33, 76],
+      "summary": "Static ThreadLocal API to set, get, require, and clear the current customer number on the request thread.",
+      "tags": ["security", "middleware", "context"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "type": "file",
+      "name": "JsonUnauthorizedEntryPoint.java",
+      "filePath": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "summary": "Spring Security entry point that writes a JSON 401 ErrorResponse using the request locale instead of a redirect.",
+      "tags": ["security", "error-handling", "middleware", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:JsonUnauthorizedEntryPoint",
+      "type": "class",
+      "name": "JsonUnauthorizedEntryPoint",
+      "filePath": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "lineRange": [48, 85],
+      "summary": "AuthenticationEntryPoint that serializes an unauthorized ErrorResponse via Jackson and MessageSource.",
+      "tags": ["security", "error-handling", "middleware"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:commence",
+      "type": "function",
+      "name": "commence",
+      "filePath": "src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "lineRange": [73, 84],
+      "summary": "Writes HTTP 401 JSON with a localized unauthorized message when authentication fails.",
+      "tags": ["security", "error-handling", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "type": "file",
+      "name": "LocalizedMessageService.java",
+      "filePath": "src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "summary": "Service interface for resolving i18n message keys to locale-specific strings used in error responses.",
+      "tags": ["service", "i18n", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "class",
+      "name": "LocalizedMessageService",
+      "filePath": "src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "lineRange": [31, 40],
+      "summary": "Contract to look up a localized message by bundle key for the current request locale.",
+      "tags": ["service", "i18n", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "type": "file",
+      "name": "LocalizedMessageServiceImpl.java",
+      "filePath": "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "summary": "Resolves message-bundle keys through Spring MessageSource using LocaleContextHolder.",
+      "tags": ["service", "i18n", "implementation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java:LocalizedMessageServiceImpl",
+      "type": "class",
+      "name": "LocalizedMessageServiceImpl",
+      "filePath": "src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "lineRange": [35, 56],
+      "summary": "Spring bean implementation of LocalizedMessageService backed by MessageSource and the current locale.",
+      "tags": ["service", "i18n", "implementation"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "file:src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "target": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "target": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "target": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "target": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "target": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "target": "file:src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "target": "file:src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "target": "class:src/main/java/com/task/chart/constants/ErrorCodes.java:ErrorCodes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleValidation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleNotFound",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadCredentials",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleUnauthorized",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "target": "class:src/main/java/com/task/chart/exception/ResourceNotFoundException.java:ResourceNotFoundException",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "target": "class:src/main/java/com/task/chart/exception/ServerErrorException.java:ServerErrorException",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "target": "class:src/main/java/com/task/chart/security/CustomerContext.java:CustomerContext",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "target": "class:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:JsonUnauthorizedEntryPoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "target": "function:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:commence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java:LocalizedMessageServiceImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleValidation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleNotFound",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadCredentials",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleUnauthorized",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:JsonUnauthorizedEntryPoint",
+      "target": "function:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:commence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "target": "class:src/main/java/com/task/chart/constants/ErrorCodes.java:ErrorCodes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/dto/response/ErrorResponse.java",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "class:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:GlobalExceptionHandler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleValidation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleNotFound",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadCredentials",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleUnauthorized",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleServer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "target": "class:src/main/java/com/task/chart/exception/ResourceNotFoundException.java:ResourceNotFoundException",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "target": "class:src/main/java/com/task/chart/exception/ServerErrorException.java:ServerErrorException",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "target": "class:src/main/java/com/task/chart/exception/ValidationException.java:ValidationException",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/CustomerContext.java",
+      "target": "class:src/main/java/com/task/chart/security/CustomerContext.java:CustomerContext",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "target": "class:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:JsonUnauthorizedEntryPoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java",
+      "target": "function:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:commence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/LocalizedMessageService.java",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java",
+      "target": "class:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java:LocalizedMessageServiceImpl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java:LocalizedMessageServiceImpl",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleValidation",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleValidation",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadRequest",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadRequest",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleNotFound",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleNotFound",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadCredentials",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleBadCredentials",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleUnauthorized",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleUnauthorized",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleServer",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java:handleServer",
+      "target": "class:src/main/java/com/task/chart/service/LocalizedMessageService.java:LocalizedMessageService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java:commence",
+      "target": "class:src/main/java/com/task/chart/dto/response/ErrorResponse.java:ErrorResponse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "target": "file:src/main/java/com/task/chart/exception/ServerErrorException.java",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

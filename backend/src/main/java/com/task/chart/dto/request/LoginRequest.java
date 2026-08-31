@@ -14,6 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * deserializes it and {@code AuthServiceImpl} checks BCrypt against {@code m_app_user}.
  * It is not a Peach S-01 token exchange and does not include a refresh token.
  *
+ * <p><strong>NOT:</strong> no {@code @NotBlank} — blank username/password is checked
+ * in {@code AuthServiceImpl}, not Jakarta Validation. Do not look for bean-validation
+ * annotations that are not here.
+ *
  * <br><br>
  * <table border="1" cellspacing="1" cellpadding="1" class="HISTORY">
  *   <colgroup>

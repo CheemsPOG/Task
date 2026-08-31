@@ -19,7 +19,7 @@
  * for `/curpairs` (that path is not under /api).
  */
 
-import { clearToken, getAcceptLanguage, getToken, refreshAccessToken } from './auth.ts';
+import { clearToken, getAcceptLanguage, getToken, readErrorBody, refreshAccessToken } from './auth.ts';
 
 const API_BASE = '/api';
 
@@ -67,18 +67,8 @@ function buildHeaders(extra: Record<string, string> = {}): HeadersInit {
 }
 
 async function parseError(response: Response): Promise<ApiHttpError> {
-	let message = `HTTP ${response.status}`;
-	let errorCode: string | undefined;
-	try {
-		const body = (await response.json()) as ApiErrorBody;
-		if (body.message) {
-			message = body.message;
-		}
-		errorCode = body.errorCode;
-	} catch {
-		/* keep default */
-	}
-	return new ApiHttpError(response.status, message, errorCode);
+	const parsed = await readErrorBody(response, `HTTP ${response.status}`);
+	return new ApiHttpError(response.status, parsed.message, parsed.errorCode);
 }
 
 function handleUnauthorizedStatus(status: number): void {

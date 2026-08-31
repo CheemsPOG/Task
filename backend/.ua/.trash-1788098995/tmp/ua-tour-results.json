@@ -1,0 +1,1189 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "document:src/main/java/README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "Mentor-facing class map of com.task.chart covering CTFX layering, datafeed docs 120–139, cache SSOT, and a full Java file tree."
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "score": 3,
+      "name": "ChartBackendApplication.java",
+      "summary": "Spring Boot entry point that starts the TradingView chart backend and enables AppProperties configuration binding."
+    },
+    {
+      "id": "config:.ua/config.json",
+      "score": 2,
+      "name": "config.json",
+      "summary": "Understand-Anything project config that sets English as the output language for generated graph text."
+    },
+    {
+      "id": "file:.gitattributes",
+      "score": 2,
+      "name": ".gitattributes",
+      "summary": "Forces LF line endings for the Unix Maven wrapper and CRLF for Windows .cmd scripts so mvnw stays portable across checkouts."
+    },
+    {
+      "id": "file:mvnw",
+      "score": 2,
+      "name": "mvnw",
+      "summary": "Apache Maven Wrapper 3.3.4 Unix shell script that locates or downloads a pinned Maven distribution and then execs the build."
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+      "fanIn": 17,
+      "name": "m_ccypairs"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java",
+      "fanIn": 9,
+      "name": "SystemDatetimeResponse.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/config/AppProperties.java",
+      "fanIn": 7,
+      "name": "AppProperties.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java",
+      "fanIn": 6,
+      "name": "CurrencyPairDto.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/ValidationException.java",
+      "fanIn": 6,
+      "name": "ValidationException.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/constants/ErrorCodes.java",
+      "fanIn": 5,
+      "name": "ErrorCodes.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/Ccypair.java",
+      "fanIn": 5,
+      "name": "Ccypair.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java",
+      "fanIn": 5,
+      "name": "ResourceNotFoundException.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/CurrencyPairService.java",
+      "fanIn": 5,
+      "name": "CurrencyPairService.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/constants/PriceComponent.java",
+      "fanIn": 4,
+      "name": "PriceComponent.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/BarDto.java",
+      "fanIn": 4,
+      "name": "BarDto.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/entity/AppUser.java",
+      "fanIn": 4,
+      "name": "AppUser.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/CachedChartBar.java",
+      "fanIn": 3,
+      "name": "CachedChartBar.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/LoginRequest.java",
+      "fanIn": 3,
+      "name": "LoginRequest.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java",
+      "fanIn": 3,
+      "name": "RegisterChartLayoutRequest.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java",
+      "fanIn": 3,
+      "name": "UpsertChartTemplateRequest.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java",
+      "fanIn": 3,
+      "name": "UpsertIndicatorTemplateRequest.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ChartLayoutDto.java",
+      "fanIn": 3,
+      "name": "ChartLayoutDto.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java",
+      "fanIn": 3,
+      "name": "ChartLayoutIdResponse.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java",
+      "fanIn": 3,
+      "name": "ChartLayoutListItemDto.java"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java",
+      "fanOut": 49,
+      "name": "ChartDataServiceImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java",
+      "fanOut": 30,
+      "name": "ChartLayoutServiceImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/ChartDataController.java",
+      "fanOut": 27,
+      "name": "ChartDataController.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java",
+      "fanOut": 22,
+      "name": "ChartTemplateServiceImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java",
+      "fanOut": 22,
+      "name": "IndicatorTemplateServiceImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java",
+      "fanOut": 21,
+      "name": "AuthServiceImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java",
+      "fanOut": 20,
+      "name": "GlobalExceptionHandler.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/ChartLayoutController.java",
+      "fanOut": 18,
+      "name": "ChartLayoutController.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/ChartCacheStore.java",
+      "fanOut": 16,
+      "name": "ChartCacheStore.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/util/DemoMarket.java",
+      "fanOut": 16,
+      "name": "DemoMarket.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/ChartTemplateController.java",
+      "fanOut": 15,
+      "name": "ChartTemplateController.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java",
+      "fanOut": 15,
+      "name": "IndicatorTemplateController.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java",
+      "fanOut": 15,
+      "name": "MockBarGeneratorImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/ChartBarRepository.java",
+      "fanOut": 14,
+      "name": "ChartBarRepository.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/TickIngestWorker.java",
+      "fanOut": 14,
+      "name": "TickIngestWorker.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java",
+      "fanOut": 14,
+      "name": "SymbolCatalogImpl.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/DemoTickEngine.java",
+      "fanOut": 13,
+      "name": "DemoTickEngine.java"
+    },
+    {
+      "id": "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql",
+      "fanOut": 13,
+      "name": "V8__create_t_chart_tables.sql"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/cache/QuoteBus.java",
+      "fanOut": 12,
+      "name": "QuoteBus.java"
+    },
+    {
+      "id": "file:src/main/java/com/task/chart/controller/AuthController.java",
+      "fanOut": 12,
+      "name": "AuthController.java"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+    "order": [
+      "file:src/main/java/com/task/chart/ChartBackendApplication.java",
+      "file:src/main/java/com/task/chart/config/AppProperties.java"
+    ],
+    "depthMap": {
+      "file:src/main/java/com/task/chart/ChartBackendApplication.java": 0,
+      "file:src/main/java/com/task/chart/config/AppProperties.java": 1
+    },
+    "byDepth": {
+      "0": [
+        "file:src/main/java/com/task/chart/ChartBackendApplication.java"
+      ],
+      "1": [
+        "file:src/main/java/com/task/chart/config/AppProperties.java"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:src/main/java/README.md",
+        "name": "README.md",
+        "summary": "Mentor-facing class map of com.task.chart covering CTFX layering, datafeed docs 120–139, cache SSOT, and a full Java file tree.",
+        "type": "document"
+      }
+    ],
+    "infrastructure": [],
+    "data": [
+      {
+        "id": "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs",
+        "name": "m_ccypairs",
+        "summary": "Master table of FX currency pairs with Japanese name, rate unit, soft-delete flag, and display priority.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V2__create_m_season.sql:m_season",
+        "name": "m_season",
+        "summary": "Season master storing a season code and inclusive start/end timestamps for chart or market windows.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V3__create_m_tv_mark.sql:m_tv_mark",
+        "name": "m_tv_mark",
+        "summary": "Stores TradingView marks keyed by currency pair and resolution, with timestamp, color, label, and mark text.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql:m_tv_timescale_mark",
+        "name": "m_tv_timescale_mark",
+        "summary": "Stores TradingView timescale marks keyed by currency pair and resolution, with color, label, and tooltip.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql:m_tv_chart_layout",
+        "name": "m_tv_chart_layout",
+        "summary": "Persists saved chart layouts per customer, including JSON content, symbol, chart type, and last update time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql:m_tv_indicator_template",
+        "name": "m_tv_indicator_template",
+        "summary": "Stores named indicator templates per customer as JSON content with an updated-at timestamp.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V7__create_m_app_user.sql:m_app_user",
+        "name": "m_app_user",
+        "summary": "Application users with username, password hash, customer number, enabled flag, and created-at timestamp.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1",
+        "name": "t_chart_1",
+        "summary": "1-second OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_60",
+        "name": "t_chart_60",
+        "summary": "1-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_300",
+        "name": "t_chart_300",
+        "summary": "5-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_600",
+        "name": "t_chart_600",
+        "summary": "10-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_900",
+        "name": "t_chart_900",
+        "summary": "15-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1800",
+        "name": "t_chart_1800",
+        "summary": "30-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_3600",
+        "name": "t_chart_3600",
+        "summary": "1-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_7200",
+        "name": "t_chart_7200",
+        "summary": "2-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_14400",
+        "name": "t_chart_14400",
+        "summary": "4-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_28800",
+        "name": "t_chart_28800",
+        "summary": "8-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_day",
+        "name": "t_chart_day",
+        "summary": "Daily OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_week",
+        "name": "t_chart_week",
+        "summary": "Weekly OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_month",
+        "name": "t_chart_month",
+        "summary": "Monthly OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time.",
+        "type": "table"
+      },
+      {
+        "id": "table:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql:m_tv_chart_templates",
+        "name": "m_tv_chart_templates",
+        "summary": "Stores named chart templates per customer as JSON content with an updated-at timestamp.",
+        "type": "table"
+      }
+    ],
+    "config": [
+      {
+        "id": "config:src/main/resources/application.yml",
+        "name": "application.yml",
+        "summary": "Spring Boot runtime configuration for the chart backend: Postgres and Redis connections, Flyway migrations, JWT and CORS, TradingView datafeed flags, and demo tick-cache cadence.",
+        "type": "config"
+      },
+      {
+        "id": "config:src/main/resources/messages.properties",
+        "name": "messages.properties",
+        "summary": "Default English API error messages keyed to ErrorCodes.MSG_* for validation, not-found, server, unauthorized, bad-credentials, and bad-request.",
+        "type": "config"
+      },
+      {
+        "id": "config:src/main/resources/messages_ja.properties",
+        "name": "messages_ja.properties",
+        "summary": "Japanese API error message overrides loaded when Accept-Language starts with ja, covering the same ErrorCodes keys as the English bundle.",
+        "type": "config"
+      },
+      {
+        "id": "config:.ua/config.json",
+        "name": "config.json",
+        "summary": "Understand-Anything project config that sets English as the output language for generated graph text.",
+        "type": "config"
+      },
+      {
+        "id": "config:pom.xml",
+        "name": "pom.xml",
+        "summary": "Maven POM for chart-backend: Spring Boot 4.0.7 on Java 21 with web, JPA, Flyway, Redis, Security, JJWT, and springdoc OpenAPI.",
+        "type": "config"
+      }
+    ]
+  },
+  "clusters": [],
+  "layers": {
+    "count": 8,
+    "list": [
+      {
+        "id": "layer:api",
+        "name": "API Layer",
+        "description": "REST controllers that expose the TradingView UDF datafeed, auth, currency-pair catalog, chart layouts, and template endpoints."
+      },
+      {
+        "id": "layer:service",
+        "name": "Service Layer",
+        "description": "Business services and implementations for datafeed history, tenant-scoped layouts and templates, symbol catalog, mock bar seeding, auth, and i18n message resolution."
+      },
+      {
+        "id": "layer:data",
+        "name": "Data Layer",
+        "description": "JPA entities, Spring Data repositories, Flyway SQL migrations, and warehouse table schemas for FX pairs, users, marks, layouts, templates, and OHLC fact tables."
+      },
+      {
+        "id": "layer:types",
+        "name": "Types Layer",
+        "description": "Request and response DTOs, error and price-side value objects, and shared constants used as contracts across the chart backend APIs."
+      },
+      {
+        "id": "layer:config",
+        "name": "Config Layer",
+        "description": "Spring Boot application entry, Maven POM, application.yml, AppProperties, OpenAPI, password and CORS beans, SecurityConfig, i18n bundles, and demo user seeding."
+      },
+      {
+        "id": "layer:middleware",
+        "name": "Middleware Layer",
+        "description": "JWT filter, unauthorized entry point, customer context, cookie and refresh-token helpers, domain exceptions, and the global REST exception handler."
+      },
+      {
+        "id": "layer:cache",
+        "name": "Cache / Market Data",
+        "description": "Redis bar cache, warehouse ChartBarRepository, demo tick engine, quote bus, ingest worker, cache namespaces, and resolution or DemoMarket helpers used to form live FX bars."
+      },
+      {
+        "id": "layer:docs-tooling",
+        "name": "Docs and Tooling",
+        "description": "Package and mentor README maps, Maven wrapper scripts, git attributes, and Understand-Anything ignore and language config for the chart backend."
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:src/main/java/com/task/chart/cache/CacheNamespace.java": {
+      "name": "CacheNamespace.java",
+      "type": "file",
+      "summary": "Enum of Redis/warehouse cache namespaces keyed by Peach chart type, mapping TradingView resolutions to table names, cache names, and bar periods."
+    },
+    "file:src/main/java/com/task/chart/cache/ChartCacheStore.java": {
+      "name": "ChartCacheStore.java",
+      "type": "file",
+      "summary": "Redis sorted-set cache for OHLC bars, with per-namespace locks, JSON encode/decode, and lazy warm-from-warehouse when a pair's key is empty."
+    },
+    "file:src/main/java/com/task/chart/controller/ChartDataController.java": {
+      "name": "ChartDataController.java",
+      "type": "file",
+      "summary": "REST controller exposing the TradingView UDF datafeed: health, config, server time, symbol search/resolve, marks, timescale marks, and history bars."
+    },
+    "file:src/main/java/com/task/chart/dto/response/DatafeedConfigResponse.java": {
+      "name": "DatafeedConfigResponse.java",
+      "type": "file",
+      "summary": "Response DTO for the UDF /config endpoint, including supported exchanges, symbol types, resolutions, and feature flags."
+    },
+    "file:src/main/java/com/task/chart/dto/response/HealthResponse.java": {
+      "name": "HealthResponse.java",
+      "type": "file",
+      "summary": "Minimal health-check response carrying a status string for the datafeed liveness endpoint."
+    },
+    "file:src/main/java/com/task/chart/dto/response/HistoryResponse.java": {
+      "name": "HistoryResponse.java",
+      "type": "file",
+      "summary": "UDF history response that converts OHLC bars into columnar t/o/h/l/c arrays, with factories for successful and empty (no-data / nextTime) results."
+    },
+    "file:src/main/java/com/task/chart/dto/response/MarkDto.java": {
+      "name": "MarkDto.java",
+      "type": "file",
+      "summary": "DTO for a TradingView chart mark: id, timestamp, color, text, and label used by the /marks endpoint."
+    },
+    "file:src/main/java/com/task/chart/dto/response/SearchSymbolDto.java": {
+      "name": "SearchSymbolDto.java",
+      "type": "file",
+      "summary": "DTO for one UDF symbol-search hit, including ticker, description, exchange, and type."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ServerTimeResponse.java": {
+      "name": "ServerTimeResponse.java",
+      "type": "file",
+      "summary": "Response wrapping Unix epoch seconds for the UDF /time endpoint."
+    },
+    "file:src/main/java/com/task/chart/dto/response/SymbolInfoDto.java": {
+      "name": "SymbolInfoDto.java",
+      "type": "file",
+      "summary": "Resolved symbol metadata for TradingView: ticker, session, timezone, price scale, and supported resolutions."
+    },
+    "file:src/main/java/com/task/chart/dto/response/TimescaleMarkDto.java": {
+      "name": "TimescaleMarkDto.java",
+      "type": "file",
+      "summary": "DTO for a TradingView timescale mark: id, time, color, label, and tooltip list for the /timescale_marks endpoint."
+    },
+    "file:src/main/java/com/task/chart/entity/Season.java": {
+      "name": "Season.java",
+      "type": "file",
+      "summary": "JPA entity for daylight-saving versus standard-time seasons, with start/end instants used to pick the FX trading session string."
+    },
+    "file:src/main/java/com/task/chart/entity/TvMark.java": {
+      "name": "TvMark.java",
+      "type": "file",
+      "summary": "JPA entity for persisted TradingView chart marks keyed by currency pair, resolution, and timestamp."
+    },
+    "file:src/main/java/com/task/chart/entity/TvTimescaleMark.java": {
+      "name": "TvTimescaleMark.java",
+      "type": "file",
+      "summary": "JPA entity for persisted TradingView timescale marks keyed by currency pair, resolution, and timestamp."
+    },
+    "file:src/main/java/com/task/chart/repository/SeasonRepository.java": {
+      "name": "SeasonRepository.java",
+      "type": "file",
+      "summary": "Spring Data repository that finds the current season overlapping a given instant among daylight-saving and standard codes."
+    },
+    "file:src/main/java/com/task/chart/repository/TvMarkRepository.java": {
+      "name": "TvMarkRepository.java",
+      "type": "file",
+      "summary": "Spring Data repository querying chart marks for a pair and resolution within a time window, ordered by mark time."
+    },
+    "file:src/main/java/com/task/chart/repository/TvTimescaleMarkRepository.java": {
+      "name": "TvTimescaleMarkRepository.java",
+      "type": "file",
+      "summary": "Spring Data repository querying timescale marks for a pair and resolution within a time window, ordered by mark time."
+    },
+    "file:src/main/java/com/task/chart/service/ChartDataService.java": {
+      "name": "ChartDataService.java",
+      "type": "file",
+      "summary": "Service interface for the TradingView datafeed: config, server time, symbol search/resolve, marks, timescale marks, and OHLC history."
+    },
+    "file:src/main/java/com/task/chart/service/impl/ChartDataServiceImpl.java": {
+      "name": "ChartDataServiceImpl.java",
+      "type": "file",
+      "summary": "Implements the UDF datafeed: validates requests, resolves FX pairs and sessions, loads marks from the database, and serves history bars from the Redis cache."
+    },
+    "file:src/main/java/com/task/chart/util/ResolutionMapper.java": {
+      "name": "ResolutionMapper.java",
+      "type": "file",
+      "summary": "Maps TradingView resolution strings to Peach chart types and period milliseconds, and validates history versus marks resolution sets."
+    },
+    "file:src/main/java/com/task/chart/ChartBackendApplication.java": {
+      "name": "ChartBackendApplication.java",
+      "type": "file",
+      "summary": "Spring Boot entry point that starts the TradingView chart backend and enables AppProperties configuration binding."
+    },
+    "file:src/main/java/com/task/chart/config/AppProperties.java": {
+      "name": "AppProperties.java",
+      "type": "file",
+      "summary": "Binds the app prefix from application.yml: CORS origins, JWT secret/TTLs, and TradingView datafeed flags used by auth and chart config."
+    },
+    "file:src/main/java/com/task/chart/config/AppUserSeedRunner.java": {
+      "name": "AppUserSeedRunner.java",
+      "type": "file",
+      "summary": "Boot-time ApplicationRunner that inserts demo and demo2 local users into m_app_user with BCrypt passwords when those usernames are missing."
+    },
+    "file:src/main/java/com/task/chart/controller/AuthController.java": {
+      "name": "AuthController.java",
+      "type": "file",
+      "summary": "REST controller for POST /api/auth/login, refresh, and logout; delegates JWT and cookie handling to AuthService."
+    },
+    "file:src/main/java/com/task/chart/dto/request/LoginRequest.java": {
+      "name": "LoginRequest.java",
+      "type": "file",
+      "summary": "JSON body for POST /api/auth/login carrying the demo username and password used to mint a local JWT."
+    },
+    "file:src/main/java/com/task/chart/dto/response/LoginResponse.java": {
+      "name": "LoginResponse.java",
+      "type": "file",
+      "summary": "Successful login payload with Bearer access token, token type, and access/refresh expiry seconds; refresh token stays in a cookie."
+    },
+    "file:src/main/java/com/task/chart/dto/response/RefreshResponse.java": {
+      "name": "RefreshResponse.java",
+      "type": "file",
+      "summary": "Refresh-endpoint body with a new Bearer access token and expiry seconds after cookie rotation."
+    },
+    "file:src/main/java/com/task/chart/entity/AppUser.java": {
+      "name": "AppUser.java",
+      "type": "file",
+      "summary": "JPA entity for local demo logins mapped to m_app_user, including BCrypt hash, enabled flag, and tenant customer_no."
+    },
+    "file:src/main/java/com/task/chart/exception/BadCredentialsAppException.java": {
+      "name": "BadCredentialsAppException.java",
+      "type": "file",
+      "summary": "Runtime exception thrown on failed login when the user is missing, disabled, or the BCrypt password does not match."
+    },
+    "file:src/main/java/com/task/chart/exception/UnauthorizedAppException.java": {
+      "name": "UnauthorizedAppException.java",
+      "type": "file",
+      "summary": "Runtime exception for missing or invalid refresh cookies during token rotation, distinct from bad-password login failures."
+    },
+    "file:src/main/java/com/task/chart/repository/AppUserRepository.java": {
+      "name": "AppUserRepository.java",
+      "type": "file",
+      "summary": "Spring Data JPA repository for m_app_user lookups by username used on login and demo-user seeding."
+    },
+    "file:src/main/java/com/task/chart/security/AuthCookieSupport.java": {
+      "name": "AuthCookieSupport.java",
+      "type": "file",
+      "summary": "Helpers that set, clear, and read the HttpOnly Lax chart_refresh_token cookie on servlet responses and requests."
+    },
+    "file:src/main/java/com/task/chart/security/JwtService.java": {
+      "name": "JwtService.java",
+      "type": "file",
+      "summary": "Creates and parses HS256 access JWTs using AppProperties.jwt secret and access TTL, embedding username and customer_no."
+    },
+    "file:src/main/java/com/task/chart/security/RefreshTokenSession.java": {
+      "name": "RefreshTokenSession.java",
+      "type": "file",
+      "summary": "In-memory identity parsed from a Redis refresh key (username plus customerNo) used only to mint a new access JWT."
+    },
+    "file:src/main/java/com/task/chart/security/RefreshTokenStore.java": {
+      "name": "RefreshTokenStore.java",
+      "type": "file",
+      "summary": "Redis store for opaque refresh UUIDs: issue, find, revoke, and rotate keys under peach:auth:refresh with JWT refresh TTL."
+    },
+    "file:src/main/java/com/task/chart/service/AuthService.java": {
+      "name": "AuthService.java",
+      "type": "file",
+      "summary": "Service contract for local username/password login, refresh-cookie rotation, and logout used by AuthController."
+    },
+    "file:src/main/java/com/task/chart/service/impl/AuthServiceImpl.java": {
+      "name": "AuthServiceImpl.java",
+      "type": "file",
+      "summary": "Authenticates against m_app_user with BCrypt, issues HS256 access JWTs, and manages Redis refresh cookies for login, refresh, and logout."
+    },
+    "file:src/main/java/com/task/chart/cache/DemoTickEngine.java": {
+      "name": "DemoTickEngine.java",
+      "type": "file",
+      "summary": "Simulates live FX quotes for every warehouse currency pair by walking bid/ask from last 1s bars or DemoMarket seeds, then exposing stepped ticks and snapshots for ingest."
+    },
+    "file:src/main/java/com/task/chart/cache/QuoteBus.java": {
+      "name": "QuoteBus.java",
+      "type": "file",
+      "summary": "Publishes live FX quotes and forming OHLC bars to Redis as JSON, writing last-value keys and broadcasting on dedicated channels."
+    },
+    "file:src/main/java/com/task/chart/cache/TickIngestWorker.java": {
+      "name": "TickIngestWorker.java",
+      "type": "file",
+      "summary": "Startup and scheduled worker that drives DemoTickEngine, upserts open bars across cache namespaces, and publishes quotes and forming bars on QuoteBus."
+    },
+    "file:src/main/java/com/task/chart/controller/CurrencyPairController.java": {
+      "name": "CurrencyPairController.java",
+      "type": "file",
+      "summary": "REST controller exposing the active FX currency-pair catalog used by chart symbol pickers."
+    },
+    "file:src/main/java/com/task/chart/dto/response/CurrencyPairDto.java": {
+      "name": "CurrencyPairDto.java",
+      "type": "file",
+      "summary": "API and cache-facing DTO carrying numeric pair code, display name, and sort priority for FX symbols."
+    },
+    "file:src/main/java/com/task/chart/dto/response/FormingBarMessage.java": {
+      "name": "FormingBarMessage.java",
+      "type": "file",
+      "summary": "Redis/WebSocket payload for the in-progress OHLC bar of a symbol at a given TradingView resolution."
+    },
+    "file:src/main/java/com/task/chart/dto/response/FxQuoteMessage.java": {
+      "name": "FxQuoteMessage.java",
+      "type": "file",
+      "summary": "Live tick payload with bid, ask, mid, and session high/low used by QuoteBus and the demo tick engine."
+    },
+    "file:src/main/java/com/task/chart/entity/Ccypair.java": {
+      "name": "Ccypair.java",
+      "type": "file",
+      "summary": "JPA entity for warehouse currency pairs, including Japanese name, rate unit, delete flag, and display priority."
+    },
+    "file:src/main/java/com/task/chart/repository/CcypairRepository.java": {
+      "name": "CcypairRepository.java",
+      "type": "file",
+      "summary": "Spring Data repository for active currency pairs: lookup by code, priority-ordered lists, and name search."
+    },
+    "file:src/main/java/com/task/chart/service/CurrencyPairService.java": {
+      "name": "CurrencyPairService.java",
+      "type": "file",
+      "summary": "Service contract for listing active FX pairs and resolving one pair by numeric code."
+    },
+    "file:src/main/java/com/task/chart/service/impl/CurrencyPairServiceImpl.java": {
+      "name": "CurrencyPairServiceImpl.java",
+      "type": "file",
+      "summary": "Loads active Ccypair rows, maps them to CurrencyPairDto, and formats six-letter codes as XXX/YYY display names."
+    },
+    "file:src/main/java/com/task/chart/service/impl/SymbolCatalogImpl.java": {
+      "name": "SymbolCatalogImpl.java",
+      "type": "file",
+      "summary": "Builds the TradingView symbol catalog from currency pairs and AppProperties exchange/type, then resolves symbols by ticker aliases."
+    },
+    "file:src/main/java/com/task/chart/util/DemoMarket.java": {
+      "name": "DemoMarket.java",
+      "type": "file",
+      "summary": "Static FX demo-market helpers for price scale, seed bid/mid, bar amplitude, spreads, and wicks, with JPY-quote vs majors branching."
+    },
+    "file:src/main/java/com/task/chart/constants/ErrorCodes.java": {
+      "name": "ErrorCodes.java",
+      "type": "file",
+      "summary": "Central catalog of API error code strings and i18n message keys for validation, not-found, server, unauthorized, and bad-credentials failures."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ErrorResponse.java": {
+      "name": "ErrorResponse.java",
+      "type": "file",
+      "summary": "JSON error payload DTO with an error code and localized message, constructed via a static factory."
+    },
+    "file:src/main/java/com/task/chart/exception/GlobalExceptionHandler.java": {
+      "name": "GlobalExceptionHandler.java",
+      "type": "file",
+      "summary": "Spring REST advice that maps domain exceptions to HTTP statuses and localized ErrorResponse bodies."
+    },
+    "file:src/main/java/com/task/chart/exception/ResourceNotFoundException.java": {
+      "name": "ResourceNotFoundException.java",
+      "type": "file",
+      "summary": "Runtime exception thrown when a requested chart resource cannot be found, carrying the NOT_FOUND error code."
+    },
+    "file:src/main/java/com/task/chart/exception/ServerErrorException.java": {
+      "name": "ServerErrorException.java",
+      "type": "file",
+      "summary": "Runtime exception for unexpected internal failures, carrying the SERVER error code."
+    },
+    "file:src/main/java/com/task/chart/exception/ValidationException.java": {
+      "name": "ValidationException.java",
+      "type": "file",
+      "summary": "Runtime exception for request validation failures, carrying the VALIDATION error code."
+    },
+    "file:src/main/java/com/task/chart/security/CustomerContext.java": {
+      "name": "CustomerContext.java",
+      "type": "file",
+      "summary": "Thread-local holder for the authenticated customer number, used by layout and template services to scope data."
+    },
+    "file:src/main/java/com/task/chart/security/JsonUnauthorizedEntryPoint.java": {
+      "name": "JsonUnauthorizedEntryPoint.java",
+      "type": "file",
+      "summary": "Spring Security entry point that writes a JSON 401 ErrorResponse using the request locale instead of a redirect."
+    },
+    "file:src/main/java/com/task/chart/service/LocalizedMessageService.java": {
+      "name": "LocalizedMessageService.java",
+      "type": "file",
+      "summary": "Service interface for resolving i18n message keys to locale-specific strings used in error responses."
+    },
+    "file:src/main/java/com/task/chart/service/impl/LocalizedMessageServiceImpl.java": {
+      "name": "LocalizedMessageServiceImpl.java",
+      "type": "file",
+      "summary": "Resolves message-bundle keys through Spring MessageSource using LocaleContextHolder."
+    },
+    "file:src/main/java/com/task/chart/controller/ChartLayoutController.java": {
+      "name": "ChartLayoutController.java",
+      "type": "file",
+      "summary": "REST controller at /api/layouts that exposes register, update, list, get, and delete endpoints for saved TradingView chart layouts (design docs 127–131)."
+    },
+    "file:src/main/java/com/task/chart/dto/request/RegisterChartLayoutRequest.java": {
+      "name": "RegisterChartLayoutRequest.java",
+      "type": "file",
+      "summary": "Request body for POST and PUT /api/layouts: layout name, widget JSON content, currency-pair symbol, and resolution."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ChartLayoutDto.java": {
+      "name": "ChartLayoutDto.java",
+      "type": "file",
+      "summary": "Full layout payload for GET /api/layouts/{id}, including widget content and updated_at as unix seconds."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ChartLayoutIdResponse.java": {
+      "name": "ChartLayoutIdResponse.java",
+      "type": "file",
+      "summary": "Id-only response returned after register or update so the client can fetch or update the layout later."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ChartLayoutListItemDto.java": {
+      "name": "ChartLayoutListItemDto.java",
+      "type": "file",
+      "summary": "Metadata-only list row for GET /api/layouts: id, name, resolution, symbol, and timestamp without widget content."
+    },
+    "file:src/main/java/com/task/chart/entity/TvChartLayout.java": {
+      "name": "TvChartLayout.java",
+      "type": "file",
+      "summary": "JPA entity for table m_tv_chart_layout storing one customer's saved widget layout, pair code, resolution, and update time."
+    },
+    "file:src/main/java/com/task/chart/repository/TvChartLayoutRepository.java": {
+      "name": "TvChartLayoutRepository.java",
+      "type": "file",
+      "summary": "Spring Data JPA repository for m_tv_chart_layout, adding a customer-scoped list ordered by newest updated_at."
+    },
+    "file:src/main/java/com/task/chart/service/ChartLayoutService.java": {
+      "name": "ChartLayoutService.java",
+      "type": "file",
+      "summary": "Service contract for tenant-scoped chart-layout register, update, get, list, and delete used by ChartLayoutController."
+    },
+    "file:src/main/java/com/task/chart/service/impl/ChartLayoutServiceImpl.java": {
+      "name": "ChartLayoutServiceImpl.java",
+      "type": "file",
+      "summary": "Transactional implementation of layout CRUD: validates body and resolution, requires an active pair, and hides other tenants' ids as 404."
+    },
+    "file:src/main/java/com/task/chart/controller/IndicatorTemplateController.java": {
+      "name": "IndicatorTemplateController.java",
+      "type": "file",
+      "summary": "REST controller exposing list, upsert, get, and delete endpoints for TradingView study (indicator) templates under /api/indicator-templates."
+    },
+    "file:src/main/java/com/task/chart/dto/request/UpsertIndicatorTemplateRequest.java": {
+      "name": "UpsertIndicatorTemplateRequest.java",
+      "type": "file",
+      "summary": "Request body for POST /api/indicator-templates carrying template name and study JSON content."
+    },
+    "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateDto.java": {
+      "name": "IndicatorTemplateDto.java",
+      "type": "file",
+      "summary": "GET-by-name response payload containing one study template's name and content for the JWT customer."
+    },
+    "file:src/main/java/com/task/chart/dto/response/IndicatorTemplateListItemDto.java": {
+      "name": "IndicatorTemplateListItemDto.java",
+      "type": "file",
+      "summary": "Name-only list-row DTO for GET /api/indicator-templates, omitting the study content blob."
+    },
+    "file:src/main/java/com/task/chart/dto/response/SystemDatetimeResponse.java": {
+      "name": "SystemDatetimeResponse.java",
+      "type": "file",
+      "summary": "Shared unix-seconds timestamp payload used by indicator, layout, and chart-template upsert/delete responses."
+    },
+    "file:src/main/java/com/task/chart/entity/TvIndicatorTemplate.java": {
+      "name": "TvIndicatorTemplate.java",
+      "type": "file",
+      "summary": "JPA entity mapping m_tv_indicator_template, uniquely keyed by customer_no and name, holding study JSON content."
+    },
+    "file:src/main/java/com/task/chart/repository/TvIndicatorTemplateRepository.java": {
+      "name": "TvIndicatorTemplateRepository.java",
+      "type": "file",
+      "summary": "Spring Data JPA repository for listing and loading customer-scoped indicator templates by name."
+    },
+    "file:src/main/java/com/task/chart/service/IndicatorTemplateService.java": {
+      "name": "IndicatorTemplateService.java",
+      "type": "file",
+      "summary": "Service contract for tenant-scoped indicator-template list, upsert, get, and delete operations."
+    },
+    "file:src/main/java/com/task/chart/service/impl/IndicatorTemplateServiceImpl.java": {
+      "name": "IndicatorTemplateServiceImpl.java",
+      "type": "file",
+      "summary": "Transactional implementation of indicator-template CRUD, scoping rows by JWT customer and validating name length."
+    },
+    "file:src/main/java/com/task/chart/controller/ChartTemplateController.java": {
+      "name": "ChartTemplateController.java",
+      "type": "file",
+      "summary": "REST controller for TradingView chart-style templates at /api/chart-templates, covering list, upsert, get, and delete (design docs 136–139)."
+    },
+    "file:src/main/java/com/task/chart/dto/request/UpsertChartTemplateRequest.java": {
+      "name": "UpsertChartTemplateRequest.java",
+      "type": "file",
+      "summary": "Request body for POST /api/chart-templates carrying template name and TradingView chart-style JSON content."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ChartTemplateDto.java": {
+      "name": "ChartTemplateDto.java",
+      "type": "file",
+      "summary": "GET-by-name response payload with a chart template's name and widget content for the JWT customer."
+    },
+    "file:src/main/java/com/task/chart/dto/response/ChartTemplateListItemDto.java": {
+      "name": "ChartTemplateListItemDto.java",
+      "type": "file",
+      "summary": "Name-only list row for GET /api/chart-templates, omitting content so clients can present a sorted template picker."
+    },
+    "file:src/main/java/com/task/chart/entity/TvChartTemplate.java": {
+      "name": "TvChartTemplate.java",
+      "type": "file",
+      "summary": "JPA entity for m_tv_chart_templates storing per-customer TradingView chart-style presets unique on (customer_no, name)."
+    },
+    "file:src/main/java/com/task/chart/repository/TvChartTemplateRepository.java": {
+      "name": "TvChartTemplateRepository.java",
+      "type": "file",
+      "summary": "Spring Data JPA repository for listing a customer's chart templates by name and loading one row by (customer_no, name)."
+    },
+    "file:src/main/java/com/task/chart/service/ChartTemplateService.java": {
+      "name": "ChartTemplateService.java",
+      "type": "file",
+      "summary": "Service contract for tenant CRUD of chart templates keyed by (customer_no, name), used by ChartTemplateController."
+    },
+    "file:src/main/java/com/task/chart/service/impl/ChartTemplateServiceImpl.java": {
+      "name": "ChartTemplateServiceImpl.java",
+      "type": "file",
+      "summary": "Transactional ChartTemplateService implementation that validates names, scopes rows by JWT customer, and upserts content on m_tv_chart_templates."
+    },
+    "file:src/main/java/com/task/chart/cache/CachedChartBar.java": {
+      "name": "CachedChartBar.java",
+      "type": "file",
+      "summary": "Immutable cache row holding dual bid/ask OHLC for one FX candle, used by tick ingest to form bars and by history to map a price side into BarDto."
+    },
+    "file:src/main/java/com/task/chart/cache/ChartCacheWriter.java": {
+      "name": "ChartCacheWriter.java",
+      "type": "file",
+      "summary": "Startup seeder that fills warehouse tables and Redis cache with deterministic historical bars for every FX symbol and timeframe once at boot."
+    },
+    "file:src/main/java/com/task/chart/constants/PriceComponent.java": {
+      "name": "PriceComponent.java",
+      "type": "file",
+      "summary": "Enumerates BID, ASK, and MID price sides for history and mock bars, with lenient and strict parsers for the bid_ask query parameter."
+    },
+    "file:src/main/java/com/task/chart/dto/response/BarDto.java": {
+      "name": "BarDto.java",
+      "type": "file",
+      "summary": "Internal OHLCV bar DTO used when mapping cache rows toward GET /api/history; time is unix milliseconds at candle open and is not the columnar JSON payload."
+    },
+    "file:src/main/java/com/task/chart/service/MockBarGenerator.java": {
+      "name": "MockBarGenerator.java",
+      "type": "file",
+      "summary": "Service interface for deterministic mock OHLCV used only to boot-seed warehouse and Redis caches, not for live tick ingest."
+    },
+    "file:src/main/java/com/task/chart/service/SymbolCatalog.java": {
+      "name": "SymbolCatalog.java",
+      "type": "file",
+      "summary": "In-memory FX symbol catalog interface that resolves widget tickers to provider symbols, price scale, and pair codes for history and ingest."
+    },
+    "file:src/main/java/com/task/chart/service/impl/MockBarGeneratorImpl.java": {
+      "name": "MockBarGeneratorImpl.java",
+      "type": "file",
+      "summary": "Deterministic sine-and-hash mock bar factory that seeds historical BID/ASK/MID candles and Peach cache rows from DemoMarket parameters."
+    },
+    "file:src/main/resources/db/migration/V1__create_m_ccypairs.sql": {
+      "name": "V1__create_m_ccypairs.sql",
+      "type": "file",
+      "summary": "Flyway V1 migration that creates the currency-pair master table used as the FX symbol catalog for charts and quotes."
+    },
+    "table:src/main/resources/db/migration/V1__create_m_ccypairs.sql:m_ccypairs": {
+      "name": "m_ccypairs",
+      "type": "table",
+      "summary": "Master table of FX currency pairs with Japanese name, rate unit, soft-delete flag, and display priority."
+    },
+    "file:src/main/resources/db/migration/V2__create_m_season.sql": {
+      "name": "V2__create_m_season.sql",
+      "type": "file",
+      "summary": "Flyway V2 migration that creates the season master table for trading calendar windows."
+    },
+    "table:src/main/resources/db/migration/V2__create_m_season.sql:m_season": {
+      "name": "m_season",
+      "type": "table",
+      "summary": "Season master storing a season code and inclusive start/end timestamps for chart or market windows."
+    },
+    "file:src/main/resources/db/migration/V3__create_m_tv_mark.sql": {
+      "name": "V3__create_m_tv_mark.sql",
+      "type": "file",
+      "summary": "Flyway V3 migration that creates the TradingView bar-mark table for per-symbol, per-resolution chart annotations."
+    },
+    "table:src/main/resources/db/migration/V3__create_m_tv_mark.sql:m_tv_mark": {
+      "name": "m_tv_mark",
+      "type": "table",
+      "summary": "Stores TradingView marks keyed by currency pair and resolution, with timestamp, color, label, and mark text."
+    },
+    "file:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql": {
+      "name": "V4__create_m_tv_timescale_mark.sql",
+      "type": "file",
+      "summary": "Flyway V4 migration that creates the TradingView timescale-mark table for time-axis annotations."
+    },
+    "table:src/main/resources/db/migration/V4__create_m_tv_timescale_mark.sql:m_tv_timescale_mark": {
+      "name": "m_tv_timescale_mark",
+      "type": "table",
+      "summary": "Stores TradingView timescale marks keyed by currency pair and resolution, with color, label, and tooltip."
+    },
+    "file:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql": {
+      "name": "V5__create_m_tv_chart_layout.sql",
+      "type": "file",
+      "summary": "Flyway V5 migration that creates the per-customer TradingView chart layout persistence table."
+    },
+    "table:src/main/resources/db/migration/V5__create_m_tv_chart_layout.sql:m_tv_chart_layout": {
+      "name": "m_tv_chart_layout",
+      "type": "table",
+      "summary": "Persists saved chart layouts per customer, including JSON content, symbol, chart type, and last update time."
+    },
+    "file:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql": {
+      "name": "V6__create_m_tv_indicator_template.sql",
+      "type": "file",
+      "summary": "Flyway V6 migration that creates the per-customer TradingView indicator template table."
+    },
+    "table:src/main/resources/db/migration/V6__create_m_tv_indicator_template.sql:m_tv_indicator_template": {
+      "name": "m_tv_indicator_template",
+      "type": "table",
+      "summary": "Stores named indicator templates per customer as JSON content with an updated-at timestamp."
+    },
+    "file:src/main/resources/db/migration/V7__create_m_app_user.sql": {
+      "name": "V7__create_m_app_user.sql",
+      "type": "file",
+      "summary": "Flyway V7 migration that creates the application user table for login credentials and customer binding."
+    },
+    "table:src/main/resources/db/migration/V7__create_m_app_user.sql:m_app_user": {
+      "name": "m_app_user",
+      "type": "table",
+      "summary": "Application users with username, password hash, customer number, enabled flag, and created-at timestamp."
+    },
+    "file:src/main/resources/db/migration/V8__create_t_chart_tables.sql": {
+      "name": "V8__create_t_chart_tables.sql",
+      "type": "file",
+      "summary": "Flyway V8 migration that creates thirteen OHLC fact tables, one per chart timeframe from 1-second through monthly bars."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1": {
+      "name": "t_chart_1",
+      "type": "table",
+      "summary": "1-second OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_60": {
+      "name": "t_chart_60",
+      "type": "table",
+      "summary": "1-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_300": {
+      "name": "t_chart_300",
+      "type": "table",
+      "summary": "5-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_600": {
+      "name": "t_chart_600",
+      "type": "table",
+      "summary": "10-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_900": {
+      "name": "t_chart_900",
+      "type": "table",
+      "summary": "15-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_1800": {
+      "name": "t_chart_1800",
+      "type": "table",
+      "summary": "30-minute OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_3600": {
+      "name": "t_chart_3600",
+      "type": "table",
+      "summary": "1-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_7200": {
+      "name": "t_chart_7200",
+      "type": "table",
+      "summary": "2-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_14400": {
+      "name": "t_chart_14400",
+      "type": "table",
+      "summary": "4-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_28800": {
+      "name": "t_chart_28800",
+      "type": "table",
+      "summary": "8-hour OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_day": {
+      "name": "t_chart_day",
+      "type": "table",
+      "summary": "Daily OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_week": {
+      "name": "t_chart_week",
+      "type": "table",
+      "summary": "Weekly OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "table:src/main/resources/db/migration/V8__create_t_chart_tables.sql:t_chart_month": {
+      "name": "t_chart_month",
+      "type": "table",
+      "summary": "Monthly OHLC fact table storing bid/ask open-high-low-close and volume keyed by currency pair and bar time."
+    },
+    "file:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql": {
+      "name": "V9__create_m_tv_chart_templates.sql",
+      "type": "file",
+      "summary": "Flyway V9 migration that creates the per-customer TradingView chart template table."
+    },
+    "table:src/main/resources/db/migration/V9__create_m_tv_chart_templates.sql:m_tv_chart_templates": {
+      "name": "m_tv_chart_templates",
+      "type": "table",
+      "summary": "Stores named chart templates per customer as JSON content with an updated-at timestamp."
+    },
+    "config:src/main/resources/application.yml": {
+      "name": "application.yml",
+      "type": "config",
+      "summary": "Spring Boot runtime configuration for the chart backend: Postgres and Redis connections, Flyway migrations, JWT and CORS, TradingView datafeed flags, and demo tick-cache cadence."
+    },
+    "config:src/main/resources/messages.properties": {
+      "name": "messages.properties",
+      "type": "config",
+      "summary": "Default English API error messages keyed to ErrorCodes.MSG_* for validation, not-found, server, unauthorized, bad-credentials, and bad-request."
+    },
+    "config:src/main/resources/messages_ja.properties": {
+      "name": "messages_ja.properties",
+      "type": "config",
+      "summary": "Japanese API error message overrides loaded when Accept-Language starts with ja, covering the same ErrorCodes keys as the English bundle."
+    },
+    "file:.gitattributes": {
+      "name": ".gitattributes",
+      "type": "file",
+      "summary": "Forces LF line endings for the Unix Maven wrapper and CRLF for Windows .cmd scripts so mvnw stays portable across checkouts."
+    },
+    "file:.ua/.understandignore": {
+      "name": ".understandignore",
+      "type": "file",
+      "summary": "Understand-Anything ignore list that excludes IDE, build, and test-pattern paths from knowledge-graph analysis of the chart backend."
+    },
+    "config:.ua/config.json": {
+      "name": "config.json",
+      "type": "config",
+      "summary": "Understand-Anything project config that sets English as the output language for generated graph text."
+    },
+    "file:mvnw": {
+      "name": "mvnw",
+      "type": "file",
+      "summary": "Apache Maven Wrapper 3.3.4 Unix shell script that locates or downloads a pinned Maven distribution and then execs the build."
+    },
+    "file:mvnw.cmd": {
+      "name": "mvnw.cmd",
+      "type": "file",
+      "summary": "Windows Maven Wrapper that bootstraps via a batch header then runs an embedded PowerShell block to download and launch Maven."
+    },
+    "config:pom.xml": {
+      "name": "pom.xml",
+      "type": "config",
+      "summary": "Maven POM for chart-backend: Spring Boot 4.0.7 on Java 21 with web, JPA, Flyway, Redis, Security, JJWT, and springdoc OpenAPI."
+    },
+    "document:src/main/java/README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Mentor-facing class map of com.task.chart covering CTFX layering, datafeed docs 120–139, cache SSOT, and a full Java file tree."
+    },
+    "file:src/main/java/com/task/chart/cache/ChartBarRepository.java": {
+      "name": "ChartBarRepository.java",
+      "type": "file",
+      "summary": "JDBC warehouse for OHLC bars: deletes/upserts into t_chart_* tables chosen from CacheNamespace and range-queries history for Redis seeding and history reads."
+    },
+    "file:src/main/java/com/task/chart/config/OpenApiConfig.java": {
+      "name": "OpenApiConfig.java",
+      "type": "file",
+      "summary": "Springdoc OpenAPI bean that titles the CTFX Chart Backend, tags docs 120–139 plus auth and currency pairs, and registers a Bearer JWT scheme."
+    },
+    "file:src/main/java/com/task/chart/config/PasswordConfig.java": {
+      "name": "PasswordConfig.java",
+      "type": "file",
+      "summary": "Registers a BCryptPasswordEncoder bean used by login to hash and verify demo user passwords."
+    },
+    "file:src/main/java/com/task/chart/config/WebConfig.java": {
+      "name": "WebConfig.java",
+      "type": "file",
+      "summary": "CORS configuration that allows the Vite widget origins to call /api/** and GET /curpairs with credentials."
+    },
+    "file:src/main/java/com/task/chart/constants/MarkSeedWindow.java": {
+      "name": "MarkSeedWindow.java",
+      "type": "file",
+      "summary": "Fixed unix FROM/TO window used when seeding demo marks and timescale marks for datafeed docs 125 and 126."
+    },
+    "file:src/main/java/com/task/chart/package-info.java": {
+      "name": "package-info.java",
+      "type": "file",
+      "summary": "Package javadoc for com.task.chart describing controller-service-repository layering, live ingest SSOT, and the Java README map."
+    },
+    "file:src/main/java/com/task/chart/security/ChartPrincipal.java": {
+      "name": "ChartPrincipal.java",
+      "type": "file",
+      "summary": "Authenticated chart user record carrying username and tenant customerNo taken from the access JWT."
+    },
+    "file:src/main/java/com/task/chart/security/JwtAuthenticationFilter.java": {
+      "name": "JwtAuthenticationFilter.java",
+      "type": "file",
+      "summary": "OncePerRequestFilter that parses Bearer access JWTs, sets SecurityContext and CustomerContext, and clears both after the request."
+    },
+    "file:src/main/java/com/task/chart/security/SecurityConfig.java": {
+      "name": "SecurityConfig.java",
+      "type": "file",
+      "summary": "Stateless Spring Security chain: CSRF off, public health/auth/Swagger, JWT required for /api/** and GET /curpairs, JSON 401 entry point."
+    }
+  },
+  "totalNodes": 142,
+  "totalEdges": 906
+}
