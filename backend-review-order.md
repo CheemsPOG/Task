@@ -1,4 +1,4 @@
-# CTFX chart backend — full package/file review order
+ # CTFX chart backend — full package/file review order
 
 Package rank = business-criticality and bug-surface, not alphabetical or dependency order. Within each package, files are ranked the same way: the one most likely to hide a real bug or teach you the most about the system sits on top.
 

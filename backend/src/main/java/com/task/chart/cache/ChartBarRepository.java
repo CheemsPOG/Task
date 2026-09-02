@@ -36,11 +36,12 @@ import org.springframework.stereotype.Repository;
  *   <tr><th>Ver  </th><th>Date      </th><th>Author   </th><th>Comment </th></tr>
  *   <tr><td>1.0.0</td><td>2026/08/21</td><td>Task</td><td>新規作成</td></tr>
  *   <tr><td>1.1.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.2.0</td><td>2026/09/02</td><td>Task</td><td>Trim warehouse after upsert</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.1.0
+ * @version 1.2.0
  */
 @Repository
 public class ChartBarRepository {
@@ -102,6 +103,38 @@ public class ChartBarRepository {
 				bar.curpairCd(),
 				bar.chartDatetimeSec());
 		jdbcTemplate.update(insertSql(table), ps -> bindBar(ps, bar));
+		trimToMaxBars(namespace, bar.curpairCd());
+	}
+
+	/**
+	 * Deletes warehouse rows older than the newest {@link ChartCacheRetention#maxBars} for this pair.
+	 *
+	 * @param namespace table mapping
+	 * @param curpairCd currency pair CD
+	 */
+	private void trimToMaxBars(CacheNamespace namespace, String curpairCd) {
+
+		int maxBars = ChartCacheRetention.maxBars(namespace);
+		String table = namespace.tableName();
+		Integer count = jdbcTemplate.queryForObject(
+				"SELECT COUNT(*) FROM " + table + " WHERE curpair_cd = ?",
+				Integer.class,
+				curpairCd);
+
+		if (count == null || count <= maxBars) {
+			return;
+		}
+
+		// Keep newest maxBars by chart_datetime; delete strictly older than the cutoff row.
+		jdbcTemplate.update(
+				"DELETE FROM " + table + " WHERE curpair_cd = ? AND chart_datetime < ("
+						+ "SELECT chart_datetime FROM ("
+						+ "SELECT chart_datetime FROM " + table + " WHERE curpair_cd = ?"
+						+ " ORDER BY chart_datetime DESC LIMIT 1 OFFSET ?"
+						+ ") AS cutoff)",
+				curpairCd,
+				curpairCd,
+				maxBars - 1);
 	}
 
 	/**

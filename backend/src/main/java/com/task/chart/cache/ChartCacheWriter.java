@@ -109,7 +109,7 @@ public class ChartCacheWriter implements ApplicationRunner {
 
 		// One pass per Peach namespace × catalog pair: warehouse then Redis.
 		for (CacheNamespace namespace : CacheNamespace.values()) {
-			int depth = seedDepth(namespace);
+			int depth = ChartCacheRetention.maxBars(namespace);
 
 			for (CachedSymbol symbol : symbols) {
 				List<CachedChartBar> bars = buildSeries(symbol, namespace, toMs, depth);
@@ -153,25 +153,5 @@ public class ChartCacheWriter implements ApplicationRunner {
 		}
 
 		return new ArrayList<>(bySec.values());
-	}
-
-	/**
-	 * How many historical bars to seed per namespace (demo depths, not Peach production).
-	 *
-	 * @param namespace Peach table / cache mapping
-	 * @return bar count
-	 */
-	private static int seedDepth(CacheNamespace namespace) {
-
-		return switch (namespace) {
-			case CACHE_SET_1S -> 900;
-			case CACHE_SET_1M -> 600;
-			case CACHE_SET_5M, CACHE_SET_10M, CACHE_SET_15M, CACHE_SET_30M -> 400;
-			case CACHE_SET_60M, CACHE_SET_120M, CACHE_SET_240M, CACHE_SET_480M -> 300;
-			case CACHE_SET_DAY -> 400;
-			case CACHE_SET_WEEK -> 200;
-			case CACHE_SET_MONTH -> 120;
-			default -> 100;
-		};
 	}
 }

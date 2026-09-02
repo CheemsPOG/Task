@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
  * {@code peach:{cache_set_day}:USDJPY} — score = unix seconds, member = JSON bar.
  * Empty keys warm from warehouse {@code t_chart_*} via {@link ChartBarRepository}.
  *
- * <p>Live last-bar writes come only from {@link TickIngestWorker}. This class
- * does not invent OHLC. Python does not read these ZSETs.
+ * <p>Live last-bar writes come only from {@link TickIngestWorker}. After each {@link #put},
+ * {@link ChartCacheRetention} trims the ZSET to the newest N bars per resolution (no key TTL).
  *
  * <p><strong>NOT:</strong> not a Redis {@code SUBSCRIBE}r (point-in-time ZRANGE only);
  * not {@code stitchCurrentBar} / live-candle math (if REST history and the WS candle
@@ -43,11 +43,12 @@ import org.springframework.stereotype.Component;
  *   <tr><td>1.1.0</td><td>2026/08/21</td><td>Task</td><td>Redis ZSET</td></tr>
  *   <tr><td>1.2.0</td><td>2026/08/21</td><td>Task</td><td>DB fallback / warm from t_chart_*</td></tr>
  *   <tr><td>1.3.0</td><td>2026/08/27</td><td>Task</td><td>Onboarding comments</td></tr>
+ *   <tr><td>1.4.0</td><td>2026/09/02</td><td>Task</td><td>Trim ZSET to newest-N after put</td></tr>
  * </table>
  * <p>
  *
  * @author Task
- * @version 1.3.0
+ * @version 1.4.0
  */
 @Component
 public class ChartCacheStore {
@@ -104,6 +105,7 @@ public class ChartCacheStore {
 			String key = redisKey(namespace, bar.curpairCd());
 			redis.opsForZSet().removeRangeByScore(key, bar.chartDatetimeSec(), bar.chartDatetimeSec());
 			redis.opsForZSet().add(key, toJson(bar), bar.chartDatetimeSec());
+			trimToMaxBars(key, ChartCacheRetention.maxBars(namespace));
 		}
 	}
 
@@ -250,6 +252,27 @@ public class ChartCacheStore {
 		}
 
 		redis.opsForZSet().add(key, tuples);
+		trimToMaxBars(key, ChartCacheRetention.maxBars(namespace));
+	}
+
+	/**
+	 * Drops oldest ZSET members when count exceeds the per-resolution cap (newest-N window).
+	 *
+	 * @param key Redis ZSET key
+	 * @param maxBars maximum members to keep
+	 */
+	private void trimToMaxBars(String key, int maxBars) {
+
+		Long card = redis.opsForZSet().zCard(key);
+
+		if (card == null || card <= maxBars) {
+			return;
+		}
+
+		long removeThrough = card - maxBars - 1L;
+
+		// Rank 0 = lowest score (oldest). Keep the newest maxBars members only.
+		redis.opsForZSet().removeRange(key, 0, removeThrough);
 	}
 
 	/**
